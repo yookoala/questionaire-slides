@@ -25,6 +25,10 @@ This project is to build a set of web components that works together as a questi
 * `<questionaire-question-answer>`
   Each `<questionaire-question>` will contain multiple of this component. Each of this component will hold the answer text, the status if it is selected, and an optional "selected-value" attribute to submit as value if the answer is selected. If "selected-value" is not set, the value will be that of the `<questionaire-question-content>` element.
 
+  Each `<questionaire-question-answer>` element is a simple container element with an additional properties / attributes:
+  - "selected": Only present if a user explicitly selected it.
+  - "value": Optional attribute but always presents in properties. If the value attribute is not set, then reading the property will give the current inner text of the element. If the property is programatically set or modified, only the attribute is affected while the inner text is kept untouched.
+
 * `<questionaire-question-actions>`
   Each `<questionaire-question>` may contain one of this. A div container component to contain multiple buttons. Will take up the bottom of the question element.
 
