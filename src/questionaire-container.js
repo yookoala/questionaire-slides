@@ -7,6 +7,7 @@ import { LitElement, html, css } from 'lit';
 export class QuestionaireContainer extends LitElement {
   static properties = {
     currentIndex: { type: Number },
+    ready: { type: String, reflect: true },
   };
 
   static styles = css`
@@ -35,10 +36,13 @@ export class QuestionaireContainer extends LitElement {
   constructor() {
     super();
     this.currentIndex = 0;
+    this.ready = '';
   }
 
   firstUpdated() {
     this._updateContainer();
+    // Set ready attribute to "1" after rendering
+    this.ready = '1';
   }
 
   render() {
