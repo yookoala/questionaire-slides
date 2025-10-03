@@ -13,6 +13,7 @@ import { LitElement, html, css } from 'lit';
 export class QuestionaireQuestion extends LitElement {
   static properties = {
     multiselect: { type: Boolean, reflect: true },
+    name: { type: String, reflect: true },
   };
 
   static styles = css`
@@ -24,6 +25,7 @@ export class QuestionaireQuestion extends LitElement {
   constructor() {
     super();
     this.multiselect = false;
+    this.name = '';
     this._observers = new Set();
   }
 

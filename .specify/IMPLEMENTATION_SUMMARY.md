@@ -245,12 +245,17 @@ The project now has a complete foundation for building questionnaires with selec
 - Tests cover: basic content aggregation, multiple content elements, questions without content, empty containers, HTML content extraction, whitespace handling
 - Examples demonstrate: full questionnaire with multiple questions, navigation, and getContents method usage
 
-### Next Phase: Implementation
-- Implement `getContents()` method in existing `src/questionaire-container.js` component
-- Method should return aggregated "\n" separated children `<questionaire-question-content>` innerText value(s)
-- Should work across all questions in the container
-- Should handle questions without content gracefully
-- Should extract text content from HTML formatting
+### Phase 2: Implementation ✅
+- Implemented `getContents()` method in `src/questionaire-container.js` component
+- Added `name` attribute support to `src/questionaire-question.js` for future values property
+- Features implemented:
+  - ✅ `getContents()` method returns aggregated "\n" separated content from all `<questionaire-question-content>` elements
+  - ✅ Traverses all questions in the container to find content elements
+  - ✅ Extracts text content from HTML formatting (uses textContent)
+  - ✅ Handles questions without content gracefully (skips them)
+  - ✅ Trims whitespace from individual content elements
+  - ✅ Returns empty string for empty containers or containers with no content
+  - ✅ Added `name` attribute support to question component for next feature
 
 ## All Current Implemented Tasks
 
