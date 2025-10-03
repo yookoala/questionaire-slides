@@ -347,8 +347,18 @@ Recent updates to TASKS.md and SPEC.md have added new validation and enhancement
 - Tests cover: custom error classes, single-select validation, multi-select with min/max constraints, error message formatting
 - Examples demonstrate: different validation scenarios, error types, constraint handling
 
-### Next Phase: Implementation
-- Implement custom error classes: `QuestionValidationError`, `QuestionNotAnsweredError`, `QuestionAnsweredTooFewError`, `QuestionAnsweredTooMuchError`
-- Add `min-answer` and `max-answer` attributes/properties to question component (multi-select only)
-- Add `.validate()` method with proper validation logic for single-select and multi-select
-- Implement numerical validation for min/max constraints with proper error handling
+### Phase 2: Implementation ✅
+- Implemented custom error classes in `src/question-validation-errors.js`
+- Updated `src/questionaire-question.js` with validation functionality
+- Features implemented:
+  - ✅ `QuestionValidationError` base class extending Error
+  - ✅ `QuestionNotAnsweredError` for single-select without selection
+  - ✅ `QuestionAnsweredTooFewError` for multi-select with too few answers
+  - ✅ `QuestionAnsweredTooMuchError` for multi-select with too many answers
+  - ✅ `min-answer` and `max-answer` attributes/properties (multi-select only)
+  - ✅ Numerical validation for min/max constraints with proper error handling
+  - ✅ `.validate()` method with comprehensive validation logic
+  - ✅ Single-select validation: checks if value is undefined
+  - ✅ Multi-select validation: checks min/max constraints
+  - ✅ Proper error messages with dynamic values
+  - ✅ Global error class availability for testing

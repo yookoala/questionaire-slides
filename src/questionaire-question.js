@@ -1,4 +1,10 @@
 import { LitElement, html, css } from 'lit';
+import { 
+  QuestionValidationError, 
+  QuestionNotAnsweredError, 
+  QuestionAnsweredTooFewError, 
+  QuestionAnsweredTooMuchError 
+} from './question-validation-errors.js';
 
 /**
  * QuestionaireQuestion - A question container component with selectable answers
@@ -14,6 +20,8 @@ export class QuestionaireQuestion extends LitElement {
   static properties = {
     multiselect: { type: Boolean, reflect: true },
     name: { type: String, reflect: true },
+    minAnswer: { type: Number, attribute: 'min-answer', reflect: true },
+    maxAnswer: { type: Number, attribute: 'max-answer', reflect: true },
   };
 
   static styles = css`
@@ -26,12 +34,57 @@ export class QuestionaireQuestion extends LitElement {
     super();
     this.multiselect = false;
     this.name = '';
+    this.minAnswer = undefined;
+    this.maxAnswer = undefined;
     this._observers = new Set();
   }
 
   connectedCallback() {
     super.connectedCallback();
+    this._validateConstraints();
     this._setupAnswerObservation();
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    super.attributeChangedCallback(name, oldVal, newVal);
+    if (name === 'min-answer' || name === 'max-answer') {
+      this._validateConstraints();
+    }
+  }
+
+  /**
+   * Validate min-answer and max-answer constraints
+   */
+  _validateConstraints() {
+    // Only validate constraints if the component is in multi-select mode
+    if (!this.multiselect) {
+      return;
+    }
+
+    // Validate min-answer is numerical if set
+    if (this.minAnswer !== undefined && this.minAnswer !== null) {
+      const minNum = Number(this.minAnswer);
+      if (isNaN(minNum) || minNum < 0 || !Number.isInteger(minNum)) {
+        throw new Error('min-answer must be a non-negative integer');
+      }
+    }
+
+    // Validate max-answer is numerical if set
+    if (this.maxAnswer !== undefined && this.maxAnswer !== null) {
+      const maxNum = Number(this.maxAnswer);
+      if (isNaN(maxNum) || maxNum < 0 || !Number.isInteger(maxNum)) {
+        throw new Error('max-answer must be a non-negative integer');
+      }
+    }
+
+    // Validate min-answer <= max-answer if both are set
+    if (this.minAnswer !== undefined && this.maxAnswer !== undefined) {
+      const minNum = Number(this.minAnswer);
+      const maxNum = Number(this.maxAnswer);
+      if (minNum > maxNum) {
+        throw new Error('min-answer cannot be greater than max-answer');
+      }
+    }
   }
 
   disconnectedCallback() {
@@ -178,6 +231,49 @@ export class QuestionaireQuestion extends LitElement {
     } else {
       this.removeAttribute('multiselect');
     }
+  }
+
+  /**
+   * Validate the current question state
+   * Throws appropriate validation errors if the question is not valid
+   */
+  validate() {
+    if (this.multiselect) {
+      // Multi-select validation
+      const selectedAnswers = this._getSelectedAnswers();
+      const selectedCount = selectedAnswers.length;
+
+      // Check minimum constraint
+      if (this.minAnswer !== undefined && this.minAnswer !== null) {
+        const minRequired = Number(this.minAnswer);
+        if (selectedCount < minRequired) {
+          throw new QuestionAnsweredTooFewError(
+            `You must at lease select ${minRequired} answer(s)`,
+            minRequired
+          );
+        }
+      }
+
+      // Check maximum constraint
+      if (this.maxAnswer !== undefined && this.maxAnswer !== null) {
+        const maxAllowed = Number(this.maxAnswer);
+        if (selectedCount > maxAllowed) {
+          throw new QuestionAnsweredTooMuchError(
+            `You must select no more than ${maxAllowed} answer(s)`,
+            maxAllowed
+          );
+        }
+      }
+    } else {
+      // Single-select validation
+      const value = this.value;
+      if (value === undefined) {
+        throw new QuestionNotAnsweredError('A value must be selected');
+      }
+    }
+
+    // If we get here, validation passed
+    return true;
   }
 }
 
