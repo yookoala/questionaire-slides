@@ -123,7 +123,7 @@ export class QuestionaireQuestion extends LitElement {
    * Get all questionaire-question-answer elements in this question
    */
   _getAnswerElements() {
-    const slot = this.shadowRoot.querySelector('slot');
+    const slot = this.shadowRoot?.querySelector('slot');
     if (!slot) return [];
     
     return slot.assignedElements().filter(element => 

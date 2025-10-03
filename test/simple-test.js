@@ -1,6 +1,7 @@
 // Simple test to verify the components can be loaded and basic API works
 import { QuestionaireContainer } from '../src/questionaire-container.js';
 import { QuestionaireQuestionAnswer } from '../src/questionaire-question-answer.js';
+import { QuestionaireQuestion } from '../src/questionaire-question.js';
 
 console.log('Testing questionaire components...\n');
 
@@ -92,6 +93,43 @@ test('QuestionaireQuestionAnswer should have proper value behavior', () => {
     
     // Test value property exists
     assertEquals(typeof instance.value, 'string', 'Value should be string');
+});
+
+console.log(`\n=== QuestionaireQuestion Tests ===`);
+
+// Test 11: Question component should be defined
+test('QuestionaireQuestion should be defined', () => {
+    assertEquals(typeof QuestionaireQuestion, 'function', 'QuestionaireQuestion should be a function/class');
+});
+
+// Test 12: Question component should have correct properties
+test('QuestionaireQuestion should have expected static properties', () => {
+    assertEquals(typeof QuestionaireQuestion.properties, 'object', 'Should have properties definition');
+});
+
+// Test 13: Custom element should be registered
+test('Custom element "questionaire-question" should be registered', () => {
+    const defined = customElements.get('questionaire-question');
+    assertEquals(defined, QuestionaireQuestion, 'Custom element should be registered');
+});
+
+// Test 14: Question component can be instantiated
+test('QuestionaireQuestion can be instantiated', () => {
+    const instance = new QuestionaireQuestion();
+    assertEquals(typeof instance, 'object', 'Should create an instance');
+    assertEquals(instance.multiselect, false, 'Should have multiselect property set to false');
+});
+
+// Test 15: Question component has correct property behavior
+test('QuestionaireQuestion should have proper value behavior', () => {
+    const instance = new QuestionaireQuestion();
+    
+    // Test multiselect property
+    assertEquals(typeof instance.multiselect, 'boolean', 'Multiselect should be boolean');
+    
+    // For value property, we need to mock the shadow root behavior since it's not connected to DOM
+    // In real usage, this would work after the component is connected
+    assertEquals(typeof instance.value, 'undefined', 'Value should be undefined when no answers available');
 });
 
 console.log(`\n=== Test Results ===`);
