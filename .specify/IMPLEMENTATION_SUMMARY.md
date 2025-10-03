@@ -182,6 +182,21 @@ Both features from TASKS.md are now implemented:
 
 The project now has a complete foundation for building questionnaires with selectable answers in a carousel format.
 
+## Current Task: feature/question-and-answer
+🔄 **IN PROGRESS**: Implement `<questionaire-question>` logics with only `<questionaire-question-answer>` in it
+
+### Phase 1: Example and Test Creation ✅
+- Created `examples/question-example.html` - Interactive example showing both single-select and multi-select question behavior
+- Created `test/questionaire-question.test.html` - Comprehensive test suite covering all specified functionality
+- Tests cover: component instantiation, single/multi-select modes, value property behavior, event dispatching, selection management
+
+### Next Phase: Implementation
+- Implement `src/questionaire-question.js` component according to specification
+- Component needs to support single-select (default) and multi-select modes
+- Value property should return string (single) or array (multi) based on selected answers
+- Must dispatch "question:changed" events when answers are selected
+- Must enforce selection rules (single vs multi)
+
 ## Next Steps
 
-As per the task instructions: "Do not do anything that is not in this file." All tasks from TASKS.md have been completed. Ready for next instruction.
+Continue with feature/question-and-answer implementation, then proceed to feature/question-content-and-answer as per TASKS.md.

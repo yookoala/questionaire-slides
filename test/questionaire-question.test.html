@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Questionaire Question Tests</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test.pass {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .test.fail {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .test-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .test-result {
+            font-size: 14px;
+        }
+        #summary {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Question Tests</h1>
+    <div id="summary">
+        <div>Total: <span id="total">0</span></div>
+        <div>Passed: <span id="passed">0</span></div>
+        <div>Failed: <span id="failed">0</span></div>
+    </div>
+    <div id="test-results"></div>
+
+    <!-- Test elements -->
+    <questionaire-question id="single-question">
+        <questionaire-question-answer value="option1">Option 1</questionaire-question-answer>
+        <questionaire-question-answer value="option2">Option 2</questionaire-question-answer>
+        <questionaire-question-answer value="option3">Option 3</questionaire-question-answer>
+    </questionaire-question>
+
+    <questionaire-question id="multi-question" multiselect>
+        <questionaire-question-answer value="choice1">Choice 1</questionaire-question-answer>
+        <questionaire-question-answer value="choice2">Choice 2</questionaire-question-answer>
+        <questionaire-question-answer value="choice3">Choice 3</questionaire-question-answer>
+    </questionaire-question>
+
+    <script type="module">
+        const results = document.getElementById('test-results');
+        let passed = 0;
+        let failed = 0;
+        let total = 0;
+
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
+
+        function assertEquals(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(message || `Expected ${expected} but got ${actual}`);
+            }
+        }
+
+        function assertArrayEquals(actual, expected, message) {
+            if (!Array.isArray(actual) || !Array.isArray(expected) || 
+                actual.length !== expected.length ||
+                !actual.every((val, index) => val === expected[index])) {
+                throw new Error(message || `Expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
+            }
+        }
+
+        function runTest(name, testFn) {
+            total++;
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test';
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'test-name';
+            nameDiv.textContent = name;
+            testDiv.appendChild(nameDiv);
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+
+            try {
+                testFn();
+                testDiv.classList.add('pass');
+                resultDiv.textContent = '✓ PASS';
+                passed++;
+            } catch (e) {
+                testDiv.classList.add('fail');
+                resultDiv.textContent = '✗ FAIL: ' + e.message;
+                failed++;
+            }
+
+            testDiv.appendChild(resultDiv);
+            results.appendChild(testDiv);
+        }
+
+        async function runTests() {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            const singleQuestion = document.getElementById('single-question');
+            const multiQuestion = document.getElementById('multi-question');
+            const singleAnswers = singleQuestion.querySelectorAll('questionaire-question-answer');
+            const multiAnswers = multiQuestion.querySelectorAll('questionaire-question-answer');
+
+            runTest('should be defined and create instances', () => {
+                assert(customElements.get('questionaire-question'), 'Component should be defined');
+                assert(singleQuestion instanceof HTMLElement, 'Should create HTML element instances');
+                assert(multiQuestion instanceof HTMLElement, 'Should create HTML element instances');
+            });
+
+            runTest('should have multiselect property working correctly', () => {
+                assertEquals(singleQuestion.multiselect, false, 'Single question should not have multiselect');
+                assertEquals(multiQuestion.multiselect, true, 'Multi question should have multiselect');
+            });
+
+            runTest('should return undefined for single-select with no selection', () => {
+                // Clear all selections
+                singleAnswers.forEach(answer => answer.removeAttribute('selected'));
+                assertEquals(singleQuestion.value, undefined, 'Should return undefined when no selection in single-select');
+            });
+
+            runTest('should return empty array for multi-select with no selection', () => {
+                // Clear all selections
+                multiAnswers.forEach(answer => answer.removeAttribute('selected'));
+                assertArrayEquals(multiQuestion.value, [], 'Should return empty array when no selection in multi-select');
+            });
+
+            runTest('should return selected value for single-select', () => {
+                // Clear all and select first
+                singleAnswers.forEach(answer => answer.removeAttribute('selected'));
+                singleAnswers[0].setAttribute('selected', '');
+                assertEquals(singleQuestion.value, 'option1', 'Should return selected value in single-select');
+            });
+
+            runTest('should return array of selected values for multi-select', () => {
+                // Clear all and select multiple
+                multiAnswers.forEach(answer => answer.removeAttribute('selected'));
+                multiAnswers[0].setAttribute('selected', '');
+                multiAnswers[2].setAttribute('selected', '');
+                assertArrayEquals(multiQuestion.value, ['choice1', 'choice3'], 'Should return array of selected values in multi-select');
+            });
+
+            runTest('should only allow one selection in single-select mode', () => {
+                // Clear all selections first
+                singleAnswers.forEach(answer => answer.removeAttribute('selected'));
+                
+                // Select first answer
+                singleAnswers[0].setAttribute('selected', '');
+                assertEquals(singleQuestion.value, 'option1', 'First answer should be selected');
+                
+                // Now select second answer - should deselect first
+                singleAnswers[1].setAttribute('selected', '');
+                
+                // Wait a bit for the logic to process
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        const selectedAnswers = Array.from(singleAnswers).filter(a => a.hasAttribute('selected'));
+                        assertEquals(selectedAnswers.length, 1, 'Only one answer should be selected in single-select mode');
+                        assertEquals(singleQuestion.value, 'option2', 'Second answer should be selected');
+                        resolve();
+                    }, 50);
+                });
+            });
+
+            runTest('should allow multiple selections in multi-select mode', () => {
+                // Clear all selections first
+                multiAnswers.forEach(answer => answer.removeAttribute('selected'));
+                
+                // Select multiple answers
+                multiAnswers[0].setAttribute('selected', '');
+                multiAnswers[1].setAttribute('selected', '');
+                multiAnswers[2].setAttribute('selected', '');
+                
+                const selectedAnswers = Array.from(multiAnswers).filter(a => a.hasAttribute('selected'));
+                assertEquals(selectedAnswers.length, 3, 'Multiple answers should be allowed in multi-select mode');
+                assertArrayEquals(multiQuestion.value, ['choice1', 'choice2', 'choice3'], 'All selected values should be returned');
+            });
+
+            runTest('should dispatch question:changed event when answer is selected', () => {
+                return new Promise((resolve, reject) => {
+                    let eventReceived = false;
+                    
+                    const eventHandler = (event) => {
+                        try {
+                            assert(event.detail && event.detail.element, 'Event should have detail.element');
+                            assert(event.detail.element === singleAnswers[0], 'Event element should match the selected answer');
+                            eventReceived = true;
+                            singleQuestion.removeEventListener('question:changed', eventHandler);
+                            resolve();
+                        } catch (e) {
+                            reject(e);
+                        }
+                    };
+                    
+                    singleQuestion.addEventListener('question:changed', eventHandler);
+                    
+                    // Clear and select an answer
+                    singleAnswers.forEach(answer => answer.removeAttribute('selected'));
+                    singleAnswers[0].setAttribute('selected', '');
+                    
+                    // Check if event was received within timeout
+                    setTimeout(() => {
+                        if (!eventReceived) {
+                            singleQuestion.removeEventListener('question:changed', eventHandler);
+                            reject(new Error('question:changed event was not dispatched'));
+                        }
+                    }, 200);
+                });
+            });
+
+            runTest('should handle text content as value when no value attribute', () => {
+                // Create a test question with answer that has no value attribute
+                const testQuestion = document.createElement('questionaire-question');
+                const testAnswer = document.createElement('questionaire-question-answer');
+                testAnswer.textContent = 'Test Text';
+                testQuestion.appendChild(testAnswer);
+                document.body.appendChild(testQuestion);
+                
+                // Wait for component to initialize
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        try {
+                            testAnswer.setAttribute('selected', '');
+                            assertEquals(testQuestion.value, 'Test Text', 'Should use text content as value when no value attribute');
+                            document.body.removeChild(testQuestion);
+                            resolve();
+                        } catch (e) {
+                            document.body.removeChild(testQuestion);
+                            throw e;
+                        }
+                    }, 100);
+                });
+            });
+
+            // Update summary
+            document.getElementById('total').textContent = total;
+            document.getElementById('passed').textContent = passed;
+            document.getElementById('failed').textContent = failed;
+
+            console.log(`Tests complete: ${passed}/${total} passed`);
+        }
+
+        // Run tests after component is ready
+        if (customElements.get('questionaire-question')) {
+            runTests();
+        } else {
+            customElements.whenDefined('questionaire-question').then(runTests);
+        }
+    </script>
+</body>
+</html>

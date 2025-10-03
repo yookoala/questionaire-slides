@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionaire Question Example</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .example-section h3 {
+            margin-top: 0;
+        }
+        questionaire-question {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background-color: white;
+        }
+        questionaire-question-answer {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        questionaire-question-answer:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        questionaire-question-answer[selected] {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+        .info-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Question Example</h1>
+    
+    <div class="example-section">
+        <h3>Single-Select Question (Default)</h3>
+        <p>Click on answer options to select them. Only one can be selected at a time.</p>
+        
+        <questionaire-question id="single-question">
+            <questionaire-question-answer value="never">
+                Never
+            </questionaire-question-answer>
+            <questionaire-question-answer value="year">
+                Once or more per year
+            </questionaire-question-answer>
+            <questionaire-question-answer value="month">
+                Once or more per month
+            </questionaire-question-answer>
+            <questionaire-question-answer value="week">
+                Once or more per week
+            </questionaire-question-answer>
+        </questionaire-question>
+    </div>
+
+    <div class="example-section">
+        <h3>Multi-Select Question</h3>
+        <p>Click on answer options to select them. Multiple answers can be selected.</p>
+        
+        <questionaire-question id="multi-question" multiselect>
+            <questionaire-question-answer value="cardio">
+                Cardio exercises
+            </questionaire-question-answer>
+            <questionaire-question-answer value="strength">
+                Strength training
+            </questionaire-question-answer>
+            <questionaire-question-answer value="flexibility">
+                Flexibility/Stretching
+            </questionaire-question-answer>
+            <questionaire-question-answer value="sports">
+                Sports activities
+            </questionaire-question-answer>
+        </questionaire-question>
+    </div>
+
+    <div class="controls">
+        <h3>Controls</h3>
+        <button onclick="getQuestionValues()">Get Question Values</button>
+        <button onclick="clearSelections()">Clear All Selections</button>
+        <button onclick="testProgrammatic()">Test Programmatic Selection</button>
+        <button onclick="testEvents()">Test Event Dispatching</button>
+    </div>
+
+    <div class="info-panel" id="info">
+        Click "Get Question Values" to see current question values
+    </div>
+
+    <script>
+        let eventLog = [];
+
+        function getQuestionValues() {
+            const singleQuestion = document.getElementById('single-question');
+            const multiQuestion = document.getElementById('multi-question');
+            
+            let info = 'Question Values:\n\n';
+            info += `Single-select question value: ${JSON.stringify(singleQuestion.value)}\n`;
+            info += `Multi-select question value: ${JSON.stringify(multiQuestion.value)}\n\n`;
+            
+            info += 'Event Log:\n';
+            eventLog.forEach((event, index) => {
+                info += `${index + 1}. ${event}\n`;
+            });
+            
+            document.getElementById('info').textContent = info;
+        }
+
+        function clearSelections() {
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.removeAttribute('selected');
+            });
+            eventLog.push('Cleared all selections');
+            getQuestionValues();
+        }
+
+        function testProgrammatic() {
+            // Test programmatic selection on single-select
+            const singleAnswers = document.querySelectorAll('#single-question questionaire-question-answer');
+            if (singleAnswers.length > 0) {
+                singleAnswers[1].selected = true; // Select second answer
+            }
+            
+            // Test programmatic selection on multi-select
+            const multiAnswers = document.querySelectorAll('#multi-question questionaire-question-answer');
+            if (multiAnswers.length > 1) {
+                multiAnswers[0].selected = true;
+                multiAnswers[2].selected = true;
+            }
+            
+            eventLog.push('Set programmatic selections');
+            getQuestionValues();
+        }
+
+        function testEvents() {
+            eventLog = []; // Clear event log
+            
+            // Simulate click on single-select answer
+            const singleAnswer = document.querySelector('#single-question questionaire-question-answer');
+            if (singleAnswer) {
+                singleAnswer.click();
+            }
+            
+            getQuestionValues();
+        }
+
+        // Add click listeners to make answers selectable
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.addEventListener('click', () => {
+                    // Toggle selection
+                    if (answer.hasAttribute('selected')) {
+                        answer.removeAttribute('selected');
+                    } else {
+                        answer.setAttribute('selected', '');
+                    }
+                    
+                    eventLog.push(`Clicked answer: ${answer.value || answer.textContent.trim()}`);
+                    getQuestionValues();
+                });
+            });
+
+            // Listen for question:changed events
+            document.querySelectorAll('questionaire-question').forEach(question => {
+                question.addEventListener('question:changed', (event) => {
+                    const answerElement = event.detail.element;
+                    const answerValue = answerElement.value || answerElement.textContent.trim();
+                    eventLog.push(`question:changed event - Answer: ${answerValue}, Selected: ${answerElement.selected}`);
+                });
+            });
+            
+            // Initial state
+            getQuestionValues();
+        });
+    </script>
+</body>
+</html>
