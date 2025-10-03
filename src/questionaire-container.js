@@ -68,6 +68,8 @@ export class QuestionaireContainer extends LitElement {
 
   /**
    * Navigate to the next slide
+   * Validates the current item (if applicable) before navigation
+   * If current item has a validate() method and validation fails, throws error and refuses to navigate
    */
   next() {
     const slot = this.shadowRoot.querySelector('slot');
@@ -75,6 +77,20 @@ export class QuestionaireContainer extends LitElement {
 
     const children = slot.assignedElements();
     if (this.currentIndex < children.length - 1) {
+      // Get current element and validate if applicable
+      const currentElement = children[this.currentIndex];
+      
+      // If current element has a validate method, call it
+      if (currentElement && typeof currentElement.validate === 'function') {
+        try {
+          currentElement.validate();
+        } catch (validationError) {
+          // Validation failed - throw the error and refuse to navigate
+          throw validationError;
+        }
+      }
+      
+      // Validation passed or no validation needed - proceed with navigation
       this.currentIndex++;
       this._updateContainer();
       this._dispatchSlideChangeEvent();
