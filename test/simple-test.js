@@ -3,6 +3,7 @@ import { QuestionaireContainer } from '../src/questionaire-container.js';
 import { QuestionaireQuestionAnswer } from '../src/questionaire-question-answer.js';
 import { QuestionaireQuestion } from '../src/questionaire-question.js';
 import { QuestionaireQuestionContent } from '../src/questionaire-question-content.js';
+import { QuestionaireAction } from '../src/questionaire-action.js';
 import { 
   QuestionValidationError, 
   QuestionNotAnsweredError, 
@@ -235,6 +236,24 @@ test('QuestionaireContainer should have current method', () => {
     
     // For unit test, method should return null when not connected to DOM
     assertEquals(instance.current(), null, 'Should return null when no elements available');
+});
+
+// Test 28: Action element should be defined
+test('QuestionaireAction should be defined', () => {
+    assertEquals(typeof QuestionaireAction, 'function', 'QuestionaireAction should be defined');
+    
+    const instance = new QuestionaireAction();
+    assertEquals(instance.tagName, 'QUESTIONAIRE-ACTION', 'Should have correct tag name');
+    assertEquals(typeof instance.action, 'string', 'Should have action property');
+});
+
+// Test 29: Action element should have default properties
+test('QuestionaireAction should have default properties', () => {
+    const instance = new QuestionaireAction();
+    assertEquals(instance.action, 'next', 'Should default to "next" action');
+    
+    // Should be registered as custom element
+    assertEquals(customElements.get('questionaire-action'), QuestionaireAction, 'Should be registered');
 });
 
 console.log(`\n=== Test Results ===`);

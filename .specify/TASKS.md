@@ -12,7 +12,7 @@ Steps to implement the applicaiton.
 - [x] feature/question--validate: Implement the `.validate()` method for `<questionaire-question>`, along with all the custom error classes.
 - [x] feature/question-container--current: Implement the `.current()` method for `<questionaire-container>`
 - [x] feature/question-container--next-validate: Update the `.next()` method for `<questionaire-container>` to implement the validation logics.
-- [ ] feature/question-action: Implement the `<questionaire-action>` element.
+- [x] feature/question-action: Implement the `<questionaire-action>` element.
 - [ ] feature/question-actions: Implement the `<questionaire-actions>` element (with `<questionaire-action>` in side in example to show the layout ability).
 
 Note: Do not do anything that is not in this file.
