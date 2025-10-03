@@ -67,13 +67,17 @@ This project is to build a set of web components that works together as a questi
 
   When a `<questionaire-question-answer>` is seleted, the answer is liable to check the "single-selected" or "multi-selected" mode of the closest `<questionaire-question>` parent element, if exists. It should unselect all `<questionaire-question-answer>` in the same `<questionaire-question>` parent before selecting itself.
 
-* `<questionaire-question-actions>`
-  Each `<questionaire-question>` may contain one of this. A div container component to contain multiple buttons. Will take up the bottom of the question element.
-
-* `<questionaire-question-actions-action>`
-  Each `<questionaire-question-actions>` will contain one or more of this. A button-like element to be shown to user for navigation.
+* `<questionaire-action>`
+  Button-like element to simplify implementation of navigations in `<questionaire-container>`.
   
-  Each may container an optional "action" attribute. The value of the attribute can be "next" or "previous". If not specified, the attribute is treated as "next".
+  Each of these element an optional "action" attribute. The value of the attribute can be "next" or "previous". If not specified, the attribute is treated as "next".
+
+  If this element is clicked, it fill find the closest parent `<questionaire-container>` element and then apply the action specified to the element ("next" or "previous").
+
+* `<questionaire-actions>`
+  Each `<questionaire-question>` may contain one of this.
+
+  This is a container component to contain multiple button-like elements `<questionaire-action>` on the same row with a 1em gaps in-between by default. With `slot="bottom"` set and placed within a `<questionaire-question>`, it should be always placed visually to the bottom of that question.
 
 
 ## Procedure for Each Step
@@ -114,11 +118,11 @@ This project is to build a set of web components that works together as a questi
         <questionaire-question-answer selected-value="week">
             Once or more per week
         </questionaire-question-answer>
-        <questionaire-question-actions>
-            <questionaire-question-actions>
+        <questionaire-actions slot="bottom">
+            <questionaire-action>
                 Next
-            </questionaire-question-actions>
-        </questionaire-question-actions>
+            </questionaire-action>
+        </questionaire-actions>
     </questionaire-question>
 
     <questionaire-question>
@@ -140,14 +144,14 @@ This project is to build a set of web components that works together as a questi
         <questionaire-question-answer selected-value=">60">
             More than 1 hour
         </questionaire-question-answer>
-        <questionaire-question-actions>
-            <questionaire-question-actions action="previous">
+        <questionaire-actions slot="bottom">
+            <questionaire-action action="previous">
                 Previous
-            </questionaire-question-actions>
-            <questionaire-question-actions>
+            </questionaire-action>
+            <questionaire-action>
                 Next
-            </questionaire-question-actions>
-        </questionaire-question-actions>
+            </questionaire-action>
+        </questionaire-actions>
     </questionaire-question>
 
 </questionaire-container>
