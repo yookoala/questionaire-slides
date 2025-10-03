@@ -1,9 +1,11 @@
 // Simple test to verify the components can be loaded and basic API works
+import { LitElement } from 'lit';
 import { QuestionaireContainer } from '../src/questionaire-container.js';
 import { QuestionaireQuestionAnswer } from '../src/questionaire-question-answer.js';
 import { QuestionaireQuestion } from '../src/questionaire-question.js';
 import { QuestionaireQuestionContent } from '../src/questionaire-question-content.js';
 import { QuestionaireAction } from '../src/questionaire-action.js';
+import { QuestionaireActions } from '../src/questionaire-actions.js';
 import { 
   QuestionValidationError, 
   QuestionNotAnsweredError, 
@@ -31,6 +33,12 @@ function test(name, fn) {
 function assertEquals(actual, expected, message) {
     if (actual !== expected) {
         throw new Error(message || `Expected ${expected} but got ${actual}`);
+    }
+}
+
+function assertTrue(condition, message) {
+    if (!condition) {
+        throw new Error(message || 'Expected condition to be true');
     }
 }
 
@@ -254,6 +262,46 @@ test('QuestionaireAction should have default properties', () => {
     
     // Should be registered as custom element
     assertEquals(customElements.get('questionaire-action'), QuestionaireAction, 'Should be registered');
+});
+
+console.log(`\n=== QuestionaireActions Tests ===`);
+
+// Test 30: Actions element should be defined
+test('QuestionaireActions should be defined', () => {
+    assertEquals(typeof QuestionaireActions, 'function', 'QuestionaireActions should be a constructor function');
+});
+
+// Test 31: Actions element should have expected static properties
+test('QuestionaireActions should have expected static properties', () => {
+    // QuestionaireActions doesn't need properties, but should have styles
+    assertEquals(typeof QuestionaireActions.styles, 'object', 'Should have styles defined');
+});
+
+// Test 32: Actions element should be registered as custom element
+test('Custom element "questionaire-actions" should be registered', () => {
+    assertEquals(customElements.get('questionaire-actions'), QuestionaireActions, 
+                'questionaire-actions should be registered with QuestionaireActions class');
+});
+
+// Test 33: Actions element can be instantiated
+test('QuestionaireActions can be instantiated', () => {
+    const instance = new QuestionaireActions();
+    assertEquals(instance.constructor, QuestionaireActions, 'Should be instance of QuestionaireActions');
+    assertTrue(instance instanceof LitElement, 'Should extend LitElement');
+});
+
+// Test 34: Actions element should be a simple container
+test('QuestionaireActions should be a simple container', () => {
+    const instance = new QuestionaireActions();
+    
+    // Should be a LitElement
+    assertTrue(instance instanceof LitElement, 'Should extend LitElement');
+    
+    // Should have render method that returns template
+    assertEquals(typeof instance.render, 'function', 'Should have render method');
+    
+    const template = instance.render();
+    assertTrue(template && typeof template === 'object', 'Should return a template');
 });
 
 console.log(`\n=== Test Results ===`);
