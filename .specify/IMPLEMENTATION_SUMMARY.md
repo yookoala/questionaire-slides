@@ -498,12 +498,18 @@ Recent updates to TASKS.md have added new action element features:
 - Tests cover: basic navigation, action attributes, parent container finding, boundary conditions, validation integration
 - Examples demonstrate: next/previous actions, nested structures, standalone actions, styling options
 
-### Next Phase: Implementation
-- Implement `<questionaire-action>` element in `src/questionaire-action.js`
-- Button-like element for navigation in `<questionaire-container>`
-- Optional "action" attribute ("next" or "previous", defaults to "next")
-- Click handler finds closest parent `<questionaire-container>` and applies action
-- Should integrate with existing container navigation and validation
+### Phase 2: Implementation ✅
+- Implemented `<questionaire-action>` element in `src/questionaire-action.js`
+- Features implemented:
+  - ✅ Button-like element using Lit Element framework
+  - ✅ Optional "action" attribute ("next" or "previous", defaults to "next")
+  - ✅ Click handler finds closest parent `<questionaire-container>` using `closest()` method
+  - ✅ Calls appropriate container method (`next()` or `previous()`) on click
+  - ✅ Graceful handling of standalone actions (no parent container)
+  - ✅ Integration with existing container navigation and validation
+  - ✅ Comprehensive styling with hover effects and disabled states
+  - ✅ Error propagation for validation failures
+  - ✅ Fallback behavior for invalid action attributes
 
 The questionnaire system now has comprehensive navigation with current element tracking and validation capabilities.
 
