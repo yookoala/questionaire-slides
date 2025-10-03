@@ -31,7 +31,8 @@ export class QuestionaireQuestionAnswer extends LitElement {
   firstUpdated() {
     // If no value attribute was set initially, use text content as value
     if (!this._initialValueSet && !this.hasAttribute('value')) {
-      this._value = this.textContent.trim();
+      const textContent = this.textContent;
+      this._value = textContent ? textContent.trim() : '';
     }
   }
 
@@ -54,8 +55,9 @@ export class QuestionaireQuestionAnswer extends LitElement {
       return this._value;
     }
     
-    // Otherwise return current text content
-    return this.textContent.trim();
+    // Otherwise return current text content (handle null/undefined)
+    const textContent = this.textContent;
+    return textContent ? textContent.trim() : '';
   }
 
   /**

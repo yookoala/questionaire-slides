@@ -1,7 +1,8 @@
-// Simple test to verify the component can be loaded and basic API works
+// Simple test to verify the components can be loaded and basic API works
 import { QuestionaireContainer } from '../src/questionaire-container.js';
+import { QuestionaireQuestionAnswer } from '../src/questionaire-question-answer.js';
 
-console.log('Testing QuestionaireContainer component...\n');
+console.log('Testing questionaire components...\n');
 
 let passed = 0;
 let failed = 0;
@@ -23,6 +24,8 @@ function assertEquals(actual, expected, message) {
         throw new Error(message || `Expected ${expected} but got ${actual}`);
     }
 }
+
+console.log(`\n=== QuestionaireContainer Tests ===`);
 
 // Test 1: Component should be defined
 test('QuestionaireContainer should be defined', () => {
@@ -53,6 +56,42 @@ test('QuestionaireContainer should have required methods', () => {
     assertEquals(typeof instance.next, 'function', 'Should have next method');
     assertEquals(typeof instance.previous, 'function', 'Should have previous method');
     assertEquals(typeof instance.goToSlide, 'function', 'Should have goToSlide method');
+});
+
+console.log(`\n=== QuestionaireQuestionAnswer Tests ===`);
+
+// Test 6: Answer component should be defined
+test('QuestionaireQuestionAnswer should be defined', () => {
+    assertEquals(typeof QuestionaireQuestionAnswer, 'function', 'QuestionaireQuestionAnswer should be a function/class');
+});
+
+// Test 7: Answer component should have correct properties
+test('QuestionaireQuestionAnswer should have expected static properties', () => {
+    assertEquals(typeof QuestionaireQuestionAnswer.properties, 'object', 'Should have properties definition');
+});
+
+// Test 8: Custom element should be registered
+test('Custom element "questionaire-question-answer" should be registered', () => {
+    const defined = customElements.get('questionaire-question-answer');
+    assertEquals(defined, QuestionaireQuestionAnswer, 'Custom element should be registered');
+});
+
+// Test 9: Answer component can be instantiated
+test('QuestionaireQuestionAnswer can be instantiated', () => {
+    const instance = new QuestionaireQuestionAnswer();
+    assertEquals(typeof instance, 'object', 'Should create an instance');
+    assertEquals(instance.selected, false, 'Should have selected property set to false');
+});
+
+// Test 10: Answer component has correct property behavior
+test('QuestionaireQuestionAnswer should have proper value behavior', () => {
+    const instance = new QuestionaireQuestionAnswer();
+    
+    // Test selected property
+    assertEquals(typeof instance.selected, 'boolean', 'Selected should be boolean');
+    
+    // Test value property exists
+    assertEquals(typeof instance.value, 'string', 'Value should be string');
 });
 
 console.log(`\n=== Test Results ===`);
