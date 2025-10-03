@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionaire Actions Element Test</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/questionaire-action.js"></script>
+    <script type="module" src="../src/questionaire-actions.js"></script>
+    <script type="module" src="../src/question-validation-errors.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .test-pass {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        questionaire-actions {
+            border: 1px dashed #007bff;
+            margin: 10px 0;
+            display: block;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Actions Element Test</h1>
+    <p>This page tests the functionality of the &lt;questionaire-actions&gt; element.</p>
+
+    <div class="test-section">
+        <h3>Test 1: Basic Actions Container Creation</h3>
+        <p>Test that the questionaire-actions element can be created and displays correctly.</p>
+        
+        <questionaire-actions id="test1">
+            <questionaire-action>Action 1</questionaire-action>
+            <questionaire-action>Action 2</questionaire-action>
+        </questionaire-actions>
+        
+        <div id="result1" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Layout with Multiple Actions</h3>
+        <p>Test that multiple actions are laid out in a row with proper spacing.</p>
+        
+        <questionaire-actions id="test2">
+            <questionaire-action>Previous</questionaire-action>
+            <questionaire-action>Next</questionaire-action>
+            <questionaire-action>Skip</questionaire-action>
+        </questionaire-actions>
+        
+        <div id="result2" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Single Action</h3>
+        <p>Test that a single action inside the container displays correctly.</p>
+        
+        <questionaire-actions id="test3">
+            <questionaire-action>Only Action</questionaire-action>
+        </questionaire-actions>
+        
+        <div id="result3" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 4: Empty Actions Container</h3>
+        <p>Test that an empty actions container handles gracefully.</p>
+        
+        <questionaire-actions id="test4">
+        </questionaire-actions>
+        
+        <div id="result4" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 5: Actions Container with slot="bottom"</h3>
+        <p>Test that actions container works correctly when used with slot="bottom" inside a question.</p>
+        
+        <questionaire-question id="test5-question">
+            <questionaire-question-content>Test Question</questionaire-question-content>
+            <questionaire-question-answer>Answer 1</questionaire-question-answer>
+            <questionaire-question-answer>Answer 2</questionaire-question-answer>
+            
+            <questionaire-actions id="test5" slot="bottom">
+                <questionaire-action action="previous">Previous</questionaire-action>
+                <questionaire-action>Next</questionaire-action>
+            </questionaire-actions>
+        </questionaire-question>
+        
+        <div id="result5" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 6: Actions Container inside Full Questionnaire</h3>
+        <p>Test that actions container works correctly in a full questionnaire context.</p>
+        
+        <questionaire-container id="test6-container">
+            <questionaire-question id="test6-question">
+                <questionaire-question-content>Full Context Test</questionaire-question-content>
+                <questionaire-question-answer>Option A</questionaire-question-answer>
+                <questionaire-question-answer>Option B</questionaire-question-answer>
+                
+                <questionaire-actions id="test6" slot="bottom">
+                    <questionaire-action action="previous">Back</questionaire-action>
+                    <questionaire-action>Forward</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+        </questionaire-container>
+        
+        <div id="result6" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 7: Dynamic Content Changes</h3>
+        <p>Test that actions container responds correctly to dynamic content changes.</p>
+        
+        <questionaire-actions id="test7">
+            <questionaire-action>Initial Action</questionaire-action>
+        </questionaire-actions>
+        
+        <button onclick="addActionToTest7()">Add Action</button>
+        <button onclick="removeActionFromTest7()">Remove Action</button>
+        
+        <div id="result7" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Manual Testing Controls</h3>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="resetTests()">Reset Tests</button>
+    </div>
+
+    <script>
+        function setTestResult(testId, passed, message) {
+            const result = document.getElementById(`result${testId}`);
+            result.className = `test-result ${passed ? 'test-pass' : 'test-fail'}`;
+            result.textContent = `${passed ? '✅ PASS' : '❌ FAIL'}: ${message}`;
+        }
+
+        function test1() {
+            try {
+                const actions = document.getElementById('test1');
+                const isElement = actions instanceof HTMLElement;
+                const hasChildren = actions.children.length === 2;
+                const isVisible = getComputedStyle(actions).display !== 'none';
+                
+                if (isElement && hasChildren && isVisible) {
+                    setTestResult(1, true, 'Actions container created successfully with 2 children');
+                } else {
+                    setTestResult(1, false, `Element check: ${isElement}, Children check: ${hasChildren}, Visible check: ${isVisible}`);
+                }
+            } catch (error) {
+                setTestResult(1, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test2() {
+            try {
+                const actions = document.getElementById('test2');
+                const style = getComputedStyle(actions);
+                const hasFlexDisplay = style.display.includes('flex') || style.display === 'block';
+                const childrenCount = actions.children.length === 3;
+                
+                // Check if children are in a row-like layout
+                const children = Array.from(actions.children);
+                const firstChild = children[0];
+                const secondChild = children[1];
+                
+                let layoutCorrect = true;
+                if (firstChild && secondChild) {
+                    const firstRect = firstChild.getBoundingClientRect();
+                    const secondRect = secondChild.getBoundingClientRect();
+                    // Check if they're roughly on the same horizontal line
+                    layoutCorrect = Math.abs(firstRect.top - secondRect.top) < 10;
+                }
+                
+                if (childrenCount && layoutCorrect) {
+                    setTestResult(2, true, 'Multiple actions laid out correctly in a row');
+                } else {
+                    setTestResult(2, false, `Children count: ${childrenCount}, Layout: ${layoutCorrect}`);
+                }
+            } catch (error) {
+                setTestResult(2, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test3() {
+            try {
+                const actions = document.getElementById('test3');
+                const hasOneChild = actions.children.length === 1;
+                const childDisplayed = actions.children[0] && getComputedStyle(actions.children[0]).display !== 'none';
+                
+                if (hasOneChild && childDisplayed) {
+                    setTestResult(3, true, 'Single action displays correctly');
+                } else {
+                    setTestResult(3, false, `One child: ${hasOneChild}, Child displayed: ${childDisplayed}`);
+                }
+            } catch (error) {
+                setTestResult(3, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test4() {
+            try {
+                const actions = document.getElementById('test4');
+                const isEmpty = actions.children.length === 0;
+                const isVisible = getComputedStyle(actions).display !== 'none';
+                
+                if (isEmpty && isVisible) {
+                    setTestResult(4, true, 'Empty actions container handles gracefully');
+                } else {
+                    setTestResult(4, false, `Empty: ${isEmpty}, Visible: ${isVisible}`);
+                }
+            } catch (error) {
+                setTestResult(4, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test5() {
+            try {
+                const actions = document.getElementById('test5');
+                const question = document.getElementById('test5-question');
+                const hasSlotAttribute = actions.getAttribute('slot') === 'bottom';
+                const isInsideQuestion = actions.closest('questionaire-question') === question;
+                const hasCorrectChildren = actions.children.length === 2;
+                
+                if (hasSlotAttribute && isInsideQuestion && hasCorrectChildren) {
+                    setTestResult(5, true, 'Actions container with slot="bottom" works correctly');
+                } else {
+                    setTestResult(5, false, `Slot attr: ${hasSlotAttribute}, Inside question: ${isInsideQuestion}, Children: ${hasCorrectChildren}`);
+                }
+            } catch (error) {
+                setTestResult(5, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test6() {
+            try {
+                const actions = document.getElementById('test6');
+                const container = document.getElementById('test6-container');
+                const question = document.getElementById('test6-question');
+                
+                const isInContainer = actions.closest('questionaire-container') === container;
+                const isInQuestion = actions.closest('questionaire-question') === question;
+                const hasCorrectActions = actions.children.length === 2;
+                
+                // Test that actions can find the container
+                const actionElements = actions.querySelectorAll('questionaire-action');
+                let canFindContainer = true;
+                actionElements.forEach(action => {
+                    if (!action.closest('questionaire-container')) {
+                        canFindContainer = false;
+                    }
+                });
+                
+                if (isInContainer && isInQuestion && hasCorrectActions && canFindContainer) {
+                    setTestResult(6, true, 'Actions container works in full questionnaire context');
+                } else {
+                    setTestResult(6, false, `In container: ${isInContainer}, In question: ${isInQuestion}, Correct actions: ${hasCorrectActions}, Can find container: ${canFindContainer}`);
+                }
+            } catch (error) {
+                setTestResult(6, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test7() {
+            try {
+                const actions = document.getElementById('test7');
+                const initialCount = actions.children.length;
+                
+                if (initialCount === 1) {
+                    setTestResult(7, true, 'Dynamic content test ready (use buttons to test)');
+                } else {
+                    setTestResult(7, false, `Expected 1 initial action, got ${initialCount}`);
+                }
+            } catch (error) {
+                setTestResult(7, false, `Error: ${error.message}`);
+            }
+        }
+
+        function addActionToTest7() {
+            const actions = document.getElementById('test7');
+            const newAction = document.createElement('questionaire-action');
+            newAction.textContent = `Action ${actions.children.length + 1}`;
+            actions.appendChild(newAction);
+            
+            const count = actions.children.length;
+            document.getElementById('result7').textContent = `✅ Added action (total: ${count})`;
+            document.getElementById('result7').className = 'test-result test-pass';
+        }
+
+        function removeActionFromTest7() {
+            const actions = document.getElementById('test7');
+            if (actions.children.length > 0) {
+                actions.removeChild(actions.lastElementChild);
+                const count = actions.children.length;
+                document.getElementById('result7').textContent = `✅ Removed action (total: ${count})`;
+                document.getElementById('result7').className = 'test-result test-pass';
+            } else {
+                document.getElementById('result7').textContent = `❌ No actions to remove`;
+                document.getElementById('result7').className = 'test-result test-fail';
+            }
+        }
+
+        function runAllTests() {
+            // Wait a bit for DOM to be ready
+            setTimeout(() => {
+                test1();
+                test2();
+                test3();
+                test4();
+                test5();
+                test6();
+                test7();
+            }, 100);
+        }
+
+        function resetTests() {
+            for (let i = 1; i <= 7; i++) {
+                const result = document.getElementById(`result${i}`);
+                result.className = 'test-result test-pending';
+                result.textContent = 'Waiting for test...';
+            }
+        }
+
+        // Auto-run tests when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runAllTests, 500);
+        });
+    </script>
+</body>
+</html>
