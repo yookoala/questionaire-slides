@@ -2,6 +2,7 @@
 import { QuestionaireContainer } from '../src/questionaire-container.js';
 import { QuestionaireQuestionAnswer } from '../src/questionaire-question-answer.js';
 import { QuestionaireQuestion } from '../src/questionaire-question.js';
+import { QuestionaireQuestionContent } from '../src/questionaire-question-content.js';
 
 console.log('Testing questionaire components...\n');
 
@@ -130,6 +131,38 @@ test('QuestionaireQuestion should have proper value behavior', () => {
     // For value property, we need to mock the shadow root behavior since it's not connected to DOM
     // In real usage, this would work after the component is connected
     assertEquals(typeof instance.value, 'undefined', 'Value should be undefined when no answers available');
+});
+
+console.log(`\n=== QuestionaireQuestionContent Tests ===`);
+
+// Test 16: Content component should be defined
+test('QuestionaireQuestionContent should be defined', () => {
+    assertEquals(typeof QuestionaireQuestionContent, 'function', 'QuestionaireQuestionContent should be a function/class');
+});
+
+// Test 17: Content component should have correct properties
+test('QuestionaireQuestionContent should have expected static properties', () => {
+    assertEquals(typeof QuestionaireQuestionContent.styles, 'object', 'Should have styles definition');
+});
+
+// Test 18: Custom element should be registered
+test('Custom element "questionaire-question-content" should be registered', () => {
+    const defined = customElements.get('questionaire-question-content');
+    assertEquals(defined, QuestionaireQuestionContent, 'Custom element should be registered');
+});
+
+// Test 19: Content component can be instantiated
+test('QuestionaireQuestionContent can be instantiated', () => {
+    const instance = new QuestionaireQuestionContent();
+    assertEquals(typeof instance, 'object', 'Should create an instance');
+});
+
+// Test 20: Content component should be simple container
+test('QuestionaireQuestionContent should be a simple container', () => {
+    const instance = new QuestionaireQuestionContent();
+    
+    // Content component should be simple and not have complex logic
+    assertEquals(typeof instance.render, 'function', 'Should have render method from LitElement');
 });
 
 console.log(`\n=== Test Results ===`);
