@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Questionaire Container values Property Tests</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test.pass {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .test.fail {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .test-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .test-result {
+            font-size: 14px;
+        }
+        #summary {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-elements {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Container values Property Tests</h1>
+    <div id="summary">
+        <div>Total: <span id="total">0</span></div>
+        <div>Passed: <span id="passed">0</span></div>
+        <div>Failed: <span id="failed">0</span></div>
+    </div>
+    <div id="test-results"></div>
+
+    <!-- Test elements (hidden) -->
+    <div class="test-elements">
+        <!-- Test container 1: Basic named questions -->
+        <questionaire-container id="test-container-1">
+            <questionaire-question name="q1">
+                <questionaire-question-answer value="a">Answer A</questionaire-question-answer>
+                <questionaire-question-answer value="b">Answer B</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="q2">
+                <questionaire-question-answer value="x">Answer X</questionaire-question-answer>
+                <questionaire-question-answer value="y">Answer Y</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 2: Mixed named and unnamed questions -->
+        <questionaire-container id="test-container-2">
+            <questionaire-question name="named1">
+                <questionaire-question-answer value="n1">Named 1</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question>
+                <questionaire-question-answer value="unnamed">Unnamed</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="named2">
+                <questionaire-question-answer value="n2">Named 2</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 3: Questions with empty names -->
+        <questionaire-container id="test-container-3">
+            <questionaire-question name="">
+                <questionaire-question-answer value="empty1">Empty Name 1</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="   ">
+                <questionaire-question-answer value="whitespace">Whitespace Name</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="valid">
+                <questionaire-question-answer value="good">Valid Name</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 4: Multi-select questions -->
+        <questionaire-container id="test-container-4">
+            <questionaire-question name="single">
+                <questionaire-question-answer value="s1">Single 1</questionaire-question-answer>
+                <questionaire-question-answer value="s2">Single 2</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="multi" multiselect>
+                <questionaire-question-answer value="m1">Multi 1</questionaire-question-answer>
+                <questionaire-question-answer value="m2">Multi 2</questionaire-question-answer>
+                <questionaire-question-answer value="m3">Multi 3</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 5: Questions with no selections -->
+        <questionaire-container id="test-container-5">
+            <questionaire-question name="unselected_single">
+                <questionaire-question-answer value="us1">Unselected 1</questionaire-question-answer>
+                <questionaire-question-answer value="us2">Unselected 2</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="unselected_multi" multiselect>
+                <questionaire-question-answer value="um1">Unselected Multi 1</questionaire-question-answer>
+                <questionaire-question-answer value="um2">Unselected Multi 2</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 6: Empty container -->
+        <questionaire-container id="test-container-6">
+        </questionaire-container>
+
+        <!-- Test container 7: Sequential order test -->
+        <questionaire-container id="test-container-7">
+            <questionaire-question name="third">
+                <questionaire-question-answer value="3rd">Third</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="first">
+                <questionaire-question-answer value="1st">First</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="second">
+                <questionaire-question-answer value="2nd">Second</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+    </div>
+
+    <script type="module">
+        const results = document.getElementById('test-results');
+        let passed = 0;
+        let failed = 0;
+        let total = 0;
+
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
+
+        function assertEquals(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(message || `Expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
+            }
+        }
+
+        function assertObjectEquals(actual, expected, message) {
+            const actualStr = JSON.stringify(actual);
+            const expectedStr = JSON.stringify(expected);
+            if (actualStr !== expectedStr) {
+                throw new Error(message || `Expected ${expectedStr} but got ${actualStr}`);
+            }
+        }
+
+        function runTest(name, testFn) {
+            total++;
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test';
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'test-name';
+            nameDiv.textContent = name;
+            testDiv.appendChild(nameDiv);
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+
+            try {
+                testFn();
+                testDiv.classList.add('pass');
+                resultDiv.textContent = '✓ PASS';
+                passed++;
+            } catch (e) {
+                testDiv.classList.add('fail');
+                resultDiv.textContent = '✗ FAIL: ' + e.message;
+                failed++;
+            }
+
+            testDiv.appendChild(resultDiv);
+            results.appendChild(testDiv);
+        }
+
+        async function runTests() {
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            const container1 = document.getElementById('test-container-1');
+            const container2 = document.getElementById('test-container-2');
+            const container3 = document.getElementById('test-container-3');
+            const container4 = document.getElementById('test-container-4');
+            const container5 = document.getElementById('test-container-5');
+            const container6 = document.getElementById('test-container-6');
+            const container7 = document.getElementById('test-container-7');
+
+            runTest('values property should exist', () => {
+                assert(typeof container1.values === 'object', 'values should be an object');
+                assert(container1.values !== null, 'values should not be null');
+            });
+
+            runTest('values should return empty object for no named questions', () => {
+                // First, make sure no questions have names in container6
+                assertObjectEquals(container6.values, {}, 'Empty container should return empty object');
+            });
+
+            runTest('values should aggregate only named questions', () => {
+                // Set up selections in container2
+                const named1Answers = container2.querySelectorAll('questionaire-question[name="named1"] questionaire-question-answer');
+                const unnamedAnswers = container2.querySelectorAll('questionaire-question:not([name]) questionaire-question-answer');
+                const named2Answers = container2.querySelectorAll('questionaire-question[name="named2"] questionaire-question-answer');
+                
+                // Clear all selections first
+                container2.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                
+                // Select answers
+                if (named1Answers[0]) named1Answers[0].setAttribute('selected', '');
+                if (unnamedAnswers[0]) unnamedAnswers[0].setAttribute('selected', '');
+                if (named2Answers[0]) named2Answers[0].setAttribute('selected', '');
+                
+                const values = container2.values;
+                assertObjectEquals(values, { named1: 'n1', named2: 'n2' }, 'Should only include named questions');
+            });
+
+            runTest('values should exclude questions with empty or whitespace names', () => {
+                // Set up selections in container3
+                const questions = container3.querySelectorAll('questionaire-question');
+                questions.forEach(q => {
+                    const answer = q.querySelector('questionaire-question-answer');
+                    if (answer) answer.setAttribute('selected', '');
+                });
+                
+                const values = container3.values;
+                assertObjectEquals(values, { valid: 'good' }, 'Should only include questions with non-empty names');
+            });
+
+            runTest('values should handle single-select questions correctly', () => {
+                // Set up selections in container4
+                const singleAnswers = container4.querySelectorAll('questionaire-question[name="single"] questionaire-question-answer');
+                const multiAnswers = container4.querySelectorAll('questionaire-question[name="multi"] questionaire-question-answer');
+                
+                // Clear all selections first
+                container4.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                
+                // Select single answer
+                if (singleAnswers[1]) singleAnswers[1].setAttribute('selected', '');
+                
+                const values = container4.values;
+                assertEquals(values.single, 's2', 'Single-select should return string value');
+            });
+
+            runTest('values should handle multi-select questions correctly', () => {
+                // Set up selections in container4
+                const multiAnswers = container4.querySelectorAll('questionaire-question[name="multi"] questionaire-question-answer');
+                
+                // Clear multi selections first
+                multiAnswers.forEach(a => a.removeAttribute('selected'));
+                
+                // Select multiple answers
+                if (multiAnswers[0]) multiAnswers[0].setAttribute('selected', '');
+                if (multiAnswers[2]) multiAnswers[2].setAttribute('selected', '');
+                
+                const values = container4.values;
+                assert(Array.isArray(values.multi), 'Multi-select should return array');
+                assertObjectEquals(values.multi, ['m1', 'm3'], 'Multi-select should return array of selected values');
+            });
+
+            runTest('values should handle questions with no selections', () => {
+                // Make sure no answers are selected in container5
+                container5.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                
+                const values = container5.values;
+                assertEquals(values.unselected_single, undefined, 'Unselected single-select should be undefined');
+                assertObjectEquals(values.unselected_multi, [], 'Unselected multi-select should be empty array');
+            });
+
+            runTest('values should preserve sequential order of questions', () => {
+                // Set up selections in container7
+                container7.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                    answer.setAttribute('selected', '');
+                });
+                
+                const values = container7.values;
+                const keys = Object.keys(values);
+                assertObjectEquals(keys, ['third', 'first', 'second'], 'Should preserve DOM order, not alphabetical');
+                assertObjectEquals(values, { third: '3rd', first: '1st', second: '2nd' }, 'Values should match DOM order');
+            });
+
+            runTest('values should be readonly property', () => {
+                const values = container1.values;
+                assert(typeof values === 'object', 'Should return object');
+                
+                // Try to modify the returned object (should not affect future calls)
+                values.newProp = 'test';
+                const values2 = container1.values;
+                assert(!('newProp' in values2), 'Modifying returned object should not affect property');
+            });
+
+            runTest('values should update dynamically when selections change', () => {
+                // Clear container1 selections
+                container1.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                
+                let values = container1.values;
+                assertEquals(values.q1, undefined, 'Initially should be undefined');
+                assertEquals(values.q2, undefined, 'Initially should be undefined');
+                
+                // Select answers
+                const q1Answer = container1.querySelector('questionaire-question[name="q1"] questionaire-question-answer');
+                const q2Answer = container1.querySelector('questionaire-question[name="q2"] questionaire-question-answer[value="y"]');
+                
+                if (q1Answer) q1Answer.setAttribute('selected', '');
+                if (q2Answer) q2Answer.setAttribute('selected', '');
+                
+                values = container1.values;
+                assertEquals(values.q1, 'a', 'Should update when selection changes');
+                assertEquals(values.q2, 'y', 'Should update when selection changes');
+            });
+
+            runTest('values should work with existing container methods', () => {
+                // Verify that adding values property doesn't break existing functionality
+                assert(typeof container1.getContents === 'function', 'getContents method should still exist');
+                assert(typeof container1.next === 'function', 'next method should still exist');
+                assert(typeof container1.slideCount === 'number', 'slideCount should still work');
+                
+                // Test that accessing values doesn't affect navigation
+                const initialIndex = container1.currentIndex;
+                const values = container1.values;
+                assertEquals(container1.currentIndex, initialIndex, 'Accessing values should not affect currentIndex');
+            });
+
+            // Update summary
+            document.getElementById('total').textContent = total;
+            document.getElementById('passed').textContent = passed;
+            document.getElementById('failed').textContent = failed;
+
+            console.log(`Tests complete: ${passed}/${total} passed`);
+        }
+
+        // Run tests after all components are ready
+        Promise.all([
+            customElements.whenDefined('questionaire-container'),
+            customElements.whenDefined('questionaire-question'),
+            customElements.whenDefined('questionaire-question-content'),
+            customElements.whenDefined('questionaire-question-answer')
+        ]).then(runTests);
+    </script>
+</body>
+</html>

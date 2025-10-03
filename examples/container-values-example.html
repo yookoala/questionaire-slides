@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionaire Container values Property Example</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .example-section h3 {
+            margin-top: 0;
+        }
+        questionaire-container {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 3px solid #28a745;
+            border-radius: 8px;
+            background-color: white;
+            min-height: 400px;
+        }
+        questionaire-question {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background-color: white;
+        }
+        questionaire-question[name] {
+            border-color: #ffc107;
+            background-color: #fff3cd;
+        }
+        questionaire-question-content {
+            display: block;
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        questionaire-question-answer {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        questionaire-question-answer:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        questionaire-question-answer[selected] {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+        .info-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .navigation button {
+            font-size: 16px;
+            padding: 10px 20px;
+            margin: 0 10px;
+        }
+        .legend {
+            padding: 10px;
+            background-color: #e7f3ff;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .named-question {
+            border: 2px solid #ffc107 !important;
+            background-color: #fff3cd !important;
+        }
+        .unnamed-question {
+            border: 2px solid #6c757d !important;
+            background-color: #f8f9fa !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Container values Property Example</h1>
+    
+    <div class="legend">
+        <strong>Legend:</strong><br>
+        🟡 <strong>Named Questions</strong> (yellow border) - Included in values property<br>
+        ⚫ <strong>Unnamed Questions</strong> (gray border) - Excluded from values property
+    </div>
+    
+    <div class="example-section">
+        <h3>Complete Survey with values Property</h3>
+        <p>This demonstrates the questionaire container with named and unnamed questions, 
+           and the values property to extract all question responses as a key-value object.</p>
+        
+        <questionaire-container id="main-survey">
+            <!-- Named Question 1: Demographics -->
+            <questionaire-question name="age_group" class="named-question">
+                <questionaire-question-content>
+                    Demographics - Age Group
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    What is your age group?
+                </questionaire-question-content>
+                <questionaire-question-answer value="18-25">18-25 years old</questionaire-question-answer>
+                <questionaire-question-answer value="26-35">26-35 years old</questionaire-question-answer>
+                <questionaire-question-answer value="36-45">36-45 years old</questionaire-question-answer>
+                <questionaire-question-answer value="46+">46+ years old</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Unnamed Question: Transition -->
+            <questionaire-question class="unnamed-question">
+                <questionaire-question-content>
+                    Thank you for that information. Now let's move on to your exercise habits.
+                </questionaire-question-content>
+                <questionaire-question-answer value="continue">Continue</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Named Question 2: Exercise Frequency -->
+            <questionaire-question name="exercise_frequency" class="named-question">
+                <questionaire-question-content>
+                    Exercise Frequency Assessment
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    How often do you exercise per week?
+                </questionaire-question-content>
+                <questionaire-question-answer value="never">Never</questionaire-question-answer>
+                <questionaire-question-answer value="1-2">1-2 times per week</questionaire-question-answer>
+                <questionaire-question-answer value="3-4">3-4 times per week</questionaire-question-answer>
+                <questionaire-question-answer value="5+">5+ times per week</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Named Question 3: Exercise Types (Multi-select) -->
+            <questionaire-question name="exercise_types" multiselect class="named-question">
+                <questionaire-question-content>
+                    Exercise Type Preferences
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    What types of exercise do you enjoy? (Select all that apply)
+                </questionaire-question-content>
+                <questionaire-question-answer value="cardio">Cardio (running, cycling, swimming)</questionaire-question-answer>
+                <questionaire-question-answer value="strength">Strength training</questionaire-question-answer>
+                <questionaire-question-answer value="flexibility">Flexibility/Yoga</questionaire-question-answer>
+                <questionaire-question-answer value="sports">Team sports</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Named Question 4: Diet Assessment -->
+            <questionaire-question name="diet_rating" class="named-question">
+                <questionaire-question-content>
+                    Diet and Nutrition
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    How would you rate your current diet?
+                </questionaire-question-content>
+                <questionaire-question-answer value="poor">Poor - needs significant improvement</questionaire-question-answer>
+                <questionaire-question-answer value="fair">Fair - some improvements needed</questionaire-question-answer>
+                <questionaire-question-answer value="good">Good - mostly healthy choices</questionaire-question-answer>
+                <questionaire-question-answer value="excellent">Excellent - very balanced and healthy</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Unnamed Question: Final -->
+            <questionaire-question class="unnamed-question">
+                <questionaire-question-content>
+                    Thank you for completing the survey!
+                </questionaire-question-content>
+                <questionaire-question-answer value="finish">Finish Survey</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Named Question 5: No Answer Selected -->
+            <questionaire-question name="empty_question" class="named-question">
+                <questionaire-question-content>
+                    Optional Question (test for empty values)
+                </questionaire-question-content>
+                <questionaire-question-answer value="optional1">Optional Answer 1</questionaire-question-answer>
+                <questionaire-question-answer value="optional2">Optional Answer 2</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+    </div>
+
+    <div class="navigation">
+        <button onclick="previousQuestion()">← Previous</button>
+        <button onclick="nextQuestion()">Next →</button>
+        <span id="question-indicator">Question 1 of 6</span>
+    </div>
+
+    <div class="controls">
+        <h3>Container Properties & Methods</h3>
+        <button onclick="getValues()">Get Values Property</button>
+        <button onclick="getContents()">Get Contents Method</button>
+        <button onclick="getCurrentQuestion()">Get Current Question Info</button>
+        <button onclick="simulateAnswers()">Simulate Answers</button>
+        <button onclick="resetSurvey()">Reset All Answers</button>
+    </div>
+
+    <div class="info-panel" id="info">
+        Click "Get Values Property" to see the values property result
+    </div>
+
+    <script>
+        let container;
+
+        function getValues() {
+            container = container || document.getElementById('main-survey');
+            
+            let info = 'Container values Property Result:\n\n';
+            
+            try {
+                const values = container.values;
+                info += `Values (as returned by values property):\n`;
+                info += JSON.stringify(values, null, 2) + '\n\n';
+                
+                info += 'Analysis:\n';
+                const keys = Object.keys(values);
+                info += `Total named questions with responses: ${keys.length}\n\n`;
+                
+                keys.forEach(key => {
+                    const value = values[key];
+                    const type = Array.isArray(value) ? 'array' : typeof value;
+                    info += `${key}: ${JSON.stringify(value)} (${type})\n`;
+                });
+                
+                // Show which questions are included/excluded
+                info += '\nQuestion Analysis:\n';
+                const slot = container.shadowRoot?.querySelector('slot');
+                if (slot) {
+                    const questions = slot.assignedElements();
+                    questions.forEach((question, index) => {
+                        const name = question.getAttribute('name');
+                        const hasName = name && name.trim() !== '';
+                        const included = hasName && keys.includes(name);
+                        info += `Question ${index + 1}: name="${name || 'unnamed'}" - ${included ? 'INCLUDED' : 'EXCLUDED'}\n`;
+                    });
+                }
+                
+            } catch (error) {
+                info += `Error accessing values property: ${error.message}\n`;
+            }
+            
+            document.getElementById('info').textContent = info;
+        }
+
+        function getContents() {
+            container = container || document.getElementById('main-survey');
+            
+            let info = 'Container getContents() Method Result:\n\n';
+            
+            try {
+                const contents = container.getContents();
+                info += `Contents (as returned by getContents()):\n`;
+                info += `"${contents}"\n\n`;
+                
+                info += 'Analysis:\n';
+                const lines = contents.split('\n');
+                info += `Total content lines: ${lines.length}\n`;
+                
+            } catch (error) {
+                info += `Error calling getContents(): ${error.message}\n`;
+            }
+            
+            document.getElementById('info').textContent = info;
+        }
+
+        function getCurrentQuestion() {
+            container = container || document.getElementById('main-survey');
+            
+            let info = 'Current Question Information:\n\n';
+            info += `Current slide index: ${container.currentIndex}\n`;
+            info += `Total slides: ${container.slideCount}\n`;
+            
+            // Try to get current question element
+            const slot = container.shadowRoot?.querySelector('slot');
+            if (slot) {
+                const questions = slot.assignedElements();
+                const currentQuestion = questions[container.currentIndex];
+                if (currentQuestion) {
+                    info += `Current question name: "${currentQuestion.getAttribute('name') || 'unnamed'}"\n`;
+                    info += `Current question multiselect: ${currentQuestion.hasAttribute('multiselect')}\n`;
+                    info += `Current question value: ${JSON.stringify(currentQuestion.value)}\n`;
+                }
+            }
+            
+            document.getElementById('info').textContent = info;
+        }
+
+        function simulateAnswers() {
+            // Simulate selecting answers for demonstration
+            const questions = document.querySelectorAll('questionaire-question[name]');
+            
+            questions.forEach((question, index) => {
+                // Clear existing selections
+                question.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                    answer.removeAttribute('selected');
+                });
+                
+                // Select answers based on question
+                const answers = question.querySelectorAll('questionaire-question-answer');
+                if (answers.length > 0) {
+                    if (question.hasAttribute('multiselect')) {
+                        // For multi-select, select first two answers
+                        if (answers[0]) answers[0].setAttribute('selected', '');
+                        if (answers[1]) answers[1].setAttribute('selected', '');
+                    } else {
+                        // For single-select, select first answer
+                        answers[index % answers.length].setAttribute('selected', '');
+                    }
+                }
+            });
+            
+            let info = 'Simulated answers have been set for all named questions.\n';
+            info += 'Click "Get Values Property" to see the results.\n';
+            document.getElementById('info').textContent = info;
+        }
+
+        function resetSurvey() {
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.removeAttribute('selected');
+            });
+            
+            let info = 'All answers have been reset.\n';
+            document.getElementById('info').textContent = info;
+        }
+
+        function nextQuestion() {
+            container = container || document.getElementById('main-survey');
+            container.next();
+            updateQuestionIndicator();
+        }
+
+        function previousQuestion() {
+            container = container || document.getElementById('main-survey');
+            container.previous();
+            updateQuestionIndicator();
+        }
+
+        function updateQuestionIndicator() {
+            container = container || document.getElementById('main-survey');
+            const indicator = document.getElementById('question-indicator');
+            indicator.textContent = `Question ${container.currentIndex + 1} of ${container.slideCount}`;
+        }
+
+        // Add click listeners to make answers selectable
+        document.addEventListener('DOMContentLoaded', () => {
+            container = document.getElementById('main-survey');
+            
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.addEventListener('click', () => {
+                    // Toggle selection
+                    if (answer.hasAttribute('selected')) {
+                        answer.removeAttribute('selected');
+                    } else {
+                        answer.setAttribute('selected', '');
+                    }
+                });
+            });
+
+            // Listen for slide changes
+            container.addEventListener('slide-changed', (event) => {
+                updateQuestionIndicator();
+            });
+            
+            // Initial state
+            updateQuestionIndicator();
+            
+            // Show initial values result
+            setTimeout(() => {
+                getValues();
+            }, 100);
+        });
+    </script>
+</body>
+</html>

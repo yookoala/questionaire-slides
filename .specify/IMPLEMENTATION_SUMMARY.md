@@ -277,4 +277,20 @@ Current status of TASKS.md:
 🔄 **NEXT**: 
 6. **feature/question-container--values**: `<questionaire-container>` values readonly property
 
+## Current Task: feature/question-container--values
+🔄 **IN PROGRESS**: Implement the `<questionaire-container>` values readonly property
+
+### Phase 1: Example and Test Creation ✅
+- Created `examples/container-values-example.html` - Interactive example showing questionnaire container with values property
+- Created `test/questionaire-container-values.test.html` - Comprehensive test suite for values property
+- Tests cover: named vs unnamed questions, empty names, single/multi-select handling, sequential order, dynamic updates, empty selections
+- Examples demonstrate: complete survey with named/unnamed questions, values aggregation, integration with existing methods
+
+### Next Phase: Implementation
+- Implement `values` readonly property in existing `src/questionaire-container.js` component
+- Property should aggregate all children `<questionaire-question>` elements with non-empty "name" attribute
+- Should build key-value object with "name" as keys and question `.value` property as values
+- Should preserve sequential DOM order of questions
+- Should handle single-select (string/undefined) and multi-select (array) values appropriately
+
 The project now has a complete questionnaire system with content extraction capabilities and is ready for the final values aggregation feature.
