@@ -209,9 +209,20 @@ The project now has a complete foundation for building questionnaires with selec
 - Verified example HTML loads correctly and would work in browser
 - Component properly integrates with existing questionaire-question-answer elements
 
-## Next Steps
+## Current Task: feature/question-content-and-answer
+🔄 **IN PROGRESS**: Implement `<questionaire-question>` logics with both `<questionaire-question-answer>` and `<questionaire-question-content>` in it
 
-Continue with feature/question-content-and-answer implementation as per TASKS.md.
+### Phase 1: Example and Test Creation ✅
+- Created `examples/question-content-example.html` - Interactive example showing questions with content elements and answers
+- Created `test/questionaire-question-content.test.html` - Comprehensive test suite for content component integration
+- Tests cover: content element creation, HTML support, integration with existing question logic, multiple content elements
+- Examples demonstrate: single content with single-select, content with multi-select, multiple content elements per question
+
+### Next Phase: Implementation
+- Implement `src/questionaire-question-content.js` component according to specification
+- Component should be a simple container for displaying question text or HTML content
+- Should integrate seamlessly with existing `questionaire-question` component
+- No changes needed to existing question logic - content is just for display
 
 ## All Current Implemented Tasks
 

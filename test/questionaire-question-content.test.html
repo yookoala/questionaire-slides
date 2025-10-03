@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Questionaire Question Content Tests</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test.pass {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .test.fail {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .test-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .test-result {
+            font-size: 14px;
+        }
+        #summary {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Question Content Tests</h1>
+    <div id="summary">
+        <div>Total: <span id="total">0</span></div>
+        <div>Passed: <span id="passed">0</span></div>
+        <div>Failed: <span id="failed">0</span></div>
+    </div>
+    <div id="test-results"></div>
+
+    <!-- Test elements -->
+    <questionaire-question id="content-single-question">
+        <questionaire-question-content id="content1">How often do you exercise?</questionaire-question-content>
+        <questionaire-question-answer value="never">Never</questionaire-question-answer>
+        <questionaire-question-answer value="sometimes">Sometimes</questionaire-question-answer>
+    </questionaire-question>
+
+    <questionaire-question id="content-multi-question" multiselect>
+        <questionaire-question-content id="content2">
+            <strong>What types of exercise do you enjoy?</strong>
+        </questionaire-question-content>
+        <questionaire-question-answer value="cardio">Cardio</questionaire-question-answer>
+        <questionaire-question-answer value="strength">Strength training</questionaire-question-answer>
+    </questionaire-question>
+
+    <questionaire-question id="multi-content-question">
+        <questionaire-question-content id="content3">Exercise Assessment</questionaire-question-content>
+        <questionaire-question-content id="content4">Please answer honestly.</questionaire-question-content>
+        <questionaire-question-answer value="yes">Yes</questionaire-question-answer>
+        <questionaire-question-answer value="no">No</questionaire-question-answer>
+    </questionaire-question>
+
+    <script type="module">
+        const results = document.getElementById('test-results');
+        let passed = 0;
+        let failed = 0;
+        let total = 0;
+
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
+
+        function assertEquals(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(message || `Expected ${expected} but got ${actual}`);
+            }
+        }
+
+        function assertArrayEquals(actual, expected, message) {
+            if (!Array.isArray(actual) || !Array.isArray(expected) || 
+                actual.length !== expected.length ||
+                !actual.every((val, index) => val === expected[index])) {
+                throw new Error(message || `Expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
+            }
+        }
+
+        function runTest(name, testFn) {
+            total++;
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test';
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'test-name';
+            nameDiv.textContent = name;
+            testDiv.appendChild(nameDiv);
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+
+            try {
+                testFn();
+                testDiv.classList.add('pass');
+                resultDiv.textContent = '✓ PASS';
+                passed++;
+            } catch (e) {
+                testDiv.classList.add('fail');
+                resultDiv.textContent = '✗ FAIL: ' + e.message;
+                failed++;
+            }
+
+            testDiv.appendChild(resultDiv);
+            results.appendChild(testDiv);
+        }
+
+        async function runTests() {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            const contentSingleQuestion = document.getElementById('content-single-question');
+            const contentMultiQuestion = document.getElementById('content-multi-question');
+            const multiContentQuestion = document.getElementById('multi-content-question');
+            const content1 = document.getElementById('content1');
+            const content2 = document.getElementById('content2');
+            const content3 = document.getElementById('content3');
+            const content4 = document.getElementById('content4');
+
+            runTest('questionaire-question-content should be defined', () => {
+                assert(customElements.get('questionaire-question-content'), 'Component should be defined');
+                assert(content1 instanceof HTMLElement, 'Should create HTML element instances');
+            });
+
+            runTest('content elements should display text content', () => {
+                assertEquals(content1.textContent, 'How often do you exercise?', 'Content should display text');
+                assert(content2.innerHTML.includes('<strong>'), 'Content should support HTML');
+            });
+
+            runTest('questions with content should still function as single-select', () => {
+                // Clear selections
+                const answers = contentSingleQuestion.querySelectorAll('questionaire-question-answer');
+                answers.forEach(answer => answer.removeAttribute('selected'));
+                
+                // Select first answer
+                answers[0].setAttribute('selected', '');
+                assertEquals(contentSingleQuestion.value, 'never', 'Should return selected value');
+                
+                // Select second answer - should deselect first
+                answers[1].setAttribute('selected', '');
+                
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        const selectedAnswers = Array.from(answers).filter(a => a.hasAttribute('selected'));
+                        assertEquals(selectedAnswers.length, 1, 'Only one answer should be selected');
+                        assertEquals(contentSingleQuestion.value, 'sometimes', 'Second answer should be selected');
+                        resolve();
+                    }, 50);
+                });
+            });
+
+            runTest('questions with content should still function as multi-select', () => {
+                const answers = contentMultiQuestion.querySelectorAll('questionaire-question-answer');
+                
+                // Clear selections
+                answers.forEach(answer => answer.removeAttribute('selected'));
+                assertEquals(contentMultiQuestion.value.length, 0, 'Should start with empty array');
+                
+                // Select multiple answers
+                answers[0].setAttribute('selected', '');
+                answers[1].setAttribute('selected', '');
+                
+                assertArrayEquals(contentMultiQuestion.value, ['cardio', 'strength'], 'Should return array of selected values');
+            });
+
+            runTest('questions can have multiple content elements', () => {
+                const contentElements = multiContentQuestion.querySelectorAll('questionaire-question-content');
+                assertEquals(contentElements.length, 2, 'Should have 2 content elements');
+                assertEquals(contentElements[0].textContent, 'Exercise Assessment', 'First content should be correct');
+                assertEquals(contentElements[1].textContent, 'Please answer honestly.', 'Second content should be correct');
+            });
+
+            runTest('content elements should not affect question value behavior', () => {
+                const answers = multiContentQuestion.querySelectorAll('questionaire-question-answer');
+                
+                // Clear selections
+                answers.forEach(answer => answer.removeAttribute('selected'));
+                assertEquals(multiContentQuestion.value, undefined, 'Should return undefined when no selection');
+                
+                // Select an answer
+                answers[0].setAttribute('selected', '');
+                assertEquals(multiContentQuestion.value, 'yes', 'Should return selected value');
+            });
+
+            runTest('content elements should be simple containers', () => {
+                // Content elements should just display their content without affecting functionality
+                const contentElement = document.createElement('questionaire-question-content');
+                contentElement.innerHTML = '<em>Test content</em>';
+                document.body.appendChild(contentElement);
+                
+                assert(contentElement.innerHTML.includes('<em>'), 'Should preserve HTML content');
+                
+                document.body.removeChild(contentElement);
+            });
+
+            runTest('questions with content should still dispatch events correctly', () => {
+                return new Promise((resolve, reject) => {
+                    let eventReceived = false;
+                    
+                    const eventHandler = (event) => {
+                        try {
+                            assert(event.detail && event.detail.element, 'Event should have detail.element');
+                            eventReceived = true;
+                            contentSingleQuestion.removeEventListener('question:changed', eventHandler);
+                            resolve();
+                        } catch (e) {
+                            reject(e);
+                        }
+                    };
+                    
+                    contentSingleQuestion.addEventListener('question:changed', eventHandler);
+                    
+                    // Clear and select an answer
+                    const answers = contentSingleQuestion.querySelectorAll('questionaire-question-answer');
+                    answers.forEach(answer => answer.removeAttribute('selected'));
+                    answers[0].setAttribute('selected', '');
+                    
+                    // Check if event was received within timeout
+                    setTimeout(() => {
+                        if (!eventReceived) {
+                            contentSingleQuestion.removeEventListener('question:changed', eventHandler);
+                            reject(new Error('question:changed event was not dispatched'));
+                        }
+                    }, 200);
+                });
+            });
+
+            runTest('content elements should work with existing question logic', () => {
+                // Test that adding content elements doesn't break existing question functionality
+                const testQuestion = document.createElement('questionaire-question');
+                const testContent = document.createElement('questionaire-question-content');
+                const testAnswer1 = document.createElement('questionaire-question-answer');
+                const testAnswer2 = document.createElement('questionaire-question-answer');
+                
+                testContent.textContent = 'Test Question';
+                testAnswer1.value = 'option1';
+                testAnswer1.textContent = 'Option 1';
+                testAnswer2.value = 'option2';
+                testAnswer2.textContent = 'Option 2';
+                
+                testQuestion.appendChild(testContent);
+                testQuestion.appendChild(testAnswer1);
+                testQuestion.appendChild(testAnswer2);
+                document.body.appendChild(testQuestion);
+                
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        try {
+                            // Test selection still works
+                            testAnswer1.setAttribute('selected', '');
+                            assertEquals(testQuestion.value, 'option1', 'Question with content should work normally');
+                            
+                            document.body.removeChild(testQuestion);
+                            resolve();
+                        } catch (e) {
+                            document.body.removeChild(testQuestion);
+                            throw e;
+                        }
+                    }, 100);
+                });
+            });
+
+            // Update summary
+            document.getElementById('total').textContent = total;
+            document.getElementById('passed').textContent = passed;
+            document.getElementById('failed').textContent = failed;
+
+            console.log(`Tests complete: ${passed}/${total} passed`);
+        }
+
+        // Run tests after components are ready
+        Promise.all([
+            customElements.whenDefined('questionaire-question'),
+            customElements.whenDefined('questionaire-question-content'),
+            customElements.whenDefined('questionaire-question-answer')
+        ]).then(runTests);
+    </script>
+</body>
+</html>
