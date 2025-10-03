@@ -16,8 +16,14 @@ This project is to build a set of web components that works together as a questi
 * `<questionaire-container>`
   The outest component to container the whole questionaire. It should act as a carousel of all the child element to only show one of them at a time.
 
+  Each of this element have a `getContents` method. When called, it will return an aggregated "\n" separated children `<questionaire-question-content>` innerText value(s).
+
+  Each of this element have a readonly `values` property. Everytime when read, it should aggregate all the children `<questionaire-question>` elements that has a non-empty "name" attribute / property set. It will build, sequencially by element order, a key-value object with "name" as the keys and the `<questionaire-question>`'s `.value` property evaluation result as the values, and then return the just built object.
+
 * `<questionaire-question>`
   The question-level, or "slide"-level, component to show a question and selectable answers. This question will have multiple answers available for selection. Questions can either be a single-selected or multiple-selected MC question.
+
+  Each of this element have an optional "name" property / attribute.
 
   Each of this element have an optional "multiselect" property / attribute. When set, this element is "mult-selected mode". If not set, this element is "single-selected mode".
 
