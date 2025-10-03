@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit';
 
 /**
  * QuestionaireContainer - A carousel component for displaying questionaire slides
- * Shows one child element at a time and provides navigation methods
+ * Uses horizontal scrolling to smoothly transition between slides
  */
 export class QuestionaireContainer extends LitElement {
   static properties = {
@@ -14,14 +14,21 @@ export class QuestionaireContainer extends LitElement {
       display: block;
       position: relative;
       overflow: hidden;
+      width: 100%;
+      height: auto;
+    }
+
+    .container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.3s ease-in-out;
     }
 
     ::slotted(*) {
-      display: none;
-    }
-
-    ::slotted([data-active]) {
-      display: block;
+      flex: 0 0 100%;
+      width: 100%;
+      box-sizing: border-box;
     }
   `;
 
@@ -31,32 +38,28 @@ export class QuestionaireContainer extends LitElement {
   }
 
   firstUpdated() {
-    this._updateSlides();
+    this._updateContainer();
   }
 
   render() {
-    return html`<slot @slotchange=${this._handleSlotChange}></slot>`;
+    return html`
+      <div class="container">
+        <slot @slotchange=${this._handleSlotChange}></slot>
+      </div>
+    `;
   }
 
   _handleSlotChange() {
-    this._updateSlides();
+    this._updateContainer();
   }
 
-  _updateSlides() {
-    const slot = this.shadowRoot.querySelector('slot');
-    if (!slot) return;
+  _updateContainer() {
+    const container = this.shadowRoot.querySelector('.container');
+    if (!container) return;
 
-    const children = slot.assignedElements();
-    
-    children.forEach((child, index) => {
-      if (index === this.currentIndex) {
-        child.setAttribute('data-active', '');
-        child.style.display = 'block';
-      } else {
-        child.removeAttribute('data-active');
-        child.style.display = 'none';
-      }
-    });
+    // Calculate the transform position based on current index
+    const translateX = -this.currentIndex * 100;
+    container.style.transform = `translateX(${translateX}%)`;
   }
 
   /**
@@ -69,7 +72,7 @@ export class QuestionaireContainer extends LitElement {
     const children = slot.assignedElements();
     if (this.currentIndex < children.length - 1) {
       this.currentIndex++;
-      this._updateSlides();
+      this._updateContainer();
       this._dispatchSlideChangeEvent();
     }
   }
@@ -80,7 +83,7 @@ export class QuestionaireContainer extends LitElement {
   previous() {
     if (this.currentIndex > 0) {
       this.currentIndex--;
-      this._updateSlides();
+      this._updateContainer();
       this._dispatchSlideChangeEvent();
     }
   }
@@ -96,7 +99,7 @@ export class QuestionaireContainer extends LitElement {
     const children = slot.assignedElements();
     if (index >= 0 && index < children.length) {
       this.currentIndex = index;
-      this._updateSlides();
+      this._updateContainer();
       this._dispatchSlideChangeEvent();
     }
   }
