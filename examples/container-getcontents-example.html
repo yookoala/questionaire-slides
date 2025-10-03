@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionaire Container getContents Example</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .example-section h3 {
+            margin-top: 0;
+        }
+        questionaire-container {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 3px solid #28a745;
+            border-radius: 8px;
+            background-color: white;
+            min-height: 300px;
+        }
+        questionaire-question {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background-color: white;
+        }
+        questionaire-question-content {
+            display: block;
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        questionaire-question-answer {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        questionaire-question-answer:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        questionaire-question-answer[selected] {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+        .info-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .navigation button {
+            font-size: 16px;
+            padding: 10px 20px;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Container getContents Example</h1>
+    
+    <div class="example-section">
+        <h3>Complete Questionnaire with getContents Method</h3>
+        <p>This demonstrates the questionaire container with multiple questions containing content elements, 
+           and the getContents() method to extract all content text.</p>
+        
+        <questionaire-container id="main-questionaire">
+            <!-- Question 1: Exercise Frequency -->
+            <questionaire-question name="exercise_frequency">
+                <questionaire-question-content>
+                    Exercise Frequency Assessment
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    How often do you exercise per week?
+                </questionaire-question-content>
+                <questionaire-question-answer value="never">Never</questionaire-question-answer>
+                <questionaire-question-answer value="1-2">1-2 times per week</questionaire-question-answer>
+                <questionaire-question-answer value="3-4">3-4 times per week</questionaire-question-answer>
+                <questionaire-question-answer value="5+">5+ times per week</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Question 2: Exercise Types -->
+            <questionaire-question name="exercise_types" multiselect>
+                <questionaire-question-content>
+                    Exercise Type Preferences
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    What types of exercise do you enjoy? (Select all that apply)
+                </questionaire-question-content>
+                <questionaire-question-answer value="cardio">Cardio (running, cycling, swimming)</questionaire-question-answer>
+                <questionaire-question-answer value="strength">Strength training</questionaire-question-answer>
+                <questionaire-question-answer value="flexibility">Flexibility/Yoga</questionaire-question-answer>
+                <questionaire-question-answer value="sports">Team sports</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Question 3: Diet Assessment -->
+            <questionaire-question name="diet_assessment">
+                <questionaire-question-content>
+                    Diet and Nutrition
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    How would you rate your current diet?
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    Consider factors like balanced nutrition, variety, and portion control.
+                </questionaire-question-content>
+                <questionaire-question-answer value="poor">Poor - needs significant improvement</questionaire-question-answer>
+                <questionaire-question-answer value="fair">Fair - some improvements needed</questionaire-question-answer>
+                <questionaire-question-answer value="good">Good - mostly healthy choices</questionaire-question-answer>
+                <questionaire-question-answer value="excellent">Excellent - very balanced and healthy</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Question 4: No Content Question (for testing) -->
+            <questionaire-question name="simple_question">
+                <questionaire-question-answer value="yes">Yes</questionaire-question-answer>
+                <questionaire-question-answer value="no">No</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+    </div>
+
+    <div class="navigation">
+        <button onclick="previousQuestion()">← Previous</button>
+        <button onclick="nextQuestion()">Next →</button>
+        <span id="question-indicator">Question 1 of 4</span>
+    </div>
+
+    <div class="controls">
+        <h3>Container Methods</h3>
+        <button onclick="getContents()">Get All Contents</button>
+        <button onclick="getCurrentQuestion()">Get Current Question Info</button>
+        <button onclick="getSlideCount()">Get Slide Count</button>
+        <button onclick="resetQuestionnaire()">Reset All Answers</button>
+    </div>
+
+    <div class="info-panel" id="info">
+        Click "Get All Contents" to see the getContents() method result
+    </div>
+
+    <script>
+        let container;
+
+        function getContents() {
+            container = container || document.getElementById('main-questionaire');
+            
+            let info = 'Container getContents() Method Result:\n\n';
+            
+            try {
+                const contents = container.getContents();
+                info += `Contents (as returned by getContents()):\n`;
+                info += `"${contents}"\n\n`;
+                
+                info += 'Analysis:\n';
+                const lines = contents.split('\n');
+                info += `Total lines: ${lines.length}\n`;
+                info += `Lines breakdown:\n`;
+                lines.forEach((line, index) => {
+                    info += `${index + 1}. "${line}"\n`;
+                });
+                
+            } catch (error) {
+                info += `Error calling getContents(): ${error.message}\n`;
+            }
+            
+            document.getElementById('info').textContent = info;
+        }
+
+        function getCurrentQuestion() {
+            container = container || document.getElementById('main-questionaire');
+            
+            let info = 'Current Question Information:\n\n';
+            info += `Current slide index: ${container.currentIndex}\n`;
+            info += `Total slides: ${container.slideCount}\n`;
+            
+            // Try to get current question element
+            const slot = container.shadowRoot?.querySelector('slot');
+            if (slot) {
+                const questions = slot.assignedElements();
+                const currentQuestion = questions[container.currentIndex];
+                if (currentQuestion) {
+                    info += `Current question name: ${currentQuestion.getAttribute('name') || 'unnamed'}\n`;
+                    info += `Current question multiselect: ${currentQuestion.hasAttribute('multiselect')}\n`;
+                    
+                    const contentElements = currentQuestion.querySelectorAll('questionaire-question-content');
+                    info += `Content elements in current question: ${contentElements.length}\n`;
+                    contentElements.forEach((content, index) => {
+                        info += `  ${index + 1}. "${content.textContent.trim()}"\n`;
+                    });
+                }
+            }
+            
+            document.getElementById('info').textContent = info;
+        }
+
+        function getSlideCount() {
+            container = container || document.getElementById('main-questionaire');
+            
+            let info = 'Slide Information:\n\n';
+            info += `Total slides: ${container.slideCount}\n`;
+            
+            document.getElementById('info').textContent = info;
+        }
+
+        function resetQuestionnaire() {
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.removeAttribute('selected');
+            });
+            
+            let info = 'All answers have been reset.\n';
+            document.getElementById('info').textContent = info;
+        }
+
+        function nextQuestion() {
+            container = container || document.getElementById('main-questionaire');
+            container.next();
+            updateQuestionIndicator();
+        }
+
+        function previousQuestion() {
+            container = container || document.getElementById('main-questionaire');
+            container.previous();
+            updateQuestionIndicator();
+        }
+
+        function updateQuestionIndicator() {
+            container = container || document.getElementById('main-questionaire');
+            const indicator = document.getElementById('question-indicator');
+            indicator.textContent = `Question ${container.currentIndex + 1} of ${container.slideCount}`;
+        }
+
+        // Add click listeners to make answers selectable
+        document.addEventListener('DOMContentLoaded', () => {
+            container = document.getElementById('main-questionaire');
+            
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.addEventListener('click', () => {
+                    // Toggle selection
+                    if (answer.hasAttribute('selected')) {
+                        answer.removeAttribute('selected');
+                    } else {
+                        answer.setAttribute('selected', '');
+                    }
+                });
+            });
+
+            // Listen for slide changes
+            container.addEventListener('slide-changed', (event) => {
+                updateQuestionIndicator();
+            });
+            
+            // Initial state
+            updateQuestionIndicator();
+            
+            // Show initial getContents result
+            setTimeout(() => {
+                getContents();
+            }, 100);
+        });
+    </script>
+</body>
+</html>

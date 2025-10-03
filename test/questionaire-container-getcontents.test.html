@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Questionaire Container getContents Tests</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test.pass {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .test.fail {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .test-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .test-result {
+            font-size: 14px;
+        }
+        #summary {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-elements {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Container getContents Tests</h1>
+    <div id="summary">
+        <div>Total: <span id="total">0</span></div>
+        <div>Passed: <span id="passed">0</span></div>
+        <div>Failed: <span id="failed">0</span></div>
+    </div>
+    <div id="test-results"></div>
+
+    <!-- Test elements (hidden) -->
+    <div class="test-elements">
+        <!-- Test container 1: Basic content aggregation -->
+        <questionaire-container id="test-container-1">
+            <questionaire-question>
+                <questionaire-question-content>Question 1 Content</questionaire-question-content>
+                <questionaire-question-answer value="a">Answer A</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question>
+                <questionaire-question-content>Question 2 Content</questionaire-question-content>
+                <questionaire-question-answer value="b">Answer B</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 2: Multiple content elements per question -->
+        <questionaire-container id="test-container-2">
+            <questionaire-question>
+                <questionaire-question-content>First content</questionaire-question-content>
+                <questionaire-question-content>Second content</questionaire-question-content>
+                <questionaire-question-answer value="x">Answer X</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question>
+                <questionaire-question-content>Third content</questionaire-question-content>
+                <questionaire-question-answer value="y">Answer Y</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 3: Questions without content -->
+        <questionaire-container id="test-container-3">
+            <questionaire-question>
+                <questionaire-question-answer value="1">Option 1</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question>
+                <questionaire-question-answer value="2">Option 2</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 4: Mixed content and no content -->
+        <questionaire-container id="test-container-4">
+            <questionaire-question>
+                <questionaire-question-content>Only question with content</questionaire-question-content>
+                <questionaire-question-answer value="yes">Yes</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question>
+                <questionaire-question-answer value="no">No</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 5: Empty container -->
+        <questionaire-container id="test-container-5">
+        </questionaire-container>
+
+        <!-- Test container 6: Content with HTML formatting -->
+        <questionaire-container id="test-container-6">
+            <questionaire-question>
+                <questionaire-question-content><strong>Bold</strong> and <em>italic</em> text</questionaire-question-content>
+                <questionaire-question-answer value="formatted">Formatted</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 7: Content with whitespace -->
+        <questionaire-container id="test-container-7">
+            <questionaire-question>
+                <questionaire-question-content>   Content with spaces   </questionaire-question-content>
+                <questionaire-question-content>
+                    Content with newlines
+                </questionaire-question-content>
+                <questionaire-question-answer value="space">Spaced</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+    </div>
+
+    <script type="module">
+        const results = document.getElementById('test-results');
+        let passed = 0;
+        let failed = 0;
+        let total = 0;
+
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
+
+        function assertEquals(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(message || `Expected "${expected}" but got "${actual}"`);
+            }
+        }
+
+        function runTest(name, testFn) {
+            total++;
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test';
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'test-name';
+            nameDiv.textContent = name;
+            testDiv.appendChild(nameDiv);
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+
+            try {
+                testFn();
+                testDiv.classList.add('pass');
+                resultDiv.textContent = '✓ PASS';
+                passed++;
+            } catch (e) {
+                testDiv.classList.add('fail');
+                resultDiv.textContent = '✗ FAIL: ' + e.message;
+                failed++;
+            }
+
+            testDiv.appendChild(resultDiv);
+            results.appendChild(testDiv);
+        }
+
+        async function runTests() {
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            const container1 = document.getElementById('test-container-1');
+            const container2 = document.getElementById('test-container-2');
+            const container3 = document.getElementById('test-container-3');
+            const container4 = document.getElementById('test-container-4');
+            const container5 = document.getElementById('test-container-5');
+            const container6 = document.getElementById('test-container-6');
+            const container7 = document.getElementById('test-container-7');
+
+            runTest('getContents method should exist', () => {
+                assert(typeof container1.getContents === 'function', 'getContents should be a function');
+            });
+
+            runTest('getContents should aggregate basic content with newlines', () => {
+                const result = container1.getContents();
+                assertEquals(result, 'Question 1 Content\nQuestion 2 Content', 'Should aggregate content with newline separation');
+            });
+
+            runTest('getContents should handle multiple content elements per question', () => {
+                const result = container2.getContents();
+                assertEquals(result, 'First content\nSecond content\nThird content', 'Should include all content elements');
+            });
+
+            runTest('getContents should return empty string for questions without content', () => {
+                const result = container3.getContents();
+                assertEquals(result, '', 'Should return empty string when no content elements exist');
+            });
+
+            runTest('getContents should handle mixed content and no content questions', () => {
+                const result = container4.getContents();
+                assertEquals(result, 'Only question with content', 'Should only include content from questions that have it');
+            });
+
+            runTest('getContents should handle empty container', () => {
+                const result = container5.getContents();
+                assertEquals(result, '', 'Should return empty string for empty container');
+            });
+
+            runTest('getContents should extract text content from HTML', () => {
+                const result = container6.getContents();
+                assertEquals(result, 'Bold and italic text', 'Should extract text content, ignoring HTML tags');
+            });
+
+            runTest('getContents should handle whitespace correctly', () => {
+                const result = container7.getContents();
+                // Should trim individual content but preserve structure
+                const lines = result.split('\n');
+                assert(lines[0].trim() === 'Content with spaces', 'Should trim leading/trailing spaces');
+                assert(lines[1].trim() === 'Content with newlines', 'Should handle internal newlines');
+            });
+
+            runTest('getContents should return string type', () => {
+                const result = container1.getContents();
+                assertEquals(typeof result, 'string', 'getContents should always return a string');
+            });
+
+            runTest('getContents should be repeatable with same results', () => {
+                const result1 = container1.getContents();
+                const result2 = container1.getContents();
+                assertEquals(result1, result2, 'Multiple calls should return same result');
+            });
+
+            runTest('getContents should work with existing container methods', () => {
+                // Verify that adding getContents doesn't break existing functionality
+                assert(typeof container1.next === 'function', 'next method should still exist');
+                assert(typeof container1.previous === 'function', 'previous method should still exist');
+                assert(typeof container1.slideCount === 'number', 'slideCount should still work');
+                
+                // Test navigation still works
+                const initialIndex = container1.currentIndex;
+                container1.next();
+                assert(container1.currentIndex !== initialIndex || container1.slideCount <= 1, 'Navigation should still work');
+            });
+
+            // Update summary
+            document.getElementById('total').textContent = total;
+            document.getElementById('passed').textContent = passed;
+            document.getElementById('failed').textContent = failed;
+
+            console.log(`Tests complete: ${passed}/${total} passed`);
+        }
+
+        // Run tests after all components are ready
+        Promise.all([
+            customElements.whenDefined('questionaire-container'),
+            customElements.whenDefined('questionaire-question'),
+            customElements.whenDefined('questionaire-question-content'),
+            customElements.whenDefined('questionaire-question-answer')
+        ]).then(runTests);
+    </script>
+</body>
+</html>

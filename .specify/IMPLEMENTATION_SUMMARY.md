@@ -236,6 +236,22 @@ The project now has a complete foundation for building questionnaires with selec
 - No regressions in existing functionality
 - Content elements work correctly with single-select and multi-select questions
 
+## Current Task: feature/question-container--getcontents
+🔄 **IN PROGRESS**: Implement the `<questionaire-container>` getContents method
+
+### Phase 1: Example and Test Creation ✅
+- Created `examples/container-getcontents-example.html` - Interactive example showing questionnaire container with getContents method
+- Created `test/questionaire-container-getcontents.test.html` - Comprehensive test suite for getContents method
+- Tests cover: basic content aggregation, multiple content elements, questions without content, empty containers, HTML content extraction, whitespace handling
+- Examples demonstrate: full questionnaire with multiple questions, navigation, and getContents method usage
+
+### Next Phase: Implementation
+- Implement `getContents()` method in existing `src/questionaire-container.js` component
+- Method should return aggregated "\n" separated children `<questionaire-question-content>` innerText value(s)
+- Should work across all questions in the container
+- Should handle questions without content gracefully
+- Should extract text content from HTML formatting
+
 ## All Current Implemented Tasks
 
 Current status of TASKS.md:
@@ -244,13 +260,9 @@ Current status of TASKS.md:
 3. ✅ **feature/question-and-answer**: `<questionaire-question>` with only answer elements
 4. ✅ **feature/question-content-and-answer**: `<questionaire-question>` with both content and answer elements
 
-🎉 **ALL TASKS COMPLETED!** 
+🔄 **IN PROGRESS**: 
+5. **feature/question-container--getcontents**: `<questionaire-container>` getContents method
 
-The project now has a complete questionnaire system with:
-- Carousel container for multiple questions
-- Content elements for displaying question text/HTML
-- Answer elements for user selections
-- Question logic supporting both single-select and multi-select modes
-- Full integration between all components
+Next: **feature/question-container--values**: `<questionaire-container>` values readonly property
 
-Ready for production use or additional feature requests!
+The project now has a complete questionnaire system with content extraction capabilities being added.
