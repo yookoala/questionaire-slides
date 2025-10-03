@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionaire Actions Slot Test</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-action.js"></script>
+    <script type="module" src="../src/questionaire-actions.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        questionaire-question {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        questionaire-question-content {
+            display: block;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        questionaire-question-answer {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+        questionaire-question-answer:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        questionaire-question-answer[selected] {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        questionaire-actions {
+            border: 2px dashed #ff0000 !important;
+            background: yellow !important;
+            padding: 10px !important;
+            margin: 10px 0 !important;
+        }
+        .debug-info {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Actions Slot Debug Test</h1>
+    
+    <div class="debug-info">
+        <strong>Debug Test:</strong> The actions container should be visible with red dashed border and yellow background.
+        If you don't see it, the slot is not working correctly.
+    </div>
+
+    <questionaire-question name="test-question">
+        <questionaire-question-content>
+            Test Question Content
+        </questionaire-question-content>
+        <questionaire-question-content>
+            This is a test question to verify that the bottom slot works correctly.
+        </questionaire-question-content>
+        
+        <questionaire-question-answer value="option1">Option 1</questionaire-question-answer>
+        <questionaire-question-answer value="option2">Option 2</questionaire-question-answer>
+        <questionaire-question-answer value="option3">Option 3</questionaire-question-answer>
+        
+        <questionaire-actions slot="bottom">
+            <questionaire-action action="previous">Previous</questionaire-action>
+            <questionaire-action>Next</questionaire-action>
+        </questionaire-actions>
+    </questionaire-question>
+
+    <div class="debug-info">
+        <strong>Standalone Actions (should also be visible):</strong>
+    </div>
+    
+    <questionaire-actions style="border: 2px solid blue; background: lightblue; padding: 10px;">
+        <questionaire-action>Standalone Action 1</questionaire-action>
+        <questionaire-action action="previous">Standalone Action 2</questionaire-action>
+    </questionaire-actions>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Make answers clickable
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.addEventListener('click', () => {
+                    if (answer.hasAttribute('selected')) {
+                        answer.removeAttribute('selected');
+                    } else {
+                        answer.setAttribute('selected', '');
+                    }
+                });
+            });
+            
+            // Debug logging
+            setTimeout(() => {
+                const question = document.querySelector('questionaire-question');
+                const actions = document.querySelector('questionaire-actions[slot="bottom"]');
+                
+                console.log('Question element:', question);
+                console.log('Actions element:', actions);
+                console.log('Actions slot attribute:', actions?.getAttribute('slot'));
+                console.log('Question shadow root:', question?.shadowRoot);
+                
+                if (question?.shadowRoot) {
+                    const bottomSlot = question.shadowRoot.querySelector('slot[name="bottom"]');
+                    console.log('Bottom slot in question:', bottomSlot);
+                    console.log('Assigned elements to bottom slot:', bottomSlot?.assignedElements());
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

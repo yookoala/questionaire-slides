@@ -27,19 +27,33 @@ export class QuestionaireQuestion extends LitElement {
   static styles = css`
     :host {
       display: block;
+      min-height: 200px; /* Ensure minimum height for grid layout */
     }
 
     .question-container {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      grid-template-areas: 
+        "content"
+        "bottom";
+      min-height: inherit;
+      gap: 1em;
+    }
+
+    .question-content {
+      grid-area: content;
       display: flex;
       flex-direction: column;
     }
 
-    .question-content {
-      flex: 1;
+    .question-bottom {
+      grid-area: bottom;
+      align-self: end;
     }
 
-    .question-bottom {
-      margin-top: auto;
+    /* Ensure the bottom slot content is visible */
+    ::slotted([slot="bottom"]) {
+      display: block !important;
     }
   `;
 
