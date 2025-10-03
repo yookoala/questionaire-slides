@@ -58,6 +58,7 @@ test('QuestionaireContainer should have required methods', () => {
     assertEquals(typeof instance.next, 'function', 'Should have next method');
     assertEquals(typeof instance.previous, 'function', 'Should have previous method');
     assertEquals(typeof instance.goToSlide, 'function', 'Should have goToSlide method');
+    assertEquals(typeof instance.getContents, 'function', 'Should have getContents method');
 });
 
 console.log(`\n=== QuestionaireQuestionAnswer Tests ===`);
@@ -163,6 +164,22 @@ test('QuestionaireQuestionContent should be a simple container', () => {
     
     // Content component should be simple and not have complex logic
     assertEquals(typeof instance.render, 'function', 'Should have render method from LitElement');
+});
+
+// Test 21: Container getContents method
+test('QuestionaireContainer should have getContents method', () => {
+    const instance = new QuestionaireContainer();
+    assertEquals(typeof instance.getContents, 'function', 'Should have getContents method');
+    
+    // For unit test, method should return empty string when not connected to DOM
+    assertEquals(instance.getContents(), '', 'Should return empty string when no content available');
+});
+
+// Test 22: Question component should have name attribute support
+test('QuestionaireQuestion should support name attribute', () => {
+    const instance = new QuestionaireQuestion();
+    assertEquals(typeof instance.name, 'string', 'Should have name property');
+    assertEquals(instance.name, '', 'Should default to empty string');
 });
 
 console.log(`\n=== Test Results ===`);
