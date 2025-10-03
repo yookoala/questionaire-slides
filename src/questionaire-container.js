@@ -156,6 +156,31 @@ export class QuestionaireContainer extends LitElement {
 
     return contentTexts.join('\n');
   }
+
+  /**
+   * Get aggregated values from all named questionaire-question elements
+   * Returns an object with question names as keys and question values as values
+   * Only includes questions with non-empty name attributes
+   */
+  get values() {
+    const slot = this.shadowRoot?.querySelector('slot');
+    if (!slot) return {};
+
+    const valuesObject = {};
+    const questions = slot.assignedElements();
+    
+    questions.forEach(question => {
+      if (question.tagName === 'QUESTIONAIRE-QUESTION') {
+        const name = question.getAttribute('name');
+        // Only include questions with non-empty name attributes
+        if (name && name.trim() !== '') {
+          valuesObject[name] = question.value;
+        }
+      }
+    });
+
+    return valuesObject;
+  }
 }
 
 customElements.define('questionaire-container', QuestionaireContainer);
