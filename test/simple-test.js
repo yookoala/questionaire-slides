@@ -182,6 +182,16 @@ test('QuestionaireQuestion should support name attribute', () => {
     assertEquals(instance.name, '', 'Should default to empty string');
 });
 
+// Test 23: Container values property
+test('QuestionaireContainer should have values property', () => {
+    const instance = new QuestionaireContainer();
+    assertEquals(typeof instance.values, 'object', 'Should have values property');
+    assertEquals(instance.values !== null, true, 'values should not be null');
+    
+    // For unit test, property should return empty object when not connected to DOM
+    assertEquals(JSON.stringify(instance.values), '{}', 'Should return empty object when no questions available');
+});
+
 console.log(`\n=== Test Results ===`);
 console.log(`Total: ${passed + failed}`);
 console.log(`Passed: ${passed}`);
