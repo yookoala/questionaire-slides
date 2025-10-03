@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionaire Container current() Method Example</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/question-validation-errors.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .example-section h3 {
+            margin-top: 0;
+        }
+        questionaire-container {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 3px solid #28a745;
+            border-radius: 8px;
+            background-color: white;
+            min-height: 400px;
+        }
+        questionaire-question {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background-color: white;
+        }
+        questionaire-question.current {
+            border-color: #ffc107;
+            background-color: #fff3cd;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+        questionaire-question-content {
+            display: block;
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        questionaire-question-answer {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        questionaire-question-answer:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        questionaire-question-answer[selected] {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+        button.primary {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        button.primary:hover {
+            background-color: #0056b3;
+        }
+        .info-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .navigation button {
+            font-size: 16px;
+            padding: 10px 20px;
+            margin: 0 10px;
+        }
+        .current-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #fff3cd;
+            padding: 15px;
+            border: 2px solid #ffc107;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .current-indicator .current-info {
+            font-weight: bold;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Container current() Method Example</h1>
+    
+    <div class="current-indicator">
+        <div class="current-info">Current Element:</div>
+        <div id="current-display">Loading...</div>
+    </div>
+    
+    <div class="example-section">
+        <h3>Complete Questionnaire with current() Method</h3>
+        <p>The current() method returns the currently focused/visible child element in the carousel. 
+           Navigate between questions to see how the current element changes.</p>
+        
+        <questionaire-container id="main-questionnaire">
+            <!-- Question 1: Demographics -->
+            <questionaire-question name="age_group" id="q1">
+                <questionaire-question-content>
+                    Demographics - Age Group
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    What is your age group?
+                </questionaire-question-content>
+                <questionaire-question-answer value="18-25">18-25 years old</questionaire-question-answer>
+                <questionaire-question-answer value="26-35">26-35 years old</questionaire-question-answer>
+                <questionaire-question-answer value="36-45">36-45 years old</questionaire-question-answer>
+                <questionaire-question-answer value="46+">46+ years old</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Question 2: Exercise Frequency -->
+            <questionaire-question name="exercise_frequency" id="q2" multiselect min-answer="1" max-answer="2">
+                <questionaire-question-content>
+                    Exercise Frequency Assessment
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    How often do you exercise per week? (Select 1-2 options)
+                </questionaire-question-content>
+                <questionaire-question-answer value="never">Never</questionaire-question-answer>
+                <questionaire-question-answer value="1-2">1-2 times per week</questionaire-question-answer>
+                <questionaire-question-answer value="3-4">3-4 times per week</questionaire-question-answer>
+                <questionaire-question-answer value="5+">5+ times per week</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Question 3: Diet Assessment -->
+            <questionaire-question name="diet_rating" id="q3">
+                <questionaire-question-content>
+                    Diet and Nutrition
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    How would you rate your current diet?
+                </questionaire-question-content>
+                <questionaire-question-answer value="poor">Poor - needs significant improvement</questionaire-question-answer>
+                <questionaire-question-answer value="fair">Fair - some improvements needed</questionaire-question-answer>
+                <questionaire-question-answer value="good">Good - mostly healthy choices</questionaire-question-answer>
+                <questionaire-question-answer value="excellent">Excellent - very balanced and healthy</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Question 4: Skills (Unconstrained Multi-select) -->
+            <questionaire-question name="skills" id="q4" multiselect>
+                <questionaire-question-content>
+                    Skills Assessment
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    What skills do you have? (Select any number)
+                </questionaire-question-content>
+                <questionaire-question-answer value="programming">Programming</questionaire-question-answer>
+                <questionaire-question-answer value="design">Design</questionaire-question-answer>
+                <questionaire-question-answer value="management">Management</questionaire-question-answer>
+                <questionaire-question-answer value="communication">Communication</questionaire-question-answer>
+            </questionaire-question>
+
+            <!-- Non-Question Element (for testing) -->
+            <div id="summary-div">
+                <h3>Summary</h3>
+                <p>Thank you for completing the questionnaire!</p>
+            </div>
+        </questionaire-container>
+    </div>
+
+    <div class="navigation">
+        <button onclick="previousQuestion()">← Previous</button>
+        <button onclick="nextQuestion()">Next →</button>
+        <span id="question-indicator">Question 1 of 5</span>
+    </div>
+
+    <div class="controls">
+        <h3>current() Method Testing</h3>
+        <button class="primary" onclick="getCurrentElement()">Get Current Element</button>
+        <button onclick="goToQuestion(0)">Go to Question 1</button>
+        <button onclick="goToQuestion(1)">Go to Question 2</button>
+        <button onclick="goToQuestion(2)">Go to Question 3</button>
+        <button onclick="goToQuestion(3)">Go to Question 4</button>
+        <button onclick="goToQuestion(4)">Go to Summary</button>
+        <button onclick="testCurrentElementProperties()">Test Current Element Properties</button>
+    </div>
+
+    <div class="info-panel" id="info">
+        Click "Get Current Element" to see the current() method result
+    </div>
+
+    <script>
+        let container;
+
+        function getCurrentElement() {
+            container = container || document.getElementById('main-questionnaire');
+            
+            let info = 'Container current() Method Result:\n\n';
+            
+            try {
+                const currentElement = container.current();
+                
+                if (currentElement) {
+                    info += `Current element found:\n`;
+                    info += `- Tag name: ${currentElement.tagName}\n`;
+                    info += `- ID: ${currentElement.id || 'none'}\n`;
+                    info += `- Name attribute: ${currentElement.getAttribute('name') || 'none'}\n`;
+                    info += `- Element type: ${currentElement.tagName === 'QUESTIONAIRE-QUESTION' ? 'Question' : 'Other'}\n`;
+                    
+                    if (currentElement.tagName === 'QUESTIONAIRE-QUESTION') {
+                        info += `- Multiselect: ${currentElement.hasAttribute('multiselect')}\n`;
+                        info += `- Current value: ${JSON.stringify(currentElement.value)}\n`;
+                        
+                        // Show validation status if it's a question
+                        try {
+                            currentElement.validate();
+                            info += `- Validation: ✓ Valid\n`;
+                        } catch (error) {
+                            info += `- Validation: ✗ Invalid (${error.constructor.name})\n`;
+                        }
+                    }
+                } else {
+                    info += 'Current element: null\n';
+                }
+                
+                // Show container state
+                info += `\nContainer state:\n`;
+                info += `- Current index: ${container.currentIndex}\n`;
+                info += `- Total slides: ${container.slideCount}\n`;
+                
+            } catch (error) {
+                info += `Error calling current(): ${error.message}\n`;
+            }
+            
+            document.getElementById('info').textContent = info;
+            updateCurrentDisplay();
+        }
+
+        function updateCurrentDisplay() {
+            container = container || document.getElementById('main-questionnaire');
+            const currentDisplay = document.getElementById('current-display');
+            
+            try {
+                const current = container.current();
+                if (current) {
+                    const name = current.getAttribute('name') || current.id || current.tagName;
+                    currentDisplay.textContent = name;
+                    
+                    // Highlight current element visually
+                    document.querySelectorAll('questionaire-question, div').forEach(el => {
+                        el.classList.remove('current');
+                    });
+                    current.classList.add('current');
+                } else {
+                    currentDisplay.textContent = 'None';
+                }
+            } catch (error) {
+                currentDisplay.textContent = 'Error';
+            }
+        }
+
+        function testCurrentElementProperties() {
+            container = container || document.getElementById('main-questionnaire');
+            
+            let info = 'Current Element Property Test:\n\n';
+            
+            try {
+                const current = container.current();
+                
+                if (current) {
+                    info += `Element properties and methods:\n`;
+                    
+                    // Test common properties
+                    info += `- tagName: ${current.tagName}\n`;
+                    info += `- id: ${current.id}\n`;
+                    info += `- className: "${current.className}"\n`;
+                    
+                    // Test question-specific properties if applicable
+                    if (current.tagName === 'QUESTIONAIRE-QUESTION') {
+                        info += `- name: ${current.name}\n`;
+                        info += `- multiselect: ${current.multiselect}\n`;
+                        info += `- value: ${JSON.stringify(current.value)}\n`;
+                        info += `- validate method: ${typeof current.validate}\n`;
+                    }
+                    
+                    // Test if it's a live element reference
+                    const originalId = current.id;
+                    current.id = 'test-modified-id';
+                    info += `\nLive reference test:\n`;
+                    info += `- Modified ID through current(): ${current.id}\n`;
+                    info += `- Element in DOM has same ID: ${document.getElementById('test-modified-id') === current}\n`;
+                    current.id = originalId; // Restore original ID
+                    
+                } else {
+                    info += 'No current element to test.\n';
+                }
+                
+            } catch (error) {
+                info += `Error testing current element: ${error.message}\n`;
+            }
+            
+            document.getElementById('info').textContent = info;
+        }
+
+        function goToQuestion(index) {
+            container = container || document.getElementById('main-questionnaire');
+            container.goToSlide(index);
+            updateQuestionIndicator();
+            updateCurrentDisplay();
+        }
+
+        function nextQuestion() {
+            container = container || document.getElementById('main-questionnaire');
+            container.next();
+            updateQuestionIndicator();
+            updateCurrentDisplay();
+        }
+
+        function previousQuestion() {
+            container = container || document.getElementById('main-questionnaire');
+            container.previous();
+            updateQuestionIndicator();
+            updateCurrentDisplay();
+        }
+
+        function updateQuestionIndicator() {
+            container = container || document.getElementById('main-questionnaire');
+            const indicator = document.getElementById('question-indicator');
+            indicator.textContent = `Question ${container.currentIndex + 1} of ${container.slideCount}`;
+        }
+
+        // Add click listeners to make answers selectable
+        document.addEventListener('DOMContentLoaded', () => {
+            container = document.getElementById('main-questionnaire');
+            
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.addEventListener('click', () => {
+                    // Toggle selection
+                    if (answer.hasAttribute('selected')) {
+                        answer.removeAttribute('selected');
+                    } else {
+                        answer.setAttribute('selected', '');
+                    }
+                });
+            });
+
+            // Listen for slide changes
+            container.addEventListener('slide-changed', (event) => {
+                updateQuestionIndicator();
+                updateCurrentDisplay();
+            });
+            
+            // Initial state
+            updateQuestionIndicator();
+            updateCurrentDisplay();
+            
+            // Show initial current element
+            setTimeout(() => {
+                getCurrentElement();
+            }, 100);
+        });
+    </script>
+</body>
+</html>

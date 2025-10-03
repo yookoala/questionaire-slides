@@ -385,4 +385,21 @@ Current status of TASKS.md after completing validation:
 🔄 **NEXT**: 
 8. **feature/question-container--current**: Implement `.current()` method for `<questionaire-container>`
 
+## Current Task: feature/question-container--current
+🔄 **IN PROGRESS**: Implement the `.current()` method for `<questionaire-container>`
+
+### Phase 1: Example and Test Creation ✅
+- Created `examples/container-current-example.html` - Interactive example showing current() method usage
+- Created `test/questionaire-container-current.test.html` - Comprehensive test suite for current() method
+- Tests cover: basic functionality, navigation updates, mixed content types, boundary conditions, live references
+- Examples demonstrate: current element tracking, visual highlighting, property testing, integration with navigation
+
+### Next Phase: Implementation
+- Implement `current()` method in existing `src/questionaire-container.js` component
+- Method should return the currently "focused" child element (the visible slide)
+- Should return null for empty containers
+- Should work with any child element type (questions, divs, etc.)
+- Should update correctly when navigation occurs
+- Should return live DOM element reference
+
 The questionnaire system now has comprehensive validation capabilities with custom error handling.
