@@ -14,7 +14,7 @@ This project is to build a set of web components that works together as a questi
 ## Components
 
 * `<questionaire-container>`
-  The outest component to container the whole questionaire.
+  The outest component to container the whole questionaire. It should act as a carousel of all the child element to only show one of them at a time.
 
 * `<questionaire-question>`
   The question-level, or "slide"-level, component to show a question and selectable answers. This question will have multiple answers available for selection. Questions can either be a single-selected or multiple-selected MC question.
@@ -34,7 +34,24 @@ This project is to build a set of web components that works together as a questi
   Each may container an optional "action" attribute. The value of the attribute can be "next" or "previous". If not specified, the attribute is treated as "next".
 
 
-## Example
+## Procedure for Each Step
+
+1. Create an example HTML.
+2. Create browser test around the example HTML.
+3. Draft summary of the changes so far.
+4. Commit to git.
+3. Implement the feature mentioned in the step.
+4. Draft summary of the changes so far.
+5. Commit to git.
+6. Check with test.
+7. If there is anything wrong with test result, modify src to fix it.
+8. Repeat 6 and 7 until all tests are fixed.
+9. Draft summary of the changes so far.
+10. Commit to git.
+11. Report to user. And then stop until user's next instructions.
+
+
+## Example of Final Outcome
 
 ```html
 <questionaire-container>
