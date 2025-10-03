@@ -65,6 +65,7 @@ test('QuestionaireContainer should have required methods', () => {
     assertEquals(typeof instance.previous, 'function', 'Should have previous method');
     assertEquals(typeof instance.goToSlide, 'function', 'Should have goToSlide method');
     assertEquals(typeof instance.getContents, 'function', 'Should have getContents method');
+    assertEquals(typeof instance.current, 'function', 'Should have current method');
 });
 
 console.log(`\n=== QuestionaireQuestionAnswer Tests ===`);
@@ -225,6 +226,15 @@ test('Error classes should extend properly', () => {
     assertEquals(notAnsweredError instanceof QuestionValidationError, true, 'QuestionNotAnsweredError should extend QuestionValidationError');
     assertEquals(tooFewError instanceof QuestionValidationError, true, 'QuestionAnsweredTooFewError should extend QuestionValidationError');
     assertEquals(tooMuchError instanceof QuestionValidationError, true, 'QuestionAnsweredTooMuchError should extend QuestionValidationError');
+});
+
+// Test 27: Container current method
+test('QuestionaireContainer should have current method', () => {
+    const instance = new QuestionaireContainer();
+    assertEquals(typeof instance.current, 'function', 'Should have current method');
+    
+    // For unit test, method should return null when not connected to DOM
+    assertEquals(instance.current(), null, 'Should return null when no elements available');
 });
 
 console.log(`\n=== Test Results ===`);
