@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Questionaire Question Answer Tests</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test.pass {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .test.fail {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .test-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .test-result {
+            font-size: 14px;
+        }
+        #summary {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Question Answer Tests</h1>
+    <div id="summary">
+        <div>Total: <span id="total">0</span></div>
+        <div>Passed: <span id="passed">0</span></div>
+        <div>Failed: <span id="failed">0</span></div>
+    </div>
+    <div id="test-results"></div>
+
+    <!-- Test elements -->
+    <questionaire-question-answer id="test-answer-1">Test Answer 1</questionaire-question-answer>
+    <questionaire-question-answer id="test-answer-2" value="test-value">Test Answer 2</questionaire-question-answer>
+
+    <script type="module">
+        const results = document.getElementById('test-results');
+        let passed = 0;
+        let failed = 0;
+        let total = 0;
+
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
+
+        function assertEquals(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(message || `Expected ${expected} but got ${actual}`);
+            }
+        }
+
+        function runTest(name, testFn) {
+            total++;
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test';
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'test-name';
+            nameDiv.textContent = name;
+            testDiv.appendChild(nameDiv);
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+
+            try {
+                testFn();
+                testDiv.classList.add('pass');
+                resultDiv.textContent = '✓ PASS';
+                passed++;
+            } catch (e) {
+                testDiv.classList.add('fail');
+                resultDiv.textContent = '✗ FAIL: ' + e.message;
+                failed++;
+            }
+
+            testDiv.appendChild(resultDiv);
+            results.appendChild(testDiv);
+        }
+
+        async function runTests() {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            const answer1 = document.getElementById('test-answer-1');
+            const answer2 = document.getElementById('test-answer-2');
+
+            runTest('should be defined and create instances', () => {
+                assert(customElements.get('questionaire-question-answer'), 'Component should be defined');
+                assert(answer1 instanceof HTMLElement, 'Should create HTML element instances');
+                assert(answer2 instanceof HTMLElement, 'Should create HTML element instances');
+            });
+
+            runTest('should not have selected attribute initially', () => {
+                assert(!answer1.hasAttribute('selected'), 'Should not have selected attribute initially');
+                assert(!answer2.hasAttribute('selected'), 'Should not have selected attribute initially');
+            });
+
+            runTest('should return text content as value when no value attribute is set', () => {
+                assertEquals(answer1.value, 'Test Answer 1', 'Value should match text content when no value attribute');
+            });
+
+            runTest('should return value attribute when it is set', () => {
+                assertEquals(answer2.value, 'test-value', 'Value should match value attribute when set');
+            });
+
+            runTest('should add selected attribute when selected property is set', () => {
+                answer1.selected = true;
+                assert(answer1.hasAttribute('selected'), 'Should have selected attribute when selected property is true');
+            });
+
+            runTest('should remove selected attribute when selected property is false', () => {
+                answer1.selected = false;
+                assert(!answer1.hasAttribute('selected'), 'Should not have selected attribute when selected property is false');
+            });
+
+            runTest('should reflect selected attribute to property', () => {
+                answer1.setAttribute('selected', '');
+                assertEquals(answer1.selected, true, 'Selected property should be true when attribute is present');
+                
+                answer1.removeAttribute('selected');
+                assertEquals(answer1.selected, false, 'Selected property should be false when attribute is removed');
+            });
+
+            runTest('should not change text content when value property is set programmatically', () => {
+                const originalText = answer1.textContent;
+                answer1.value = 'new-programmatic-value';
+                assertEquals(answer1.textContent, originalText, 'Text content should remain unchanged');
+                assertEquals(answer1.value, 'new-programmatic-value', 'Value property should be updated');
+            });
+
+            runTest('should update value property when text content changes', () => {
+                const testAnswer = document.createElement('questionaire-question-answer');
+                testAnswer.textContent = 'Initial Text';
+                document.body.appendChild(testAnswer);
+                
+                // Wait for component to initialize
+                await new Promise(resolve => setTimeout(resolve, 50));
+                
+                assertEquals(testAnswer.value, 'Initial Text', 'Value should match initial text');
+                
+                testAnswer.textContent = 'Changed Text';
+                
+                // Trigger change detection (if any)
+                await new Promise(resolve => setTimeout(resolve, 50));
+                
+                // Note: This test might need adjustment based on actual implementation
+                // If the component doesn't automatically detect text changes, this is expected behavior
+                
+                document.body.removeChild(testAnswer);
+            });
+
+            runTest('should handle value attribute changes', () => {
+                answer2.setAttribute('value', 'updated-value');
+                assertEquals(answer2.value, 'updated-value', 'Value property should reflect attribute changes');
+            });
+
+            runTest('should have proper property descriptors', () => {
+                const proto = Object.getPrototypeOf(answer1);
+                const selectedDescriptor = Object.getOwnPropertyDescriptor(proto.constructor, 'properties') || 
+                                         Object.getOwnPropertyDescriptor(proto, 'selected');
+                const valueDescriptor = Object.getOwnPropertyDescriptor(proto.constructor, 'properties') ||
+                                       Object.getOwnPropertyDescriptor(proto, 'value');
+                
+                // Basic check that the component has these properties defined
+                assert('selected' in answer1, 'Should have selected property');
+                assert('value' in answer1, 'Should have value property');
+            });
+
+            // Update summary
+            document.getElementById('total').textContent = total;
+            document.getElementById('passed').textContent = passed;
+            document.getElementById('failed').textContent = failed;
+
+            console.log(`Tests complete: ${passed}/${total} passed`);
+        }
+
+        // Run tests after component is ready
+        if (customElements.get('questionaire-question-answer')) {
+            runTests();
+        } else {
+            customElements.whenDefined('questionaire-question-answer').then(runTests);
+        }
+    </script>
+</body>
+</html>

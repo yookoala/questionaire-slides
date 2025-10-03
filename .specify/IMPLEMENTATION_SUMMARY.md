@@ -120,6 +120,18 @@ Open `examples/carousel-example.html` in a web browser to see the component in a
 ✅ Uses Web Components standard
 ✅ Fully tested and documented
 
+## Current Work in Progress
+🔧 **feature/answer**: Implement `<questionaire-question-answer>` element
+
+### Progress Update
+1. ✅ Created example HTML (`examples/answer-example.html`)
+2. ✅ Created browser test (`test/questionaire-question-answer.test.html`)
+3. 🔧 **Next**: Draft summary and commit, then implement the component
+
+### Files Added for Answer Component
+- `examples/answer-example.html` - Interactive example showing expected behavior
+- `test/questionaire-question-answer.test.html` - Comprehensive test suite
+
 ## Next Steps
 
-As per TASKS.md, no further action is required for this task. The carousel feature is complete and ready for the next instruction.
+Ready to commit the preparation work and then implement the `<questionaire-question-answer>` component as per TASKS.md.

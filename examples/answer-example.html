@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionaire Question Answer Example</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .example-section h3 {
+            margin-top: 0;
+        }
+        questionaire-question-answer {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        questionaire-question-answer:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        questionaire-question-answer[selected] {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+        .info-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Question Answer Example</h1>
+    
+    <div class="example-section">
+        <h3>Basic Answer Options</h3>
+        <p>Click on the answer options below to select them:</p>
+        
+        <questionaire-question-answer id="answer1">
+            Never
+        </questionaire-question-answer>
+        
+        <questionaire-question-answer id="answer2" value="year">
+            Once or more per year
+        </questionaire-question-answer>
+        
+        <questionaire-question-answer id="answer3" value="month">
+            Once or more per month
+        </questionaire-question-answer>
+        
+        <questionaire-question-answer id="answer4" value="week">
+            Once or more per week
+        </questionaire-question-answer>
+    </div>
+
+    <div class="controls">
+        <h3>Controls</h3>
+        <button onclick="selectAnswer('answer1')">Select Answer 1</button>
+        <button onclick="selectAnswer('answer2')">Select Answer 2</button>
+        <button onclick="selectAnswer('answer3')">Select Answer 3</button>
+        <button onclick="selectAnswer('answer4')">Select Answer 4</button>
+        <button onclick="clearSelections()">Clear All</button>
+        <button onclick="updateInfo()">Update Info</button>
+    </div>
+
+    <div class="info-panel" id="info">
+        Click "Update Info" to see current state
+    </div>
+
+    <div class="example-section">
+        <h3>Programmatic Value Setting</h3>
+        <p>This demonstrates how programmatically setting the value attribute doesn't affect the display text:</p>
+        
+        <questionaire-question-answer id="testAnswer">
+            Original Text Content
+        </questionaire-question-answer>
+        
+        <div class="controls">
+            <button onclick="setValueProgrammatically()">Set value="programmatic" (text unchanged)</button>
+            <button onclick="changeTextContent()">Change text content to "New Text"</button>
+            <button onclick="showCurrentState()">Show Current State</button>
+        </div>
+        
+        <div class="info-panel" id="testInfo">
+            Current state will be shown here
+        </div>
+    </div>
+
+    <script>
+        function selectAnswer(id) {
+            // Clear all selections first
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.removeAttribute('selected');
+            });
+            
+            // Select the specified answer
+            const answer = document.getElementById(id);
+            answer.setAttribute('selected', '');
+        }
+
+        function clearSelections() {
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.removeAttribute('selected');
+            });
+            updateInfo();
+        }
+
+        function updateInfo() {
+            const answers = document.querySelectorAll('#answer1, #answer2, #answer3, #answer4');
+            let info = 'Current State:\n\n';
+            
+            answers.forEach((answer, index) => {
+                const isSelected = answer.hasAttribute('selected');
+                const value = answer.value;
+                const textContent = answer.textContent.trim();
+                
+                info += `Answer ${index + 1}:\n`;
+                info += `  Selected: ${isSelected}\n`;
+                info += `  Value: "${value}"\n`;
+                info += `  Text: "${textContent}"\n\n`;
+            });
+            
+            document.getElementById('info').textContent = info;
+        }
+
+        function setValueProgrammatically() {
+            const testAnswer = document.getElementById('testAnswer');
+            testAnswer.value = 'programmatic';
+            showCurrentState();
+        }
+
+        function changeTextContent() {
+            const testAnswer = document.getElementById('testAnswer');
+            testAnswer.textContent = 'New Text';
+            showCurrentState();
+        }
+
+        function showCurrentState() {
+            const testAnswer = document.getElementById('testAnswer');
+            let info = 'Test Answer State:\n\n';
+            info += `Value property: "${testAnswer.value}"\n`;
+            info += `Value attribute: "${testAnswer.getAttribute('value') || 'null'}"\n`;
+            info += `Text content: "${testAnswer.textContent.trim()}"\n`;
+            info += `Selected: ${testAnswer.hasAttribute('selected')}`;
+            
+            document.getElementById('testInfo').textContent = info;
+        }
+
+        // Add click listeners to make answers selectable
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.addEventListener('click', () => {
+                    // Toggle selection
+                    if (answer.hasAttribute('selected')) {
+                        answer.removeAttribute('selected');
+                    } else {
+                        answer.setAttribute('selected', '');
+                    }
+                    updateInfo();
+                });
+            });
+            
+            // Initial info update
+            updateInfo();
+            showCurrentState();
+        });
+    </script>
+</body>
+</html>
