@@ -3,6 +3,12 @@ import { QuestionaireContainer } from '../src/questionaire-container.js';
 import { QuestionaireQuestionAnswer } from '../src/questionaire-question-answer.js';
 import { QuestionaireQuestion } from '../src/questionaire-question.js';
 import { QuestionaireQuestionContent } from '../src/questionaire-question-content.js';
+import { 
+  QuestionValidationError, 
+  QuestionNotAnsweredError, 
+  QuestionAnsweredTooFewError, 
+  QuestionAnsweredTooMuchError 
+} from '../src/question-validation-errors.js';
 
 console.log('Testing questionaire components...\n');
 
@@ -190,6 +196,35 @@ test('QuestionaireContainer should have values property', () => {
     
     // For unit test, property should return empty object when not connected to DOM
     assertEquals(JSON.stringify(instance.values), '{}', 'Should return empty object when no questions available');
+});
+
+// Test 24: Question validation error classes
+test('Question validation error classes should be defined', () => {
+    assertEquals(typeof QuestionValidationError, 'function', 'QuestionValidationError should be defined');
+    assertEquals(typeof QuestionNotAnsweredError, 'function', 'QuestionNotAnsweredError should be defined');
+    assertEquals(typeof QuestionAnsweredTooFewError, 'function', 'QuestionAnsweredTooFewError should be defined');
+    assertEquals(typeof QuestionAnsweredTooMuchError, 'function', 'QuestionAnsweredTooMuchError should be defined');
+});
+
+// Test 25: Question should have validate method and constraint properties
+test('QuestionaireQuestion should have validation features', () => {
+    const instance = new QuestionaireQuestion();
+    assertEquals(typeof instance.validate, 'function', 'Should have validate method');
+    assertEquals(typeof instance.minAnswer, 'undefined', 'Should have minAnswer property');
+    assertEquals(typeof instance.maxAnswer, 'undefined', 'Should have maxAnswer property');
+});
+
+// Test 26: Error class hierarchy
+test('Error classes should extend properly', () => {
+    const baseError = new QuestionValidationError('test');
+    const notAnsweredError = new QuestionNotAnsweredError();
+    const tooFewError = new QuestionAnsweredTooFewError('test', 2);
+    const tooMuchError = new QuestionAnsweredTooMuchError('test', 3);
+
+    assertEquals(baseError instanceof Error, true, 'QuestionValidationError should extend Error');
+    assertEquals(notAnsweredError instanceof QuestionValidationError, true, 'QuestionNotAnsweredError should extend QuestionValidationError');
+    assertEquals(tooFewError instanceof QuestionValidationError, true, 'QuestionAnsweredTooFewError should extend QuestionValidationError');
+    assertEquals(tooMuchError instanceof QuestionValidationError, true, 'QuestionAnsweredTooMuchError should extend QuestionValidationError');
 });
 
 console.log(`\n=== Test Results ===`);

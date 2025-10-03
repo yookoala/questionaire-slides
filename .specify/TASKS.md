@@ -9,7 +9,7 @@ Steps to implement the applicaiton.
 `<questionaire-question-answer>` and `<questionaire-question-content>` in it.
 - [x] feature/question-container--getcontents: Implement the `<questionaire-container>` getContents method.
 - [x] feature/question-container--values: Implement the `<questionaire-container>` values readonly property.
-- [ ] feature/question--validate: Implement the `.validate()` method for `<questionaire-question>`, along with all the custom error classes.
+- [x] feature/question--validate: Implement the `.validate()` method for `<questionaire-question>`, along with all the custom error classes.
 - [ ] feature/question-container--current: Implement the `.current()` method for `<questionaire-container>`
 - [ ] feature/question-container--next-validate: Update the `.next()` method for `<questionaire-container>` to implement the validation logics.
 
