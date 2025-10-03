@@ -28,6 +28,19 @@ export class QuestionaireQuestion extends LitElement {
     :host {
       display: block;
     }
+
+    .question-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .question-content {
+      flex: 1;
+    }
+
+    .question-bottom {
+      margin-top: auto;
+    }
   `;
 
   constructor() {
@@ -93,7 +106,16 @@ export class QuestionaireQuestion extends LitElement {
   }
 
   render() {
-    return html`<slot @slotchange=${this._handleSlotChange}></slot>`;
+    return html`
+      <div class="question-container">
+        <div class="question-content">
+          <slot @slotchange=${this._handleSlotChange}></slot>
+        </div>
+        <div class="question-bottom">
+          <slot name="bottom"></slot>
+        </div>
+      </div>
+    `;
   }
 
   /**
@@ -178,7 +200,7 @@ export class QuestionaireQuestion extends LitElement {
    * Get all questionaire-question-answer elements in this question
    */
   _getAnswerElements() {
-    const slot = this.shadowRoot?.querySelector('slot');
+    const slot = this.shadowRoot?.querySelector('slot:not([name])');
     if (!slot) return [];
     
     return slot.assignedElements().filter(element => 
