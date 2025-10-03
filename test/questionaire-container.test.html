@@ -2,9 +2,57 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <title>Questionaire Container Tests</title>
     <script type="module" src="../src/questionaire-container.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test.pass {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .test.fail {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .test-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .test-result {
+            font-size: 14px;
+        }
+        #summary {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
+    <h1>Questionaire Container Tests</h1>
+    <div id="summary">
+        <div>Total: <span id="total">0</span></div>
+        <div>Passed: <span id="passed">0</span></div>
+        <div>Failed: <span id="failed">0</span></div>
+    </div>
+    <div id="test-results"></div>
+
     <questionaire-container id="test-container">
         <div id="slide1">Slide 1</div>
         <div id="slide2">Slide 2</div>
@@ -12,73 +60,129 @@
     </questionaire-container>
 
     <script type="module">
-        import { expect } from '@esm-bundle/chai';
+        const results = document.getElementById('test-results');
+        let passed = 0;
+        let failed = 0;
+        let total = 0;
 
-        describe('questionaire-container', () => {
-            let container;
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
 
-            beforeEach(() => {
-                container = document.getElementById('test-container');
-            });
+        function assertEquals(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(message || `Expected ${expected} but got ${actual}`);
+            }
+        }
 
-            it('should display only the first slide initially', async () => {
-                await container.updateComplete;
+        function runTest(name, testFn) {
+            total++;
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test';
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'test-name';
+            nameDiv.textContent = name;
+            testDiv.appendChild(nameDiv);
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+
+            try {
+                testFn();
+                testDiv.classList.add('pass');
+                resultDiv.textContent = '✓ PASS';
+                passed++;
+            } catch (e) {
+                testDiv.classList.add('fail');
+                resultDiv.textContent = '✗ FAIL: ' + e.message;
+                failed++;
+            }
+
+            testDiv.appendChild(resultDiv);
+            results.appendChild(testDiv);
+        }
+
+        async function runTests() {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            const container = document.getElementById('test-container');
+
+            runTest('should display only the first slide initially', () => {
                 const slides = container.children;
-                expect(slides[0].style.display).to.not.equal('none');
-                expect(slides[1].style.display).to.equal('none');
-                expect(slides[2].style.display).to.equal('none');
+                assertEquals(slides[0].style.display, 'block', 'First slide should be visible');
+                assertEquals(slides[1].style.display, 'none', 'Second slide should be hidden');
+                assertEquals(slides[2].style.display, 'none', 'Third slide should be hidden');
             });
 
-            it('should have currentIndex of 0 initially', () => {
-                expect(container.currentIndex).to.equal(0);
+            runTest('should have currentIndex of 0 initially', () => {
+                assertEquals(container.currentIndex, 0, 'Initial index should be 0');
             });
 
-            it('should move to next slide when next() is called', async () => {
+            runTest('should move to next slide when next() is called', () => {
                 container.next();
-                await container.updateComplete;
-                expect(container.currentIndex).to.equal(1);
+                assertEquals(container.currentIndex, 1, 'Index should be 1 after next()');
                 const slides = container.children;
-                expect(slides[0].style.display).to.equal('none');
-                expect(slides[1].style.display).to.not.equal('none');
-                expect(slides[2].style.display).to.equal('none');
+                assertEquals(slides[0].style.display, 'none', 'First slide should be hidden');
+                assertEquals(slides[1].style.display, 'block', 'Second slide should be visible');
+                assertEquals(slides[2].style.display, 'none', 'Third slide should be hidden');
             });
 
-            it('should move to previous slide when previous() is called', async () => {
-                container.next();
-                await container.updateComplete;
+            runTest('should move to previous slide when previous() is called', () => {
                 container.previous();
-                await container.updateComplete;
-                expect(container.currentIndex).to.equal(0);
+                assertEquals(container.currentIndex, 0, 'Index should be 0 after previous()');
             });
 
-            it('should not go below index 0 when previous() is called at first slide', async () => {
+            runTest('should not go below index 0 when previous() is called at first slide', () => {
                 container.previous();
-                await container.updateComplete;
-                expect(container.currentIndex).to.equal(0);
+                assertEquals(container.currentIndex, 0, 'Index should stay at 0');
             });
 
-            it('should not go beyond last slide when next() is called at last slide', async () => {
+            runTest('should not go beyond last slide when next() is called at last slide', () => {
                 container.next();
                 container.next();
                 container.next(); // Try to go beyond
-                await container.updateComplete;
-                expect(container.currentIndex).to.equal(2);
+                assertEquals(container.currentIndex, 2, 'Index should stay at 2');
             });
 
-            it('should emit slide-changed event when slide changes', (done) => {
+            runTest('should emit slide-changed event when slide changes', () => {
+                let eventFired = false;
+                let eventIndex = -1;
+                
                 container.addEventListener('slide-changed', (e) => {
-                    expect(e.detail.index).to.equal(1);
-                    done();
-                });
-                container.next();
+                    eventFired = true;
+                    eventIndex = e.detail.index;
+                }, { once: true });
+                
+                container.previous();
+                assert(eventFired, 'Event should be fired');
+                assertEquals(eventIndex, 1, 'Event should contain correct index');
             });
 
-            it('should go to specific slide with goToSlide()', async () => {
+            runTest('should go to specific slide with goToSlide()', () => {
                 container.goToSlide(2);
-                await container.updateComplete;
-                expect(container.currentIndex).to.equal(2);
+                assertEquals(container.currentIndex, 2, 'Index should be 2 after goToSlide(2)');
             });
-        });
+
+            runTest('slideCount should return correct number of slides', () => {
+                assertEquals(container.slideCount, 3, 'Should have 3 slides');
+            });
+
+            // Update summary
+            document.getElementById('total').textContent = total;
+            document.getElementById('passed').textContent = passed;
+            document.getElementById('failed').textContent = failed;
+
+            console.log(`Tests complete: ${passed}/${total} passed`);
+        }
+
+        // Run tests after component is ready
+        if (customElements.get('questionaire-container')) {
+            runTests();
+        } else {
+            customElements.whenDefined('questionaire-container').then(runTests);
+        }
     </script>
 </body>
 </html>
