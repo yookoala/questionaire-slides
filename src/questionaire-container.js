@@ -17,6 +17,7 @@ export class QuestionaireContainer extends LitElement {
       overflow: hidden;
       width: 100%;
       height: auto;
+      box-sizing: border-box;
     }
 
     .container {
