@@ -181,6 +181,25 @@ export class QuestionaireContainer extends LitElement {
 
     return valuesObject;
   }
+
+  /**
+   * Get the currently focused child element
+   * Returns the child element at the current index, or null if no elements
+   */
+  current() {
+    const slot = this.shadowRoot?.querySelector('slot');
+    if (!slot) return null;
+
+    const children = slot.assignedElements();
+    if (children.length === 0) return null;
+
+    // Return the element at the current index
+    if (this.currentIndex >= 0 && this.currentIndex < children.length) {
+      return children[this.currentIndex];
+    }
+
+    return null;
+  }
 }
 
 customElements.define('questionaire-container', QuestionaireContainer);
