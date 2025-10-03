@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Questionaire Container next() Validation Tests</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/question-validation-errors.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test.pass {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .test.fail {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .test-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .test-result {
+            font-size: 14px;
+        }
+        #summary {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-elements {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Container next() Validation Tests</h1>
+    <div id="summary">
+        <div>Total: <span id="total">0</span></div>
+        <div>Passed: <span id="passed">0</span></div>
+        <div>Failed: <span id="failed">0</span></div>
+    </div>
+    <div id="test-results"></div>
+
+    <!-- Test elements (hidden) -->
+    <div class="test-elements">
+        <!-- Test container 1: Valid single-select question -->
+        <questionaire-container id="test-container-1">
+            <questionaire-question name="q1">
+                <questionaire-question-content>Valid Question</questionaire-question-content>
+                <questionaire-question-answer value="valid" selected>Valid Answer</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="q2">
+                <questionaire-question-content>Second Question</questionaire-question-content>
+                <questionaire-question-answer value="second">Second Answer</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 2: Invalid single-select question -->
+        <questionaire-container id="test-container-2">
+            <questionaire-question name="invalid-q">
+                <questionaire-question-content>Invalid Question (no selection)</questionaire-question-content>
+                <questionaire-question-answer value="option1">Option 1</questionaire-question-answer>
+                <questionaire-question-answer value="option2">Option 2</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="next-q">
+                <questionaire-question-content>Next Question</questionaire-question-content>
+                <questionaire-question-answer value="next">Next Answer</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 3: Multi-select with constraints -->
+        <questionaire-container id="test-container-3">
+            <questionaire-question name="multi-valid" multiselect min-answer="2" max-answer="3">
+                <questionaire-question-content>Multi-select Question</questionaire-question-content>
+                <questionaire-question-answer value="m1" selected>Multi 1</questionaire-question-answer>
+                <questionaire-question-answer value="m2" selected>Multi 2</questionaire-question-answer>
+                <questionaire-question-answer value="m3">Multi 3</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="after-multi">
+                <questionaire-question-content>After Multi</questionaire-question-content>
+                <questionaire-question-answer value="after">After Answer</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 4: Multi-select invalid (too few) -->
+        <questionaire-container id="test-container-4">
+            <questionaire-question name="multi-invalid" multiselect min-answer="2">
+                <questionaire-question-content>Multi-select Too Few</questionaire-question-content>
+                <questionaire-question-answer value="only1" selected>Only One Selected</questionaire-question-answer>
+                <questionaire-question-answer value="unselected2">Unselected 2</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="should-not-reach">
+                <questionaire-question-content>Should Not Reach</questionaire-question-content>
+                <questionaire-question-answer value="unreachable">Unreachable</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 5: Non-question elements -->
+        <questionaire-container id="test-container-5">
+            <div id="non-question-div">This is not a question</div>
+            <questionaire-question name="after-div">
+                <questionaire-question-content>After Div</questionaire-question-content>
+                <questionaire-question-answer value="after-div">After Div Answer</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 6: Mixed valid/invalid sequence -->
+        <questionaire-container id="test-container-6">
+            <questionaire-question name="first-valid">
+                <questionaire-question-content>First Valid</questionaire-question-content>
+                <questionaire-question-answer value="first" selected>First Answer</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="second-invalid">
+                <questionaire-question-content>Second Invalid</questionaire-question-content>
+                <questionaire-question-answer value="second">Second Answer (not selected)</questionaire-question-answer>
+            </questionaire-question>
+            <questionaire-question name="third-question">
+                <questionaire-question-content>Third Question</questionaire-question-content>
+                <questionaire-question-answer value="third">Third Answer</questionaire-question-answer>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 7: Empty container -->
+        <questionaire-container id="test-container-7">
+        </questionaire-container>
+    </div>
+
+    <script type="module">
+        const results = document.getElementById('test-results');
+        let passed = 0;
+        let failed = 0;
+        let total = 0;
+
+        // Import error classes for testing
+        const { QuestionValidationError, QuestionNotAnsweredError, QuestionAnsweredTooFewError, QuestionAnsweredTooMuchError } = window;
+
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
+
+        function assertEquals(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(message || `Expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
+            }
+        }
+
+        function assertThrows(fn, expectedErrorType, message) {
+            try {
+                fn();
+                throw new Error(message || `Expected ${expectedErrorType?.name || 'error'} to be thrown`);
+            } catch (error) {
+                if (expectedErrorType && !(error instanceof expectedErrorType)) {
+                    throw new Error(message || `Expected ${expectedErrorType.name} but got ${error.constructor.name}`);
+                }
+                // If no specific error type expected, just verify an error was thrown
+            }
+        }
+
+        function runTest(name, testFn) {
+            total++;
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test';
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'test-name';
+            nameDiv.textContent = name;
+            testDiv.appendChild(nameDiv);
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+
+            try {
+                testFn();
+                testDiv.classList.add('pass');
+                resultDiv.textContent = '✓ PASS';
+                passed++;
+            } catch (e) {
+                testDiv.classList.add('fail');
+                resultDiv.textContent = '✗ FAIL: ' + e.message;
+                failed++;
+            }
+
+            testDiv.appendChild(resultDiv);
+            results.appendChild(testDiv);
+        }
+
+        async function runTests() {
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            const container1 = document.getElementById('test-container-1');
+            const container2 = document.getElementById('test-container-2');
+            const container3 = document.getElementById('test-container-3');
+            const container4 = document.getElementById('test-container-4');
+            const container5 = document.getElementById('test-container-5');
+            const container6 = document.getElementById('test-container-6');
+            const container7 = document.getElementById('test-container-7');
+
+            runTest('next() should navigate when current question is valid', () => {
+                // Container 1 has a valid question (answer selected)
+                container1.goToSlide(0);
+                const initialIndex = container1.currentIndex;
+                
+                // Should navigate successfully
+                container1.next();
+                assertEquals(container1.currentIndex, initialIndex + 1, 'Should navigate to next slide');
+            });
+
+            runTest('next() should throw error when current question is invalid', () => {
+                // Container 2 has an invalid question (no answer selected)
+                container2.goToSlide(0);
+                const initialIndex = container2.currentIndex;
+                
+                assertThrows(
+                    () => container2.next(),
+                    QuestionNotAnsweredError,
+                    'Should throw QuestionNotAnsweredError for invalid question'
+                );
+                
+                // Should not have navigated
+                assertEquals(container2.currentIndex, initialIndex, 'Should not navigate when validation fails');
+            });
+
+            runTest('next() should work with valid multi-select questions', () => {
+                // Container 3 has a valid multi-select question (2 answers selected, within min=2, max=3)
+                container3.goToSlide(0);
+                const initialIndex = container3.currentIndex;
+                
+                container3.next();
+                assertEquals(container3.currentIndex, initialIndex + 1, 'Should navigate from valid multi-select');
+            });
+
+            runTest('next() should throw error for multi-select with too few answers', () => {
+                // Container 4 has invalid multi-select (only 1 selected, min=2)
+                container4.goToSlide(0);
+                const initialIndex = container4.currentIndex;
+                
+                assertThrows(
+                    () => container4.next(),
+                    QuestionAnsweredTooFewError,
+                    'Should throw QuestionAnsweredTooFewError for too few selections'
+                );
+                
+                assertEquals(container4.currentIndex, initialIndex, 'Should not navigate with too few selections');
+            });
+
+            runTest('next() should work with non-question elements', () => {
+                // Container 5 starts with a div (non-question element)
+                container5.goToSlide(0);
+                const initialIndex = container5.currentIndex;
+                
+                // Should navigate without validation (div has no validate method)
+                container5.next();
+                assertEquals(container5.currentIndex, initialIndex + 1, 'Should navigate from non-question element');
+            });
+
+            runTest('next() should validate only when element has validate method', () => {
+                // Test that only elements with validate method are validated
+                container5.goToSlide(0); // Start at div
+                const current = container5.current();
+                
+                assert(current.tagName !== 'QUESTIONAIRE-QUESTION', 'Should be on non-question element');
+                assert(typeof current.validate === 'undefined', 'Non-question should not have validate method');
+                
+                // Should navigate without error
+                container5.next();
+            });
+
+            runTest('next() should work correctly in sequence', () => {
+                // Container 6: valid -> invalid -> unreachable
+                container6.goToSlide(0);
+                
+                // First question is valid, should navigate
+                container6.next();
+                assertEquals(container6.currentIndex, 1, 'Should navigate from valid first question');
+                
+                // Second question is invalid, should not navigate
+                const beforeInvalid = container6.currentIndex;
+                assertThrows(() => container6.next(), QuestionNotAnsweredError);
+                assertEquals(container6.currentIndex, beforeInvalid, 'Should not navigate from invalid second question');
+            });
+
+            runTest('next() should handle boundary conditions', () => {
+                // Test at last slide
+                container1.goToSlide(container1.slideCount - 1);
+                const lastIndex = container1.currentIndex;
+                
+                // Should not navigate beyond last slide, even if current is valid
+                container1.next();
+                assertEquals(container1.currentIndex, lastIndex, 'Should not navigate beyond last slide');
+            });
+
+            runTest('next() should handle empty container', () => {
+                // Empty container should not cause errors
+                const initialIndex = container7.currentIndex;
+                container7.next();
+                assertEquals(container7.currentIndex, initialIndex, 'Empty container should not change index');
+            });
+
+            runTest('next() should preserve existing functionality', () => {
+                // Verify that enhanced next() doesn't break existing navigation features
+                assert(typeof container1.previous === 'function', 'previous method should still exist');
+                assert(typeof container1.goToSlide === 'function', 'goToSlide method should still exist');
+                assert(typeof container1.current === 'function', 'current method should still exist');
+                
+                // Test that other navigation methods still work
+                container1.goToSlide(0);
+                container1.previous(); // Should not validate
+                container1.goToSlide(1); // Should not validate
+                
+                // Test that slide-changed events are still dispatched
+                let eventFired = false;
+                const eventHandler = () => { eventFired = true; };
+                container1.addEventListener('slide-changed', eventHandler);
+                
+                // Navigate using valid question
+                container1.goToSlide(0);
+                container1.next();
+                
+                assert(eventFired, 'slide-changed event should still be dispatched');
+                container1.removeEventListener('slide-changed', eventHandler);
+            });
+
+            runTest('validation errors should contain proper information', () => {
+                // Test that validation errors have proper error types and messages
+                container2.goToSlide(0);
+                
+                try {
+                    container2.next();
+                    assert(false, 'Should have thrown an error');
+                } catch (error) {
+                    assert(error instanceof QuestionNotAnsweredError, 'Should be QuestionNotAnsweredError');
+                    assert(error.message.includes('selected'), 'Error message should mention selection requirement');
+                }
+                
+                container4.goToSlide(0);
+                
+                try {
+                    container4.next();
+                    assert(false, 'Should have thrown an error');
+                } catch (error) {
+                    assert(error instanceof QuestionAnsweredTooFewError, 'Should be QuestionAnsweredTooFewError');
+                    assert(error.message.includes('2'), 'Error message should mention required number');
+                }
+            });
+
+            runTest('next() should work with dynamically changed validation state', () => {
+                // Start with invalid question
+                container2.goToSlide(0);
+                
+                // Should fail initially
+                assertThrows(() => container2.next(), QuestionNotAnsweredError);
+                
+                // Make question valid by selecting an answer
+                const answer = container2.current().querySelector('questionaire-question-answer');
+                answer.setAttribute('selected', '');
+                
+                // Should now succeed
+                const beforeValid = container2.currentIndex;
+                container2.next();
+                assertEquals(container2.currentIndex, beforeValid + 1, 'Should navigate after making question valid');
+            });
+
+            // Update summary
+            document.getElementById('total').textContent = total;
+            document.getElementById('passed').textContent = passed;
+            document.getElementById('failed').textContent = failed;
+
+            console.log(`Tests complete: ${passed}/${total} passed`);
+        }
+
+        // Run tests after all components are ready
+        Promise.all([
+            customElements.whenDefined('questionaire-container'),
+            customElements.whenDefined('questionaire-question'),
+            customElements.whenDefined('questionaire-question-content'),
+            customElements.whenDefined('questionaire-question-answer')
+        ]).then(runTests);
+    </script>
+</body>
+</html>

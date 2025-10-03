@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionaire Container next() with Validation Example</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/question-validation-errors.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .example-section h3 {
+            margin-top: 0;
+        }
+        questionaire-container {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 3px solid #28a745;
+            border-radius: 8px;
+            background-color: white;
+            min-height: 400px;
+        }
+        questionaire-question {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background-color: white;
+        }
+        questionaire-question.valid {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        questionaire-question.invalid {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        questionaire-question-content {
+            display: block;
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        questionaire-question-answer {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        questionaire-question-answer:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        questionaire-question-answer[selected] {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+        button.primary {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        button.primary:hover {
+            background-color: #0056b3;
+        }
+        button.danger {
+            background-color: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+        button.danger:hover {
+            background-color: #c82333;
+        }
+        .info-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        .error-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        .success-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .navigation button {
+            font-size: 16px;
+            padding: 10px 20px;
+            margin: 0 10px;
+        }
+        .constraint-info {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        .validation-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 300px;
+        }
+        .status-current {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .status-validation {
+            font-size: 14px;
+        }
+        .non-question {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #6c757d;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Container next() with Validation Example</h1>
+    
+    <div class="validation-status">
+        <div class="status-current">Current: <span id="current-display">Loading...</span></div>
+        <div class="status-validation">Status: <span id="validation-display">Unknown</span></div>
+    </div>
+    
+    <div class="example-section">
+        <h3>Questionnaire with Validation on Navigation</h3>
+        <p>The enhanced next() method validates the current question before allowing navigation. 
+           Try navigating with valid and invalid answers to see the behavior.</p>
+        
+        <questionaire-container id="validation-survey">
+            <!-- Question 1: Required Single-Select -->
+            <questionaire-question name="age_group" id="q1">
+                <questionaire-question-content>
+                    Demographics - Age Group (Required)
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    What is your age group?
+                </questionaire-question-content>
+                <questionaire-question-answer value="18-25">18-25 years old</questionaire-question-answer>
+                <questionaire-question-answer value="26-35">26-35 years old</questionaire-question-answer>
+                <questionaire-question-answer value="36-45">36-45 years old</questionaire-question-answer>
+                <questionaire-question-answer value="46+">46+ years old</questionaire-question-answer>
+                <div class="constraint-info">Validation: Must select an answer</div>
+            </questionaire-question>
+
+            <!-- Question 2: Multi-Select with Constraints -->
+            <questionaire-question name="exercise_types" id="q2" multiselect min-answer="2" max-answer="3">
+                <questionaire-question-content>
+                    Exercise Types (Constrained Multi-Select)
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    What types of exercise do you enjoy? (Select 2-3 options)
+                </questionaire-question-content>
+                <questionaire-question-answer value="cardio">Cardio (running, cycling, swimming)</questionaire-question-answer>
+                <questionaire-question-answer value="strength">Strength training</questionaire-question-answer>
+                <questionaire-question-answer value="flexibility">Flexibility/Yoga</questionaire-question-answer>
+                <questionaire-question-answer value="sports">Team sports</questionaire-question-answer>
+                <questionaire-question-answer value="outdoor">Outdoor activities</questionaire-question-answer>
+                <div class="constraint-info">Validation: Must select 2-3 answers</div>
+            </questionaire-question>
+
+            <!-- Question 3: Optional Multi-Select -->
+            <questionaire-question name="skills" id="q3" multiselect>
+                <questionaire-question-content>
+                    Skills Assessment (Optional)
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    What skills do you have? (Select any number)
+                </questionaire-question-content>
+                <questionaire-question-answer value="programming">Programming</questionaire-question-answer>
+                <questionaire-question-answer value="design">Design</questionaire-question-answer>
+                <questionaire-question-answer value="management">Management</questionaire-question-answer>
+                <questionaire-question-answer value="communication">Communication</questionaire-question-answer>
+                <div class="constraint-info">Validation: Always valid (no constraints)</div>
+            </questionaire-question>
+
+            <!-- Non-Question Element (no validation) -->
+            <div id="transition-page" class="non-question">
+                <h3>Transition Page</h3>
+                <p>This is not a question, so no validation is performed.</p>
+                <p>Navigation should proceed normally from here.</p>
+            </div>
+
+            <!-- Question 4: Required Single-Select -->
+            <questionaire-question name="satisfaction" id="q4">
+                <questionaire-question-content>
+                    Overall Satisfaction (Required)
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    How satisfied are you with this questionnaire system?
+                </questionaire-question-content>
+                <questionaire-question-answer value="very-dissatisfied">Very Dissatisfied</questionaire-question-answer>
+                <questionaire-question-answer value="dissatisfied">Dissatisfied</questionaire-question-answer>
+                <questionaire-question-answer value="neutral">Neutral</questionaire-question-answer>
+                <questionaire-question-answer value="satisfied">Satisfied</questionaire-question-answer>
+                <questionaire-question-answer value="very-satisfied">Very Satisfied</questionaire-question-answer>
+                <div class="constraint-info">Validation: Must select an answer</div>
+            </questionaire-question>
+
+            <!-- Final Summary -->
+            <div id="summary-page" class="non-question">
+                <h3>Survey Complete!</h3>
+                <p>Thank you for completing the questionnaire.</p>
+                <p>All questions have been validated successfully.</p>
+            </div>
+        </questionaire-container>
+    </div>
+
+    <div class="navigation">
+        <button onclick="previousQuestion()">← Previous</button>
+        <button onclick="nextQuestion()" class="primary">Next (with Validation) →</button>
+        <button onclick="nextWithoutValidation()" class="danger">Next (Skip Validation)</button>
+        <span id="question-indicator">Question 1 of 6</span>
+    </div>
+
+    <div class="controls">
+        <h3>Validation Testing</h3>
+        <button onclick="validateCurrent()">Validate Current Question</button>
+        <button onclick="clearCurrentAnswers()">Clear Current Answers</button>
+        <button onclick="setValidAnswers()">Set Valid Answers</button>
+        <button onclick="setInvalidAnswers()">Set Invalid Answers</button>
+        <button onclick="goToQuestion(0)">Go to Question 1</button>
+        <button onclick="goToQuestion(1)">Go to Question 2</button>
+        <button onclick="resetSurvey()">Reset All</button>
+    </div>
+
+    <div id="result-panel"></div>
+
+    <script>
+        let container;
+
+        function nextQuestion() {
+            container = container || document.getElementById('validation-survey');
+            const resultPanel = document.getElementById('result-panel');
+            
+            try {
+                // This will use the enhanced next() method with validation
+                container.next();
+                
+                resultPanel.innerHTML = `
+                    <div class="success-panel">
+                        <strong>✓ Navigation Successful</strong><br>
+                        Validation passed and moved to next question.
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultPanel.innerHTML = `
+                    <div class="error-panel">
+                        <strong>✗ Navigation Blocked</strong><br>
+                        <strong>Error Type:</strong> ${error.constructor.name}<br>
+                        <strong>Message:</strong> ${error.message}<br>
+                        <em>Please fix validation errors before proceeding.</em>
+                    </div>
+                `;
+            }
+            
+            updateQuestionIndicator();
+            updateValidationStatus();
+        }
+
+        function nextWithoutValidation() {
+            // This demonstrates the difference between validated and non-validated navigation
+            container = container || document.getElementById('validation-survey');
+            const resultPanel = document.getElementById('result-panel');
+            
+            // Get current state before navigation
+            const currentIndex = container.currentIndex;
+            const slideCount = container.slideCount;
+            
+            if (currentIndex < slideCount - 1) {
+                // Manually navigate without validation (simulate old behavior)
+                container.goToSlide(currentIndex + 1);
+                
+                resultPanel.innerHTML = `
+                    <div class="info-panel">
+                        <strong>→ Navigation Without Validation</strong><br>
+                        Moved to next slide without checking validation.<br>
+                        <em>This bypasses the enhanced next() method validation.</em>
+                    </div>
+                `;
+            } else {
+                resultPanel.innerHTML = `
+                    <div class="info-panel">
+                        Already at the last slide.
+                    </div>
+                `;
+            }
+            
+            updateQuestionIndicator();
+            updateValidationStatus();
+        }
+
+        function previousQuestion() {
+            container = container || document.getElementById('validation-survey');
+            container.previous();
+            updateQuestionIndicator();
+            updateValidationStatus();
+            
+            document.getElementById('result-panel').innerHTML = `
+                <div class="info-panel">Previous navigation (no validation required)</div>
+            `;
+        }
+
+        function validateCurrent() {
+            container = container || document.getElementById('validation-survey');
+            const current = container.current();
+            const resultPanel = document.getElementById('result-panel');
+            
+            if (current && current.tagName === 'QUESTIONAIRE-QUESTION') {
+                try {
+                    current.validate();
+                    resultPanel.innerHTML = `
+                        <div class="success-panel">
+                            <strong>✓ Current Question Valid</strong><br>
+                            Question "${current.getAttribute('name')}" passes validation.
+                        </div>
+                    `;
+                    current.classList.remove('invalid');
+                    current.classList.add('valid');
+                } catch (error) {
+                    resultPanel.innerHTML = `
+                        <div class="error-panel">
+                            <strong>✗ Current Question Invalid</strong><br>
+                            <strong>Error:</strong> ${error.constructor.name}<br>
+                            <strong>Message:</strong> ${error.message}
+                        </div>
+                    `;
+                    current.classList.remove('valid');
+                    current.classList.add('invalid');
+                }
+            } else {
+                resultPanel.innerHTML = `
+                    <div class="info-panel">
+                        Current element is not a question, no validation needed.
+                    </div>
+                `;
+            }
+            
+            updateValidationStatus();
+        }
+
+        function clearCurrentAnswers() {
+            container = container || document.getElementById('validation-survey');
+            const current = container.current();
+            
+            if (current && current.tagName === 'QUESTIONAIRE-QUESTION') {
+                current.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                    answer.removeAttribute('selected');
+                });
+                
+                current.classList.remove('valid', 'invalid');
+                
+                document.getElementById('result-panel').innerHTML = `
+                    <div class="info-panel">Cleared answers for current question.</div>
+                `;
+            }
+            
+            updateValidationStatus();
+        }
+
+        function setValidAnswers() {
+            container = container || document.getElementById('validation-survey');
+            const current = container.current();
+            
+            if (current && current.tagName === 'QUESTIONAIRE-QUESTION') {
+                const answers = current.querySelectorAll('questionaire-question-answer');
+                
+                // Clear existing selections
+                answers.forEach(answer => answer.removeAttribute('selected'));
+                
+                if (current.hasAttribute('multiselect')) {
+                    const minAnswer = current.getAttribute('min-answer');
+                    const maxAnswer = current.getAttribute('max-answer');
+                    
+                    // Select appropriate number for multi-select
+                    let selectCount = Math.max(1, parseInt(minAnswer) || 1);
+                    if (maxAnswer) {
+                        selectCount = Math.min(selectCount, parseInt(maxAnswer));
+                    }
+                    
+                    for (let i = 0; i < selectCount && i < answers.length; i++) {
+                        answers[i].setAttribute('selected', '');
+                    }
+                } else {
+                    // Select first answer for single-select
+                    if (answers[0]) answers[0].setAttribute('selected', '');
+                }
+                
+                current.classList.remove('invalid');
+                current.classList.add('valid');
+                
+                document.getElementById('result-panel').innerHTML = `
+                    <div class="success-panel">Set valid answers for current question.</div>
+                `;
+            }
+            
+            updateValidationStatus();
+        }
+
+        function setInvalidAnswers() {
+            container = container || document.getElementById('validation-survey');
+            const current = container.current();
+            
+            if (current && current.tagName === 'QUESTIONAIRE-QUESTION') {
+                const answers = current.querySelectorAll('questionaire-question-answer');
+                
+                // Clear existing selections
+                answers.forEach(answer => answer.removeAttribute('selected'));
+                
+                if (current.hasAttribute('multiselect')) {
+                    const minAnswer = parseInt(current.getAttribute('min-answer')) || 0;
+                    const maxAnswer = parseInt(current.getAttribute('max-answer'));
+                    
+                    if (minAnswer > 0) {
+                        // Select too few (less than minimum)
+                        // Don't select any to violate minimum requirement
+                    } else if (maxAnswer) {
+                        // Select too many (more than maximum)
+                        for (let i = 0; i <= maxAnswer && i < answers.length; i++) {
+                            answers[i].setAttribute('selected', '');
+                        }
+                    }
+                }
+                // For single-select, leaving empty will be invalid
+                
+                current.classList.remove('valid');
+                current.classList.add('invalid');
+                
+                document.getElementById('result-panel').innerHTML = `
+                    <div class="error-panel">Set invalid answers for current question.</div>
+                `;
+            }
+            
+            updateValidationStatus();
+        }
+
+        function goToQuestion(index) {
+            container = container || document.getElementById('validation-survey');
+            container.goToSlide(index);
+            updateQuestionIndicator();
+            updateValidationStatus();
+            
+            document.getElementById('result-panel').innerHTML = `
+                <div class="info-panel">Navigated directly to slide ${index + 1} (no validation)</div>
+            `;
+        }
+
+        function resetSurvey() {
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.removeAttribute('selected');
+            });
+            
+            document.querySelectorAll('questionaire-question').forEach(q => {
+                q.classList.remove('valid', 'invalid');
+            });
+            
+            goToQuestion(0);
+            
+            document.getElementById('result-panel').innerHTML = `
+                <div class="info-panel">Survey reset to beginning.</div>
+            `;
+        }
+
+        function updateQuestionIndicator() {
+            container = container || document.getElementById('validation-survey');
+            const indicator = document.getElementById('question-indicator');
+            indicator.textContent = `Question ${container.currentIndex + 1} of ${container.slideCount}`;
+        }
+
+        function updateValidationStatus() {
+            container = container || document.getElementById('validation-survey');
+            const current = container.current();
+            const currentDisplay = document.getElementById('current-display');
+            const validationDisplay = document.getElementById('validation-display');
+            
+            if (current) {
+                if (current.tagName === 'QUESTIONAIRE-QUESTION') {
+                    const name = current.getAttribute('name') || current.id;
+                    currentDisplay.textContent = name;
+                    
+                    try {
+                        current.validate();
+                        validationDisplay.textContent = '✓ Valid';
+                        validationDisplay.style.color = '#155724';
+                    } catch (error) {
+                        validationDisplay.textContent = `✗ ${error.constructor.name}`;
+                        validationDisplay.style.color = '#721c24';
+                    }
+                } else {
+                    currentDisplay.textContent = current.id || 'Non-question element';
+                    validationDisplay.textContent = 'N/A (not a question)';
+                    validationDisplay.style.color = '#6c757d';
+                }
+            } else {
+                currentDisplay.textContent = 'None';
+                validationDisplay.textContent = 'N/A';
+                validationDisplay.style.color = '#6c757d';
+            }
+        }
+
+        // Add click listeners to make answers selectable
+        document.addEventListener('DOMContentLoaded', () => {
+            container = document.getElementById('validation-survey');
+            
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.addEventListener('click', () => {
+                    // Toggle selection
+                    if (answer.hasAttribute('selected')) {
+                        answer.removeAttribute('selected');
+                    } else {
+                        answer.setAttribute('selected', '');
+                    }
+                    
+                    // Reset validation state when selections change
+                    const question = answer.closest('questionaire-question');
+                    if (question) {
+                        question.classList.remove('valid', 'invalid');
+                    }
+                    
+                    updateValidationStatus();
+                });
+            });
+
+            // Listen for slide changes
+            container.addEventListener('slide-changed', (event) => {
+                updateQuestionIndicator();
+                updateValidationStatus();
+            });
+            
+            // Initial state
+            updateQuestionIndicator();
+            updateValidationStatus();
+        });
+    </script>
+</body>
+</html>

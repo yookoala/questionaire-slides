@@ -428,6 +428,22 @@ Current status of TASKS.md after completing current() method:
 🔄 **NEXT**: 
 9. **feature/question-container--next-validate**: Update `.next()` method for `<questionaire-container>` to implement validation logics
 
+## Current Task: feature/question-container--next-validate
+🔄 **IN PROGRESS**: Update the `.next()` method for `<questionaire-container>` to implement the validation logics
+
+### Phase 1: Example and Test Creation ✅
+- Created `examples/container-next-validate-example.html` - Interactive example showing enhanced next() with validation
+- Created `test/questionaire-container-next-validate.test.html` - Comprehensive test suite for validation logic
+- Tests cover: valid/invalid questions, multi-select constraints, non-question elements, boundary conditions, error handling
+- Examples demonstrate: validation blocking navigation, error messages, bypass options, different question types
+
+### Next Phase: Implementation
+- Update existing `next()` method in `src/questionaire-container.js` component
+- Add validation logic: if current item has `.validate()` method, call it before navigation
+- If validation fails, throw error and refuse to navigate
+- If validation passes or no validate method, proceed with normal navigation
+- Preserve all existing functionality and event dispatching
+
 The questionnaire system now has comprehensive navigation with current element tracking and validation capabilities.
 
 The questionnaire system now has comprehensive validation capabilities with custom error handling.
