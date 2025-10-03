@@ -13,12 +13,12 @@ export class QuestionaireActions extends LitElement {
     }
 
     .actions-container {
-      display: flex;
-      flex-direction: row;
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: max-content;
       gap: 1em;
       align-items: center;
-      justify-content: flex-start;
-      flex-wrap: wrap;
+      justify-content: start;
     }
 
     /* When used with slot="bottom", ensure it's positioned at the bottom */
@@ -35,8 +35,10 @@ export class QuestionaireActions extends LitElement {
     /* Responsive behavior for very small screens */
     @media (max-width: 480px) {
       .actions-container {
-        flex-direction: column;
+        grid-auto-flow: row;
+        grid-auto-columns: unset;
         gap: 0.5em;
+        justify-content: center;
       }
       
       .actions-container ::slotted(questionaire-action) {

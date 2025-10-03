@@ -20,14 +20,13 @@ export class QuestionaireContainer extends LitElement {
     }
 
     .container {
-      display: flex;
-      width: 100%;
+      display: grid;
       height: 100%;
       transition: transform 0.3s ease-in-out;
+      /* Grid template columns will be set dynamically via inline styles */
     }
 
     ::slotted(*) {
-      flex: 0 0 100%;
       width: 100%;
       box-sizing: border-box;
     }
@@ -61,9 +60,27 @@ export class QuestionaireContainer extends LitElement {
     const container = this.shadowRoot.querySelector('.container');
     if (!container) return;
 
-    // Calculate the transform position based on current index
-    const translateX = -this.currentIndex * 100;
-    container.style.transform = `translateX(${translateX}%)`;
+    const slot = this.shadowRoot.querySelector('slot');
+    const children = slot ? slot.assignedElements() : [];
+    const childCount = children.length;
+
+    if (childCount > 0) {
+      // Set grid template columns dynamically based on number of children
+      const gridColumns = Array(childCount).fill('1fr').join(' ');
+      container.style.gridTemplateColumns = gridColumns;
+      
+      // Set container width to accommodate all children
+      container.style.width = `${childCount * 100}%`;
+      
+      // Calculate the transform position based on current index
+      const translateX = -this.currentIndex * (100 / childCount);
+      container.style.transform = `translateX(${translateX}%)`;
+    } else {
+      // Handle empty container
+      container.style.gridTemplateColumns = '1fr';
+      container.style.width = '100%';
+      container.style.transform = 'translateX(0%)';
+    }
   }
 
   /**

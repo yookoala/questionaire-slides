@@ -42,8 +42,9 @@ export class QuestionaireQuestion extends LitElement {
 
     .question-content {
       grid-area: content;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-auto-flow: row;
+      gap: 0.5em;
     }
 
     .question-bottom {
