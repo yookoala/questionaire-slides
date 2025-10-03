@@ -20,6 +20,12 @@ This project is to build a set of web components that works together as a questi
 
   Each of this element have a readonly `values` property. Everytime when read, it should aggregate all the children `<questionaire-question>` elements that has a non-empty "name" attribute / property set. It will build, sequencially by element order, a key-value object with "name" as the keys and the `<questionaire-question>`'s `.value` property evaluation result as the values, and then return the just built object.
 
+  This element has a `.current()` method that will return the currently "focused" child element (there should be only 1).
+
+  This element has a `.previous()` method that will scroll the inner container to show the previous child element.
+
+  This element has a `.next()` method that will validate the current item (if applicable). If the current item has a method `.validate()`, it will call the method. If the item is not valid, then it should throw an error and refuse to probagate. If valid, scroll the inner container to show the next item.
+
 * `<questionaire-question>`
   The question-level, or "slide"-level, component to show a question and selectable answers. This question will have multiple answers available for selection. Questions can either be a single-selected or multiple-selected MC question.
 
@@ -32,6 +38,20 @@ This project is to build a set of web components that works together as a questi
     - In "mult-selected mode", the "value" property will return an array of string from all "value" property of the selected answers. If none is selected, then it should return an empty array.
 
     - In "single-selected mode", the "value" property will return the string from the only selected answer, or the global `undefined` object if none is selected.
+
+  Each of this element may have a "min-answer" and "max-answer" attribute / property. These 2 attribute / property are only valid if this element is in "multi-selected mode". They must be of numerical values. If not, raise error on render.
+
+  Each of this element have a `.valdiate()` method, which raise error with proper validation message if the element is not valid. Customized error class must be implemented.
+  
+    - In "single-selected mode", the method will check if the `.value` property evaluates to `undefined` or not. If it is `undefined`, then the validation fails and `.validate()` will raise an `QuestionNotAnsweredError()` with the message string "A value must be selected".
+
+    - In "multi-selected mode", the method will check "min-answer" and "max-answer" for validation criterias.
+    
+    If the number of selected answers is less than "min-answer", `.validate()` should raise `QuestionAnsweredTooFewError` with the message "You must at lease select {num} answer(s)".
+
+    If the number of selected answers is more than "max-answer", `.validate()` should raise `QuestionAnsweredTooMuchError` with the message "You must select no more than {num} answer(s)".
+
+  All custom error classes must extends the custom `QuestionValidationError`, which extends javascript's own `Error` class.
 
 * `<questionaire-question-content>`
   Each `<questionaire-question>` will contain multiple of this. This is for showing the question text or other HTML element to display the question with.
