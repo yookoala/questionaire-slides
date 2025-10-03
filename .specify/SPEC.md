@@ -65,14 +65,26 @@ This project is to build a set of web components that works together as a questi
 
   When a `<questionaire-question-answer>` is seleted, the answer is liable to find the closest `<questionaire-question>` parent element, dispatch a "question:changed" custom event on the parent with `.detail.element` set to the answer element.
 
+  When a `<questionaire-question-answer>` is seleted, the answer is liable to find the closest `<questionaire-container>` parent element, dispatch a "container:changed" custom event on the parent with `.detail.element` set to the answer element.
+
   When a `<questionaire-question-answer>` is seleted, the answer is liable to check the "single-selected" or "multi-selected" mode of the closest `<questionaire-question>` parent element, if exists. It should unselect all `<questionaire-question-answer>` in the same `<questionaire-question>` parent before selecting itself.
 
 * `<questionaire-action>`
   Button-like element to simplify implementation of navigations in `<questionaire-container>`.
-  
+
   Each of these element an optional "action" attribute. The value of the attribute can be "next" or "previous". If not specified, the attribute is treated as "next".
 
+  Each of these element has an optional "disabled" attribute / property. If the attribute "disabled" exists (i.e. the property "disabled" is `true`), then the element is set to "disabled" state until programmatically set otherwise.
+
   If this element is clicked, it fill find the closest parent `<questionaire-container>` element and then apply the action specified to the element ("next" or "previous").
+
+  When initialized, the `<questionaire-action>` element that is with `action="next"` (which is the default) will look for the closest parent `<questionaire-container>` current slide. If it has a `.validate()` method, it will check the validation result. And if error is raised, then the `<questionaire-action>` is automatically set, internally, to "invalid" state. This "invalid" state is stored independent from the "disabled" attribute / property.
+
+  The element is shown grey-out and does not react to click either if:
+   - it is internally set to "invalid" state; or
+   - it is explicitly set to "disabled" by attribute or property.
+
+  `<questionaire-action>` will listen to the closest parent `<questionaire-container>` element for "container:changed" event, and then re-evaluate the "invalid" state.
 
 * `<questionaire-actions>`
   Each `<questionaire-question>` may contain one of this.
