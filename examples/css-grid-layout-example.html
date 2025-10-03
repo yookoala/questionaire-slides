@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Grid Layout Fix Example</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/questionaire-action.js"></script>
+    <script type="module" src="../src/questionaire-actions.js"></script>
+    <script type="module" src="../src/question-validation-errors.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .example-section h3 {
+            margin-top: 0;
+        }
+        questionaire-container {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 3px solid #28a745;
+            border-radius: 8px;
+            background-color: white;
+            min-height: 400px;
+        }
+        questionaire-question {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background-color: white;
+        }
+        questionaire-question-content {
+            display: block;
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        questionaire-question-answer {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        questionaire-question-answer:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        questionaire-question-answer[selected] {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+        .info-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        .action-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #fff3cd;
+            padding: 15px;
+            border: 2px solid #ffc107;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 300px;
+        }
+        .action-info .current-slide {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .testing-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        .demo-element {
+            background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            padding: 20px;
+            margin: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Grid Layout Fix Example</h1>
+    
+    <div class="action-info">
+        <div class="current-slide">Current Slide: <span id="slide-display">1</span></div>
+        <div>Total Slides: <span id="total-display">5</span></div>
+        <div>Layout: <span id="layout-display">CSS Grid</span></div>
+    </div>
+    
+    <div class="example-section">
+        <h3>CSS Grid Container Layout</h3>
+        <p>The container now uses CSS Grid instead of Flexbox for better layout control and to prevent padding issues.</p>
+        
+        <questionaire-container id="grid-survey">
+            <!-- Question 1 -->
+            <questionaire-question name="grid_test1" id="q1">
+                <questionaire-question-content>
+                    Grid Layout Test 1
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    This question tests the new CSS Grid layout system.
+                </questionaire-question-content>
+                <questionaire-question-answer value="option1">Option 1 with extra padding</questionaire-question-answer>
+                <questionaire-question-answer value="option2">Option 2</questionaire-question-answer>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action>Next</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+
+            <!-- Question 2 -->
+            <questionaire-question name="grid_test2" id="q2">
+                <questionaire-question-content>
+                    Grid Layout Test 2
+                </questionaire-question-content>
+                <questionaire-question-answer value="a">Answer A</questionaire-question-answer>
+                <questionaire-question-answer value="b">Answer B</questionaire-question-answer>
+                <questionaire-question-answer value="c">Answer C</questionaire-question-answer>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action action="previous">Previous</questionaire-action>
+                    <questionaire-action>Next</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+
+            <!-- Demo Element 1 -->
+            <div class="demo-element">
+                Demo Element 1
+                <br>
+                <small>This element has different padding to test grid layout</small>
+            </div>
+
+            <!-- Demo Element 2 -->
+            <div class="demo-element" style="padding: 40px;">
+                Demo Element 2
+                <br>
+                <small>This element has extra padding: 40px</small>
+            </div>
+
+            <!-- Demo Element 3 -->
+            <div class="demo-element" style="padding: 5px 60px;">
+                Demo Element 3
+                <br>
+                <small>This element has different padding: 5px 60px</small>
+            </div>
+        </questionaire-container>
+    </div>
+
+    <div class="testing-section">
+        <h3>Layout Testing</h3>
+        <p>Test that the CSS Grid layout handles elements with different padding correctly:</p>
+        
+        <div style="margin: 15px 0;">
+            <strong>Container with 2 elements:</strong><br>
+            <questionaire-container id="test-2-elements" style="border: 1px dashed #ccc; min-height: 200px;">
+                <div class="demo-element">Element 1</div>
+                <div class="demo-element" style="padding: 30px;">Element 2 (extra padding)</div>
+            </questionaire-container>
+        </div>
+        
+        <div style="margin: 15px 0;">
+            <strong>Container with 3 elements:</strong><br>
+            <questionaire-container id="test-3-elements" style="border: 1px dashed #ccc; min-height: 200px;">
+                <div class="demo-element">Element A</div>
+                <div class="demo-element" style="padding: 10px 50px;">Element B (wide padding)</div>
+                <div class="demo-element" style="padding: 25px;">Element C (extra padding)</div>
+            </questionaire-container>
+        </div>
+        
+        <div style="margin: 15px 0;">
+            <strong>Container with 4 elements:</strong><br>
+            <questionaire-container id="test-4-elements" style="border: 1px dashed #ccc; min-height: 200px;">
+                <div class="demo-element">Element 1</div>
+                <div class="demo-element" style="padding: 15px;">Element 2</div>
+                <div class="demo-element" style="padding: 5px 40px;">Element 3</div>
+                <div class="demo-element" style="padding: 35px 10px;">Element 4</div>
+            </questionaire-container>
+        </div>
+    </div>
+
+    <div class="controls">
+        <h3>Manual Controls</h3>
+        <button onclick="goToSlide(0)">Go to Question 1</button>
+        <button onclick="goToSlide(1)">Go to Question 2</button>
+        <button onclick="goToSlide(2)">Go to Demo 1</button>
+        <button onclick="goToSlide(3)">Go to Demo 2</button>
+        <button onclick="goToSlide(4)">Go to Demo 3</button>
+        <button onclick="showLayoutInfo()">Show Layout Info</button>
+        <button onclick="testDynamicGrid()">Test Dynamic Grid</button>
+    </div>
+
+    <div id="result-panel" class="info-panel">
+        CSS Grid layout prevents padding issues that occur with Flexbox.
+        Navigate between slides to test the new grid-based container.
+    </div>
+
+    <script>
+        let container;
+
+        function updateDisplay() {
+            container = container || document.getElementById('grid-survey');
+            
+            const slideDisplay = document.getElementById('slide-display');
+            const totalDisplay = document.getElementById('total-display');
+            
+            slideDisplay.textContent = container.currentIndex + 1;
+            totalDisplay.textContent = container.slideCount;
+        }
+
+        function goToSlide(index) {
+            container = container || document.getElementById('grid-survey');
+            container.goToSlide(index);
+            updateDisplay();
+            
+            const resultPanel = document.getElementById('result-panel');
+            resultPanel.innerHTML = `Navigated to slide ${index + 1}`;
+        }
+
+        function showLayoutInfo() {
+            container = container || document.getElementById('grid-survey');
+            const resultPanel = document.getElementById('result-panel');
+            
+            // Get the shadow root container element
+            const shadowContainer = container.shadowRoot?.querySelector('.container');
+            const computedStyle = shadowContainer ? getComputedStyle(shadowContainer) : null;
+            
+            resultPanel.innerHTML = `
+                <strong>Layout Information:</strong><br>
+                Total slides: ${container.slideCount}<br>
+                Current index: ${container.currentIndex}<br>
+                Container display: ${computedStyle?.display || 'unknown'}<br>
+                Grid template columns: ${computedStyle?.gridTemplateColumns || 'unknown'}<br>
+                Container transform: ${computedStyle?.transform || 'unknown'}<br>
+                Container width: ${shadowContainer?.style.width || 'unknown'}
+            `;
+        }
+
+        function testDynamicGrid() {
+            // Test containers with different numbers of elements
+            const containers = [
+                document.getElementById('test-2-elements'),
+                document.getElementById('test-3-elements'), 
+                document.getElementById('test-4-elements')
+            ];
+            
+            const resultPanel = document.getElementById('result-panel');
+            let results = '<strong>Dynamic Grid Test Results:</strong><br>';
+            
+            containers.forEach((cont, i) => {
+                const shadowContainer = cont?.shadowRoot?.querySelector('.container');
+                const computedStyle = shadowContainer ? getComputedStyle(shadowContainer) : null;
+                const expectedColumns = cont ? cont.children.length : 0;
+                
+                results += `Container ${i + 1}: ${expectedColumns} elements<br>`;
+                results += `  Grid columns: ${computedStyle?.gridTemplateColumns || 'unknown'}<br>`;
+                results += `  Width: ${shadowContainer?.style.width || 'unknown'}<br><br>`;
+            });
+            
+            resultPanel.innerHTML = results;
+        }
+
+        // Add click listeners to make answers selectable
+        document.addEventListener('DOMContentLoaded', () => {
+            container = document.getElementById('grid-survey');
+            
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.addEventListener('click', () => {
+                    // Toggle selection
+                    if (answer.hasAttribute('selected')) {
+                        answer.removeAttribute('selected');
+                    } else {
+                        answer.setAttribute('selected', '');
+                    }
+                });
+            });
+
+            // Listen for slide changes to update display
+            container.addEventListener('slide-changed', (event) => {
+                updateDisplay();
+            });
+            
+            // Listen for action clicks
+            document.addEventListener('click', (event) => {
+                if (event.target.tagName === 'QUESTIONAIRE-ACTION') {
+                    const action = event.target.getAttribute('action') || 'next';
+                    
+                    const resultPanel = document.getElementById('result-panel');
+                    resultPanel.innerHTML = `
+                        <strong>Action Button Used:</strong><br>
+                        Action: ${action}<br>
+                        Button Text: "${event.target.textContent.trim()}"<br>
+                        CSS Grid layout maintains proper positioning regardless of element padding.
+                    `;
+                }
+            });
+            
+            // Initial state
+            updateDisplay();
+        });
+    </script>
+</body>
+</html>

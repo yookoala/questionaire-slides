@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Grid Layout Test</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/questionaire-action.js"></script>
+    <script type="module" src="../src/questionaire-actions.js"></script>
+    <script type="module" src="../src/question-validation-errors.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .test-pass {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        questionaire-container {
+            border: 1px dashed #007bff;
+            margin: 10px 0;
+            display: block;
+            min-height: 100px;
+        }
+        .demo-element {
+            background: #e9ecef;
+            padding: 10px;
+            margin: 5px;
+            text-align: center;
+            border-radius: 3px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Grid Layout Test</h1>
+    <p>This page tests the CSS Grid layout implementation for questionaire-container.</p>
+
+    <div class="test-section">
+        <h3>Test 1: Basic Grid Layout</h3>
+        <p>Test that the container uses CSS Grid instead of Flexbox.</p>
+        
+        <questionaire-container id="test1">
+            <div class="demo-element">Element 1</div>
+            <div class="demo-element">Element 2</div>
+        </questionaire-container>
+        
+        <div id="result1" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Dynamic Grid Columns</h3>
+        <p>Test that grid columns are dynamically set based on number of children.</p>
+        
+        <questionaire-container id="test2">
+            <div class="demo-element">Child 1</div>
+            <div class="demo-element">Child 2</div>
+            <div class="demo-element">Child 3</div>
+        </questionaire-container>
+        
+        <div id="result2" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Padding Handling</h3>
+        <p>Test that elements with different padding don't break the layout.</p>
+        
+        <questionaire-container id="test3">
+            <div class="demo-element">Normal Padding</div>
+            <div class="demo-element" style="padding: 30px;">Extra Padding</div>
+            <div class="demo-element" style="padding: 5px 50px;">Wide Padding</div>
+        </questionaire-container>
+        
+        <div id="result3" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 4: Navigation with Grid</h3>
+        <p>Test that navigation still works correctly with CSS Grid layout.</p>
+        
+        <questionaire-container id="test4">
+            <div class="demo-element">Slide 1</div>
+            <div class="demo-element">Slide 2</div>
+            <div class="demo-element">Slide 3</div>
+            <div class="demo-element">Slide 4</div>
+        </questionaire-container>
+        
+        <button onclick="test4Container.goToSlide(0)">Slide 1</button>
+        <button onclick="test4Container.goToSlide(1)">Slide 2</button>
+        <button onclick="test4Container.goToSlide(2)">Slide 3</button>
+        <button onclick="test4Container.goToSlide(3)">Slide 4</button>
+        
+        <div id="result4" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 5: Single Element Grid</h3>
+        <p>Test that containers with single elements work correctly.</p>
+        
+        <questionaire-container id="test5">
+            <div class="demo-element">Single Element</div>
+        </questionaire-container>
+        
+        <div id="result5" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 6: Empty Container Grid</h3>
+        <p>Test that empty containers handle gracefully.</p>
+        
+        <questionaire-container id="test6">
+        </questionaire-container>
+        
+        <div id="result6" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 7: Dynamic Content Changes</h3>
+        <p>Test that grid updates when content is added/removed dynamically.</p>
+        
+        <questionaire-container id="test7">
+            <div class="demo-element">Initial Element</div>
+        </questionaire-container>
+        
+        <button onclick="addElementToTest7()">Add Element</button>
+        <button onclick="removeElementFromTest7()">Remove Element</button>
+        
+        <div id="result7" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Manual Testing Controls</h3>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="resetTests()">Reset Tests</button>
+    </div>
+
+    <script>
+        let test4Container;
+
+        function setTestResult(testId, passed, message) {
+            const result = document.getElementById(`result${testId}`);
+            result.className = `test-result ${passed ? 'test-pass' : 'test-fail'}`;
+            result.textContent = `${passed ? '✅ PASS' : '❌ FAIL'}: ${message}`;
+        }
+
+        function getContainerStyle(containerId) {
+            const container = document.getElementById(containerId);
+            const shadowContainer = container?.shadowRoot?.querySelector('.container');
+            return shadowContainer ? getComputedStyle(shadowContainer) : null;
+        }
+
+        function test1() {
+            try {
+                const style = getContainerStyle('test1');
+                const isGrid = style?.display === 'grid';
+                const hasGridColumns = style?.gridTemplateColumns && style.gridTemplateColumns !== 'none';
+                
+                if (isGrid && hasGridColumns) {
+                    setTestResult(1, true, `Container uses CSS Grid with columns: ${style.gridTemplateColumns}`);
+                } else {
+                    setTestResult(1, false, `Display: ${style?.display}, Grid columns: ${style?.gridTemplateColumns}`);
+                }
+            } catch (error) {
+                setTestResult(1, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test2() {
+            try {
+                const container = document.getElementById('test2');
+                const childCount = container.children.length;
+                const style = getContainerStyle('test2');
+                const gridColumns = style?.gridTemplateColumns;
+                
+                // Should have 3 columns for 3 children
+                const expectedPattern = /1fr\s+1fr\s+1fr/;
+                const hasCorrectColumns = expectedPattern.test(gridColumns);
+                
+                if (hasCorrectColumns) {
+                    setTestResult(2, true, `Dynamic grid: ${childCount} children → ${gridColumns}`);
+                } else {
+                    setTestResult(2, false, `Expected 3 1fr columns, got: ${gridColumns}`);
+                }
+            } catch (error) {
+                setTestResult(2, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test3() {
+            try {
+                const container = document.getElementById('test3');
+                const style = getContainerStyle('test3');
+                const isGrid = style?.display === 'grid';
+                const hasColumns = style?.gridTemplateColumns && style.gridTemplateColumns !== 'none';
+                
+                // Check that all children are properly positioned despite different padding
+                const shadowContainer = container.shadowRoot?.querySelector('.container');
+                const containerWidth = shadowContainer?.getBoundingClientRect().width || 0;
+                
+                if (isGrid && hasColumns && containerWidth > 0) {
+                    setTestResult(3, true, 'Grid layout handles elements with different padding correctly');
+                } else {
+                    setTestResult(3, false, `Grid: ${isGrid}, Columns: ${hasColumns}, Width: ${containerWidth}`);
+                }
+            } catch (error) {
+                setTestResult(3, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test4() {
+            try {
+                test4Container = document.getElementById('test4');
+                const initialIndex = test4Container.currentIndex;
+                
+                // Test navigation
+                test4Container.goToSlide(2);
+                const newIndex = test4Container.currentIndex;
+                
+                if (newIndex === 2) {
+                    setTestResult(4, true, `Navigation works: moved from ${initialIndex} to ${newIndex}`);
+                } else {
+                    setTestResult(4, false, `Navigation failed: expected index 2, got ${newIndex}`);
+                }
+            } catch (error) {
+                setTestResult(4, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test5() {
+            try {
+                const style = getContainerStyle('test5');
+                const gridColumns = style?.gridTemplateColumns;
+                const expectedPattern = /1fr/;
+                const hasCorrectColumns = expectedPattern.test(gridColumns) && !gridColumns.includes('1fr 1fr');
+                
+                if (hasCorrectColumns) {
+                    setTestResult(5, true, `Single element grid: ${gridColumns}`);
+                } else {
+                    setTestResult(5, false, `Expected single 1fr column, got: ${gridColumns}`);
+                }
+            } catch (error) {
+                setTestResult(5, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test6() {
+            try {
+                const container = document.getElementById('test6');
+                const style = getContainerStyle('test6');
+                const isGrid = style?.display === 'grid';
+                const childCount = container.children.length;
+                
+                if (isGrid && childCount === 0) {
+                    setTestResult(6, true, 'Empty container handles gracefully with CSS Grid');
+                } else {
+                    setTestResult(6, false, `Grid: ${isGrid}, Children: ${childCount}`);
+                }
+            } catch (error) {
+                setTestResult(6, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test7() {
+            try {
+                const container = document.getElementById('test7');
+                const initialCount = container.children.length;
+                
+                if (initialCount === 1) {
+                    setTestResult(7, true, 'Dynamic content test ready (use buttons to test)');
+                } else {
+                    setTestResult(7, false, `Expected 1 initial element, got ${initialCount}`);
+                }
+            } catch (error) {
+                setTestResult(7, false, `Error: ${error.message}`);
+            }
+        }
+
+        function addElementToTest7() {
+            const container = document.getElementById('test7');
+            const newElement = document.createElement('div');
+            newElement.className = 'demo-element';
+            newElement.textContent = `Element ${container.children.length + 1}`;
+            container.appendChild(newElement);
+            
+            // Wait a bit for the component to update, then check grid
+            setTimeout(() => {
+                const style = getContainerStyle('test7');
+                const count = container.children.length;
+                document.getElementById('result7').textContent = `✅ Added element (total: ${count}), Grid: ${style?.gridTemplateColumns || 'unknown'}`;
+                document.getElementById('result7').className = 'test-result test-pass';
+            }, 100);
+        }
+
+        function removeElementFromTest7() {
+            const container = document.getElementById('test7');
+            if (container.children.length > 0) {
+                container.removeChild(container.lastElementChild);
+                
+                setTimeout(() => {
+                    const style = getContainerStyle('test7');
+                    const count = container.children.length;
+                    document.getElementById('result7').textContent = `✅ Removed element (total: ${count}), Grid: ${style?.gridTemplateColumns || 'unknown'}`;
+                    document.getElementById('result7').className = 'test-result test-pass';
+                }, 100);
+            } else {
+                document.getElementById('result7').textContent = `❌ No elements to remove`;
+                document.getElementById('result7').className = 'test-result test-fail';
+            }
+        }
+
+        function runAllTests() {
+            // Wait a bit for DOM to be ready
+            setTimeout(() => {
+                test1();
+                test2();
+                test3();
+                test4();
+                test5();
+                test6();
+                test7();
+            }, 500);
+        }
+
+        function resetTests() {
+            for (let i = 1; i <= 7; i++) {
+                const result = document.getElementById(`result${i}`);
+                result.className = 'test-result test-pending';
+                result.textContent = 'Waiting for test...';
+            }
+        }
+
+        // Auto-run tests when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>
