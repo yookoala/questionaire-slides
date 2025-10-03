@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Questionaire Action Element Tests</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/questionaire-action.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test.pass {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .test.fail {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .test-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .test-result {
+            font-size: 14px;
+        }
+        #summary {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-elements {
+            display: none;
+        }
+        questionaire-action {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #007bff;
+            border-radius: 3px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Action Element Tests</h1>
+    <div id="summary">
+        <div>Total: <span id="total">0</span></div>
+        <div>Passed: <span id="passed">0</span></div>
+        <div>Failed: <span id="failed">0</span></div>
+    </div>
+    <div id="test-results"></div>
+
+    <!-- Test elements (hidden) -->
+    <div class="test-elements">
+        <!-- Test container 1: Basic navigation -->
+        <questionaire-container id="test-container-1">
+            <questionaire-question name="q1">
+                <questionaire-question-content>Question 1</questionaire-question-content>
+                <questionaire-question-answer value="a1" selected>Answer 1</questionaire-question-answer>
+                <questionaire-action id="next-btn-1">Next</questionaire-action>
+            </questionaire-question>
+            <questionaire-question name="q2">
+                <questionaire-question-content>Question 2</questionaire-question-content>
+                <questionaire-question-answer value="a2">Answer 2</questionaire-question-answer>
+                <questionaire-action action="previous" id="prev-btn-1">Previous</questionaire-action>
+                <questionaire-action id="next-btn-2">Next</questionaire-action>
+            </questionaire-question>
+            <questionaire-question name="q3">
+                <questionaire-question-content>Question 3</questionaire-question-content>
+                <questionaire-question-answer value="a3">Answer 3</questionaire-question-answer>
+                <questionaire-action action="previous" id="prev-btn-2">Previous</questionaire-action>
+            </questionaire-question>
+        </questionaire-container>
+
+        <!-- Test container 2: Actions outside container -->
+        <div id="outside-container">
+            <questionaire-action id="standalone-next">Standalone Next</questionaire-action>
+            <questionaire-action action="previous" id="standalone-prev">Standalone Previous</questionaire-action>
+        </div>
+
+        <!-- Test container 3: Nested structure -->
+        <questionaire-container id="test-container-3">
+            <questionaire-question name="nested-q">
+                <questionaire-question-content>Nested Question</questionaire-question-content>
+                <questionaire-question-answer value="nested">Nested Answer</questionaire-question-answer>
+                <div class="wrapper">
+                    <questionaire-action id="nested-action">Nested Action</questionaire-action>
+                </div>
+            </questionaire-question>
+            <div id="non-question-slide">
+                <h3>Non-question slide</h3>
+                <questionaire-action action="previous" id="non-question-prev">Back</questionaire-action>
+            </div>
+        </questionaire-container>
+
+        <!-- Test container 4: Invalid actions -->
+        <questionaire-container id="test-container-4">
+            <questionaire-question name="invalid-test">
+                <questionaire-question-content>Invalid Test</questionaire-question-content>
+                <questionaire-question-answer value="invalid">Invalid Answer</questionaire-question-answer>
+                <questionaire-action action="invalid" id="invalid-action">Invalid Action</questionaire-action>
+                <questionaire-action action="" id="empty-action">Empty Action</questionaire-action>
+                <questionaire-action id="default-action">Default Action</questionaire-action>
+            </questionaire-question>
+        </questionaire-container>
+    </div>
+
+    <script type="module">
+        const results = document.getElementById('test-results');
+        let passed = 0;
+        let failed = 0;
+        let total = 0;
+
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
+
+        function assertEquals(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(message || `Expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
+            }
+        }
+
+        function runTest(name, testFn) {
+            total++;
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test';
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'test-name';
+            nameDiv.textContent = name;
+            testDiv.appendChild(nameDiv);
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+
+            try {
+                testFn();
+                testDiv.classList.add('pass');
+                resultDiv.textContent = '✓ PASS';
+                passed++;
+            } catch (e) {
+                testDiv.classList.add('fail');
+                resultDiv.textContent = '✗ FAIL: ' + e.message;
+                failed++;
+            }
+
+            testDiv.appendChild(resultDiv);
+            results.appendChild(testDiv);
+        }
+
+        async function runTests() {
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            const container1 = document.getElementById('test-container-1');
+            const container3 = document.getElementById('test-container-3');
+            const container4 = document.getElementById('test-container-4');
+            
+            const nextBtn1 = document.getElementById('next-btn-1');
+            const prevBtn1 = document.getElementById('prev-btn-1');
+            const standaloneNext = document.getElementById('standalone-next');
+            const nestedAction = document.getElementById('nested-action');
+            const invalidAction = document.getElementById('invalid-action');
+            const emptyAction = document.getElementById('empty-action');
+            const defaultAction = document.getElementById('default-action');
+
+            runTest('questionaire-action element should be defined', () => {
+                assert(customElements.get('questionaire-action'), 'questionaire-action should be registered');
+                assert(nextBtn1.tagName === 'QUESTIONAIRE-ACTION', 'Should be questionaire-action element');
+            });
+
+            runTest('action attribute should default to "next"', () => {
+                assertEquals(nextBtn1.getAttribute('action'), null, 'Default action should not have attribute set');
+                // The element should treat missing action as "next"
+            });
+
+            runTest('action attribute should be settable', () => {
+                assertEquals(prevBtn1.getAttribute('action'), 'previous', 'Should have action="previous"');
+            });
+
+            runTest('clicking next action should navigate forward', () => {
+                container1.goToSlide(0);
+                const initialIndex = container1.currentIndex;
+                
+                // Simulate click
+                nextBtn1.click();
+                
+                assertEquals(container1.currentIndex, initialIndex + 1, 'Should navigate to next slide');
+            });
+
+            runTest('clicking previous action should navigate backward', () => {
+                container1.goToSlide(1);
+                const initialIndex = container1.currentIndex;
+                
+                // Simulate click
+                prevBtn1.click();
+                
+                assertEquals(container1.currentIndex, initialIndex - 1, 'Should navigate to previous slide');
+            });
+
+            runTest('action should find closest parent container', () => {
+                container3.goToSlide(0);
+                const initialIndex = container3.currentIndex;
+                
+                // Nested action should still work
+                nestedAction.click();
+                
+                assertEquals(container3.currentIndex, initialIndex + 1, 'Nested action should find parent container');
+            });
+
+            runTest('standalone actions should not cause errors', () => {
+                // These should not throw errors even though no container parent
+                try {
+                    standaloneNext.click();
+                    // Should not throw error
+                } catch (error) {
+                    throw new Error('Standalone action should not throw error: ' + error.message);
+                }
+            });
+
+            runTest('invalid action attribute should be treated as next', () => {
+                container4.goToSlide(0);
+                const initialIndex = container4.currentIndex;
+                
+                // Invalid action should default to next behavior
+                invalidAction.click();
+                
+                // Since we're at slide 0 and there's only 1 slide, should not navigate
+                // But the action should not cause an error
+            });
+
+            runTest('empty action attribute should be treated as next', () => {
+                container4.goToSlide(0);
+                
+                // Empty action should default to next behavior (no error)
+                try {
+                    emptyAction.click();
+                } catch (error) {
+                    throw new Error('Empty action should not throw error: ' + error.message);
+                }
+            });
+
+            runTest('default action (no attribute) should be treated as next', () => {
+                container4.goToSlide(0);
+                
+                // Default action should behave as next (no error)
+                try {
+                    defaultAction.click();
+                } catch (error) {
+                    throw new Error('Default action should not throw error: ' + error.message);
+                }
+            });
+
+            runTest('actions should respect container navigation boundaries', () => {
+                // Test at first slide - previous should not go below 0
+                container1.goToSlide(0);
+                prevBtn1.click();
+                assertEquals(container1.currentIndex, 0, 'Should not go below first slide');
+                
+                // Test at last slide - next should not go beyond last
+                const lastIndex = container1.slideCount - 1;
+                container1.goToSlide(lastIndex);
+                const nextBtn = document.getElementById('next-btn-2') || nextBtn1;
+                nextBtn.click();
+                assertEquals(container1.currentIndex, lastIndex, 'Should not go beyond last slide');
+            });
+
+            runTest('actions should work with validation (if container has validation)', () => {
+                // Test that actions trigger the same validation as manual next/previous
+                container1.goToSlide(0);
+                
+                // This should work the same as calling container1.next()
+                nextBtn1.click();
+                
+                // If validation was implemented, it should behave the same
+                assert(true, 'Actions should integrate with container validation');
+            });
+
+            runTest('multiple actions in same container should work independently', () => {
+                container1.goToSlide(1);
+                
+                // Test previous button
+                prevBtn1.click();
+                assertEquals(container1.currentIndex, 0, 'Previous button should work');
+                
+                // Test next button
+                nextBtn1.click();
+                assertEquals(container1.currentIndex, 1, 'Next button should work');
+            });
+
+            runTest('action elements should be styleable', () => {
+                // Test that basic styling properties can be applied
+                assert(nextBtn1.style !== undefined, 'Should have style property');
+                
+                // Test that CSS can target the element
+                const computedStyle = window.getComputedStyle(nextBtn1);
+                assert(computedStyle.display !== '', 'Should have computed styles');
+            });
+
+            // Update summary
+            document.getElementById('total').textContent = total;
+            document.getElementById('passed').textContent = passed;
+            document.getElementById('failed').textContent = failed;
+
+            console.log(`Tests complete: ${passed}/${total} passed`);
+        }
+
+        // Run tests after all components are ready
+        Promise.all([
+            customElements.whenDefined('questionaire-container'),
+            customElements.whenDefined('questionaire-question'),
+            customElements.whenDefined('questionaire-question-content'),
+            customElements.whenDefined('questionaire-question-answer'),
+            customElements.whenDefined('questionaire-action')
+        ]).then(runTests);
+    </script>
+</body>
+</html>

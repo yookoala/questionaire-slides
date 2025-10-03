@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionaire Action Element Example</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/questionaire-action.js"></script>
+    <script type="module" src="../src/question-validation-errors.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .example-section h3 {
+            margin-top: 0;
+        }
+        questionaire-container {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 3px solid #28a745;
+            border-radius: 8px;
+            background-color: white;
+            min-height: 400px;
+        }
+        questionaire-question {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background-color: white;
+        }
+        questionaire-question-content {
+            display: block;
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        questionaire-question-answer {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        questionaire-question-answer:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        questionaire-question-answer[selected] {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        questionaire-action {
+            display: inline-block;
+            margin: 5px;
+            padding: 10px 20px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 100px;
+        }
+        questionaire-action:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        questionaire-action:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        questionaire-action[action="previous"] {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        questionaire-action[action="previous"]:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+        }
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        .info-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+        .action-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #fff3cd;
+            padding: 15px;
+            border: 2px solid #ffc107;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 300px;
+        }
+        .action-info .current-slide {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .testing-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Action Element Example</h1>
+    
+    <div class="action-info">
+        <div class="current-slide">Current Slide: <span id="slide-display">1</span></div>
+        <div>Total Slides: <span id="total-display">5</span></div>
+        <div>Last Action: <span id="action-display">None</span></div>
+    </div>
+    
+    <div class="example-section">
+        <h3>Questionnaire with Action Buttons</h3>
+        <p>The `&lt;questionaire-action&gt;` elements automatically find their parent container and trigger navigation actions when clicked.</p>
+        
+        <questionaire-container id="main-survey">
+            <!-- Question 1: Basic single-select -->
+            <questionaire-question name="experience" id="q1">
+                <questionaire-question-content>
+                    Programming Experience
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    How many years of programming experience do you have?
+                </questionaire-question-content>
+                <questionaire-question-answer value="0-1">0-1 years</questionaire-question-answer>
+                <questionaire-question-answer value="2-5">2-5 years</questionaire-question-answer>
+                <questionaire-question-answer value="6-10">6-10 years</questionaire-question-answer>
+                <questionaire-question-answer value="10+">10+ years</questionaire-question-answer>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <questionaire-action>Next Question</questionaire-action>
+                </div>
+            </questionaire-question>
+
+            <!-- Question 2: Multi-select with constraints -->
+            <questionaire-question name="languages" id="q2" multiselect min-answer="1" max-answer="3">
+                <questionaire-question-content>
+                    Programming Languages
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    Which programming languages do you use? (Select 1-3)
+                </questionaire-question-content>
+                <questionaire-question-answer value="javascript">JavaScript</questionaire-question-answer>
+                <questionaire-question-answer value="python">Python</questionaire-question-answer>
+                <questionaire-question-answer value="java">Java</questionaire-question-answer>
+                <questionaire-question-answer value="csharp">C#</questionaire-question-answer>
+                <questionaire-question-answer value="go">Go</questionaire-question-answer>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <questionaire-action action="previous">Previous</questionaire-action>
+                    <questionaire-action action="next">Next</questionaire-action>
+                </div>
+            </questionaire-question>
+
+            <!-- Question 3: Work environment -->
+            <questionaire-question name="work_env" id="q3">
+                <questionaire-question-content>
+                    Work Environment
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    What type of work environment do you prefer?
+                </questionaire-question-content>
+                <questionaire-question-answer value="remote">Fully remote</questionaire-question-answer>
+                <questionaire-question-answer value="hybrid">Hybrid (remote + office)</questionaire-question-answer>
+                <questionaire-question-answer value="office">Fully in-office</questionaire-question-answer>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <questionaire-action action="previous">Go Back</questionaire-action>
+                    <questionaire-action>Continue</questionaire-action>
+                </div>
+            </questionaire-question>
+
+            <!-- Question 4: Tools and frameworks -->
+            <questionaire-question name="tools" id="q4" multiselect>
+                <questionaire-question-content>
+                    Development Tools
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    What development tools do you regularly use? (Select any)
+                </questionaire-question-content>
+                <questionaire-question-answer value="vscode">VS Code</questionaire-question-answer>
+                <questionaire-question-answer value="git">Git</questionaire-question-answer>
+                <questionaire-question-answer value="docker">Docker</questionaire-question-answer>
+                <questionaire-question-answer value="kubernetes">Kubernetes</questionaire-question-answer>
+                <questionaire-question-answer value="aws">AWS</questionaire-question-answer>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <questionaire-action action="previous">← Previous</questionaire-action>
+                    <questionaire-action action="next">Finish →</questionaire-action>
+                </div>
+            </questionaire-question>
+
+            <!-- Summary page -->
+            <div id="summary-page" style="text-align: center; padding: 40px;">
+                <h2>Survey Complete!</h2>
+                <p>Thank you for completing the developer questionnaire.</p>
+                <p>Your responses have been recorded.</p>
+                
+                <div style="margin-top: 30px;">
+                    <questionaire-action action="previous">← Back to Review</questionaire-action>
+                </div>
+            </div>
+        </questionaire-container>
+    </div>
+
+    <div class="testing-section">
+        <h3>Action Element Testing</h3>
+        <p>Test different action configurations and behavior:</p>
+        
+        <div style="margin: 15px 0;">
+            <strong>Standalone Actions (outside container):</strong><br>
+            <questionaire-action>Standalone Next (should do nothing)</questionaire-action>
+            <questionaire-action action="previous">Standalone Previous (should do nothing)</questionaire-action>
+        </div>
+        
+        <div style="margin: 15px 0;">
+            <strong>Action with default behavior:</strong><br>
+            <questionaire-action onclick="testAction(this)">Default Action (next)</questionaire-action>
+        </div>
+        
+        <div style="margin: 15px 0;">
+            <strong>Action with explicit previous:</strong><br>
+            <questionaire-action action="previous" onclick="testAction(this)">Explicit Previous</questionaire-action>
+        </div>
+    </div>
+
+    <div class="controls">
+        <h3>Manual Controls</h3>
+        <button onclick="goToSlide(0)">Go to Question 1</button>
+        <button onclick="goToSlide(1)">Go to Question 2</button>
+        <button onclick="goToSlide(2)">Go to Question 3</button>
+        <button onclick="goToSlide(3)">Go to Question 4</button>
+        <button onclick="goToSlide(4)">Go to Summary</button>
+        <button onclick="showCurrentValues()">Show Current Values</button>
+        <button onclick="validateCurrent()">Validate Current</button>
+    </div>
+
+    <div id="result-panel" class="info-panel">
+        Click action buttons or use manual controls to navigate the questionnaire.
+    </div>
+
+    <script>
+        let container;
+
+        function updateDisplay() {
+            container = container || document.getElementById('main-survey');
+            
+            const slideDisplay = document.getElementById('slide-display');
+            const totalDisplay = document.getElementById('total-display');
+            
+            slideDisplay.textContent = container.currentIndex + 1;
+            totalDisplay.textContent = container.slideCount;
+        }
+
+        function recordAction(actionType) {
+            const actionDisplay = document.getElementById('action-display');
+            actionDisplay.textContent = actionType;
+            updateDisplay();
+        }
+
+        function testAction(actionElement) {
+            const resultPanel = document.getElementById('result-panel');
+            const action = actionElement.getAttribute('action') || 'next';
+            
+            resultPanel.innerHTML = `
+                <strong>Action Button Clicked:</strong><br>
+                Element: ${actionElement.tagName}<br>
+                Action: ${action}<br>
+                Text Content: "${actionElement.textContent.trim()}"<br>
+                Parent Container: ${actionElement.closest('questionaire-container') ? 'Found' : 'Not Found'}<br>
+                <em>Note: This test action doesn't actually navigate.</em>
+            `;
+        }
+
+        function goToSlide(index) {
+            container = container || document.getElementById('main-survey');
+            container.goToSlide(index);
+            recordAction(`Manual (slide ${index + 1})`);
+            
+            const resultPanel = document.getElementById('result-panel');
+            resultPanel.innerHTML = `Manually navigated to slide ${index + 1}`;
+        }
+
+        function showCurrentValues() {
+            container = container || document.getElementById('main-survey');
+            const values = container.values;
+            const resultPanel = document.getElementById('result-panel');
+            
+            resultPanel.innerHTML = `
+                <strong>Current Survey Values:</strong><br>
+                ${JSON.stringify(values, null, 2)}
+            `;
+        }
+
+        function validateCurrent() {
+            container = container || document.getElementById('main-survey');
+            const current = container.current();
+            const resultPanel = document.getElementById('result-panel');
+            
+            if (current && current.tagName === 'QUESTIONAIRE-QUESTION') {
+                try {
+                    current.validate();
+                    resultPanel.innerHTML = `
+                        <div style="color: #155724; background-color: #d4edda; padding: 10px; border-radius: 5px;">
+                            ✅ Current question "${current.getAttribute('name')}" is valid
+                        </div>
+                    `;
+                } catch (error) {
+                    resultPanel.innerHTML = `
+                        <div style="color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 5px;">
+                            ❌ Current question validation failed:<br>
+                            ${error.constructor.name}: ${error.message}
+                        </div>
+                    `;
+                }
+            } else {
+                resultPanel.innerHTML = `
+                    <div style="color: #856404; background-color: #fff3cd; padding: 10px; border-radius: 5px;">
+                        ℹ️ Current element is not a question (no validation needed)
+                    </div>
+                `;
+            }
+        }
+
+        // Add click listeners to make answers selectable
+        document.addEventListener('DOMContentLoaded', () => {
+            container = document.getElementById('main-survey');
+            
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.addEventListener('click', () => {
+                    // Toggle selection
+                    if (answer.hasAttribute('selected')) {
+                        answer.removeAttribute('selected');
+                    } else {
+                        answer.setAttribute('selected', '');
+                    }
+                });
+            });
+
+            // Listen for slide changes to update display
+            container.addEventListener('slide-changed', (event) => {
+                updateDisplay();
+            });
+            
+            // Listen for action clicks
+            document.addEventListener('click', (event) => {
+                if (event.target.tagName === 'QUESTIONAIRE-ACTION') {
+                    const action = event.target.getAttribute('action') || 'next';
+                    recordAction(`${action} (action button)`);
+                    
+                    const resultPanel = document.getElementById('result-panel');
+                    resultPanel.innerHTML = `
+                        <strong>Action Button Used:</strong><br>
+                        Action: ${action}<br>
+                        Button Text: "${event.target.textContent.trim()}"<br>
+                        Navigation triggered automatically by questionaire-action element.
+                    `;
+                }
+            });
+            
+            // Initial state
+            updateDisplay();
+        });
+    </script>
+</body>
+</html>

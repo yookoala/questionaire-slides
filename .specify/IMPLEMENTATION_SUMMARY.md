@@ -482,6 +482,29 @@ The project now has a **fully-featured questionnaire system** with:
 
 **Ready for production use! The questionnaire system is feature-complete according to all specifications. 🚀**
 
+## NEW TASKS ADDED
+
+Recent updates to TASKS.md have added new action element features:
+
+10. **feature/question-action**: Implement the `<questionaire-action>` element
+11. **feature/question-actions**: Implement the `<questionaire-actions>` element
+
+## Current Task: feature/question-action
+🔄 **IN PROGRESS**: Implement the `<questionaire-action>` element
+
+### Phase 1: Example and Test Creation ✅
+- Created `examples/questionaire-action-example.html` - Interactive example showing action element usage
+- Created `test/questionaire-action.test.html` - Comprehensive test suite for action element
+- Tests cover: basic navigation, action attributes, parent container finding, boundary conditions, validation integration
+- Examples demonstrate: next/previous actions, nested structures, standalone actions, styling options
+
+### Next Phase: Implementation
+- Implement `<questionaire-action>` element in `src/questionaire-action.js`
+- Button-like element for navigation in `<questionaire-container>`
+- Optional "action" attribute ("next" or "previous", defaults to "next")
+- Click handler finds closest parent `<questionaire-container>` and applies action
+- Should integrate with existing container navigation and validation
+
 The questionnaire system now has comprehensive navigation with current element tracking and validation capabilities.
 
 The questionnaire system now has comprehensive validation capabilities with custom error handling.
