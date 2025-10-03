@@ -19,15 +19,27 @@ This project is to build a set of web components that works together as a questi
 * `<questionaire-question>`
   The question-level, or "slide"-level, component to show a question and selectable answers. This question will have multiple answers available for selection. Questions can either be a single-selected or multiple-selected MC question.
 
+  Each of this element have an optional "multiselect" property / attribute. When set, this element is "mult-selected mode". If not set, this element is "single-selected mode".
+
+  Each of this element will have a read-only "value" property. When read, it should look for the children elements to find any selected answer.
+  
+    - In "mult-selected mode", the "value" property will return an array of string from all "value" property of the selected answers. If none is selected, then it should return an empty array.
+
+    - In "single-selected mode", the "value" property will return the string from the only selected answer, or the global `undefined` object if none is selected.
+
 * `<questionaire-question-content>`
   Each `<questionaire-question>` will contain multiple of this. This is for showing the question text or other HTML element to display the question with.
 
 * `<questionaire-question-answer>`
-  Each `<questionaire-question>` will contain multiple of this component. Each of this component will hold the answer text, the status if it is selected, and an optional "selected-value" attribute to submit as value if the answer is selected. If "selected-value" is not set, the value will be that of the `<questionaire-question-content>` element.
+  Each `<questionaire-question>` will contain multiple of this component. Each of this component will hold the answer text and an optional "value" attribute.
 
   Each `<questionaire-question-answer>` element is a simple container element with an additional properties / attributes:
   - "selected": Only present if a user explicitly selected it.
   - "value": Optional attribute but always presents in properties. If the value attribute is not set, then reading the property will give the current inner text of the element. If the property is programatically set or modified, only the attribute is affected while the inner text is kept untouched.
+
+  When a `<questionaire-question-answer>` is seleted, the answer is liable to find the closest `<questionaire-question>` parent element, dispatch a "question:changed" custom event on the parent with `.detail.element` set to the answer element.
+
+  When a `<questionaire-question-answer>` is seleted, the answer is liable to check the "single-selected" or "multi-selected" mode of the closest `<questionaire-question>` parent element, if exists. It should unselect all `<questionaire-question-answer>` in the same `<questionaire-question>` parent before selecting itself.
 
 * `<questionaire-question-actions>`
   Each `<questionaire-question>` may contain one of this. A div container component to contain multiple buttons. Will take up the bottom of the question element.
