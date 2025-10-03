@@ -329,3 +329,26 @@ The project now has a complete questionnaire system with:
 - Full integration between all components with comprehensive testing
 
 Ready for production use! The questionnaire system is feature-complete according to all specifications.
+
+## New Tasks Added
+
+Recent updates to TASKS.md and SPEC.md have added new validation and enhancement features:
+
+1. **feature/question--validate**: Implement validation method and custom error classes
+2. **feature/question-container--current**: Implement current() method for container
+3. **feature/question-container--next-validate**: Update next() method with validation logic
+
+## Current Task: feature/question--validate
+🔄 **IN PROGRESS**: Implement the `.validate()` method for `<questionaire-question>`, along with all the custom error classes
+
+### Phase 1: Example and Test Creation ✅
+- Created `examples/question-validation-example.html` - Interactive example showing question validation
+- Created `test/questionaire-question-validation.test.html` - Comprehensive test suite for validation
+- Tests cover: custom error classes, single-select validation, multi-select with min/max constraints, error message formatting
+- Examples demonstrate: different validation scenarios, error types, constraint handling
+
+### Next Phase: Implementation
+- Implement custom error classes: `QuestionValidationError`, `QuestionNotAnsweredError`, `QuestionAnsweredTooFewError`, `QuestionAnsweredTooMuchError`
+- Add `min-answer` and `max-answer` attributes/properties to question component (multi-select only)
+- Add `.validate()` method with proper validation logic for single-select and multi-select
+- Implement numerical validation for min/max constraints with proper error handling

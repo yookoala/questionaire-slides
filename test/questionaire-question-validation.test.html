@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Questionaire Question Validation Tests</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/question-validation-errors.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test.pass {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .test.fail {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .test-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .test-result {
+            font-size: 14px;
+        }
+        #summary {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-elements {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Question Validation Tests</h1>
+    <div id="summary">
+        <div>Total: <span id="total">0</span></div>
+        <div>Passed: <span id="passed">0</span></div>
+        <div>Failed: <span id="failed">0</span></div>
+    </div>
+    <div id="test-results"></div>
+
+    <!-- Test elements (hidden) -->
+    <div class="test-elements">
+        <!-- Single-select question -->
+        <questionaire-question id="test-single">
+            <questionaire-question-answer value="option1">Option 1</questionaire-question-answer>
+            <questionaire-question-answer value="option2">Option 2</questionaire-question-answer>
+        </questionaire-question>
+
+        <!-- Multi-select with constraints -->
+        <questionaire-question id="test-multi-constrained" multiselect min-answer="2" max-answer="3">
+            <questionaire-question-answer value="opt1">Option 1</questionaire-question-answer>
+            <questionaire-question-answer value="opt2">Option 2</questionaire-question-answer>
+            <questionaire-question-answer value="opt3">Option 3</questionaire-question-answer>
+            <questionaire-question-answer value="opt4">Option 4</questionaire-question-answer>
+        </questionaire-question>
+
+        <!-- Multi-select with min only -->
+        <questionaire-question id="test-multi-min" multiselect min-answer="1">
+            <questionaire-question-answer value="min1">Min 1</questionaire-question-answer>
+            <questionaire-question-answer value="min2">Min 2</questionaire-question-answer>
+        </questionaire-question>
+
+        <!-- Multi-select with max only -->
+        <questionaire-question id="test-multi-max" multiselect max-answer="2">
+            <questionaire-question-answer value="max1">Max 1</questionaire-question-answer>
+            <questionaire-question-answer value="max2">Max 2</questionaire-question-answer>
+            <questionaire-question-answer value="max3">Max 3</questionaire-question-answer>
+        </questionaire-question>
+
+        <!-- Multi-select unconstrained -->
+        <questionaire-question id="test-multi-unconstrained" multiselect>
+            <questionaire-question-answer value="free1">Free 1</questionaire-question-answer>
+            <questionaire-question-answer value="free2">Free 2</questionaire-question-answer>
+        </questionaire-question>
+    </div>
+
+    <script type="module">
+        const results = document.getElementById('test-results');
+        let passed = 0;
+        let failed = 0;
+        let total = 0;
+
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
+
+        function assertEquals(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(message || `Expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
+            }
+        }
+
+        function assertThrows(fn, expectedErrorType, expectedMessage, message) {
+            try {
+                fn();
+                throw new Error(message || `Expected ${expectedErrorType.name} to be thrown`);
+            } catch (error) {
+                if (!(error instanceof expectedErrorType)) {
+                    throw new Error(message || `Expected ${expectedErrorType.name} but got ${error.constructor.name}`);
+                }
+                if (expectedMessage && !error.message.includes(expectedMessage)) {
+                    throw new Error(message || `Expected message to contain "${expectedMessage}" but got "${error.message}"`);
+                }
+            }
+        }
+
+        function runTest(name, testFn) {
+            total++;
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test';
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'test-name';
+            nameDiv.textContent = name;
+            testDiv.appendChild(nameDiv);
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+
+            try {
+                testFn();
+                testDiv.classList.add('pass');
+                resultDiv.textContent = '✓ PASS';
+                passed++;
+            } catch (e) {
+                testDiv.classList.add('fail');
+                resultDiv.textContent = '✗ FAIL: ' + e.message;
+                failed++;
+            }
+
+            testDiv.appendChild(resultDiv);
+            results.appendChild(testDiv);
+        }
+
+        async function runTests() {
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            const singleQuestion = document.getElementById('test-single');
+            const multiConstrained = document.getElementById('test-multi-constrained');
+            const multiMin = document.getElementById('test-multi-min');
+            const multiMax = document.getElementById('test-multi-max');
+            const multiUnconstrained = document.getElementById('test-multi-unconstrained');
+
+            // Import error classes (they should be available globally)
+            const { QuestionValidationError, QuestionNotAnsweredError, QuestionAnsweredTooFewError, QuestionAnsweredTooMuchError } = window;
+
+            runTest('Custom error classes should exist', () => {
+                assert(typeof QuestionValidationError === 'function', 'QuestionValidationError should be defined');
+                assert(typeof QuestionNotAnsweredError === 'function', 'QuestionNotAnsweredError should be defined');
+                assert(typeof QuestionAnsweredTooFewError === 'function', 'QuestionAnsweredTooFewError should be defined');
+                assert(typeof QuestionAnsweredTooMuchError === 'function', 'QuestionAnsweredTooMuchError should be defined');
+            });
+
+            runTest('Error classes should extend properly', () => {
+                const baseError = new QuestionValidationError('test');
+                const notAnsweredError = new QuestionNotAnsweredError('test');
+                const tooFewError = new QuestionAnsweredTooFewError('test', 2);
+                const tooMuchError = new QuestionAnsweredTooMuchError('test', 3);
+
+                assert(baseError instanceof Error, 'QuestionValidationError should extend Error');
+                assert(notAnsweredError instanceof QuestionValidationError, 'QuestionNotAnsweredError should extend QuestionValidationError');
+                assert(tooFewError instanceof QuestionValidationError, 'QuestionAnsweredTooFewError should extend QuestionValidationError');
+                assert(tooMuchError instanceof QuestionValidationError, 'QuestionAnsweredTooMuchError should extend QuestionValidationError');
+            });
+
+            runTest('Question should have validate method', () => {
+                assert(typeof singleQuestion.validate === 'function', 'Question should have validate method');
+            });
+
+            runTest('Question should have min-answer and max-answer properties', () => {
+                assert('minAnswer' in multiConstrained || 'min-answer' in multiConstrained, 'Should have min-answer property');
+                assert('maxAnswer' in multiConstrained || 'max-answer' in multiConstrained, 'Should have max-answer property');
+            });
+
+            runTest('Single-select validation should pass with selection', () => {
+                // Clear and select
+                singleQuestion.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                singleQuestion.querySelector('questionaire-question-answer').setAttribute('selected', '');
+                
+                // Should not throw
+                singleQuestion.validate();
+            });
+
+            runTest('Single-select validation should fail without selection', () => {
+                // Clear all selections
+                singleQuestion.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                
+                assertThrows(
+                    () => singleQuestion.validate(),
+                    QuestionNotAnsweredError,
+                    'A value must be selected',
+                    'Should throw QuestionNotAnsweredError for unselected single-select'
+                );
+            });
+
+            runTest('Multi-select validation should pass with valid number of selections', () => {
+                // Clear and select 2 answers (within min=2, max=3 range)
+                multiConstrained.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                const answers = multiConstrained.querySelectorAll('questionaire-question-answer');
+                answers[0].setAttribute('selected', '');
+                answers[1].setAttribute('selected', '');
+                
+                // Should not throw
+                multiConstrained.validate();
+            });
+
+            runTest('Multi-select validation should fail with too few selections', () => {
+                // Clear and select only 1 answer (below min=2)
+                multiConstrained.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                multiConstrained.querySelector('questionaire-question-answer').setAttribute('selected', '');
+                
+                assertThrows(
+                    () => multiConstrained.validate(),
+                    QuestionAnsweredTooFewError,
+                    'You must at lease select 2 answer(s)',
+                    'Should throw QuestionAnsweredTooFewError for too few selections'
+                );
+            });
+
+            runTest('Multi-select validation should fail with too many selections', () => {
+                // Select all 4 answers (above max=3)
+                multiConstrained.querySelectorAll('questionaire-question-answer').forEach(a => a.setAttribute('selected', ''));
+                
+                assertThrows(
+                    () => multiConstrained.validate(),
+                    QuestionAnsweredTooMuchError,
+                    'You must select no more than 3 answer(s)',
+                    'Should throw QuestionAnsweredTooMuchError for too many selections'
+                );
+            });
+
+            runTest('Multi-select with min-only should validate correctly', () => {
+                // Test passing case (1 selection, min=1)
+                multiMin.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                multiMin.querySelector('questionaire-question-answer').setAttribute('selected', '');
+                multiMin.validate(); // Should not throw
+                
+                // Test failing case (0 selections, min=1)
+                multiMin.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                assertThrows(
+                    () => multiMin.validate(),
+                    QuestionAnsweredTooFewError,
+                    'You must at lease select 1 answer(s)',
+                    'Should throw for too few when only min is set'
+                );
+            });
+
+            runTest('Multi-select with max-only should validate correctly', () => {
+                // Test passing case (2 selections, max=2)
+                multiMax.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                const answers = multiMax.querySelectorAll('questionaire-question-answer');
+                answers[0].setAttribute('selected', '');
+                answers[1].setAttribute('selected', '');
+                multiMax.validate(); // Should not throw
+                
+                // Test failing case (3 selections, max=2)
+                answers[2].setAttribute('selected', '');
+                assertThrows(
+                    () => multiMax.validate(),
+                    QuestionAnsweredTooMuchError,
+                    'You must select no more than 2 answer(s)',
+                    'Should throw for too many when only max is set'
+                );
+            });
+
+            runTest('Unconstrained multi-select should always validate', () => {
+                // Test with 0 selections
+                multiUnconstrained.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                multiUnconstrained.validate(); // Should not throw
+                
+                // Test with all selections
+                multiUnconstrained.querySelectorAll('questionaire-question-answer').forEach(a => a.setAttribute('selected', ''));
+                multiUnconstrained.validate(); // Should not throw
+            });
+
+            runTest('Error messages should contain correct numbers', () => {
+                // Test too few error message formatting
+                multiConstrained.querySelectorAll('questionaire-question-answer').forEach(a => a.removeAttribute('selected'));
+                
+                try {
+                    multiConstrained.validate();
+                    assert(false, 'Should have thrown error');
+                } catch (error) {
+                    assert(error.message.includes('2'), 'Error message should contain the min-answer number');
+                }
+                
+                // Test too many error message formatting
+                multiConstrained.querySelectorAll('questionaire-question-answer').forEach(a => a.setAttribute('selected', ''));
+                
+                try {
+                    multiConstrained.validate();
+                    assert(false, 'Should have thrown error');
+                } catch (error) {
+                    assert(error.message.includes('3'), 'Error message should contain the max-answer number');
+                }
+            });
+
+            // Update summary
+            document.getElementById('total').textContent = total;
+            document.getElementById('passed').textContent = passed;
+            document.getElementById('failed').textContent = failed;
+
+            console.log(`Tests complete: ${passed}/${total} passed`);
+        }
+
+        // Run tests after all components are ready
+        Promise.all([
+            customElements.whenDefined('questionaire-question'),
+            customElements.whenDefined('questionaire-question-content'),
+            customElements.whenDefined('questionaire-question-answer')
+        ]).then(runTests);
+    </script>
+</body>
+</html>

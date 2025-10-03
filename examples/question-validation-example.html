@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionaire Question Validation Example</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/question-validation-errors.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .example-section h3 {
+            margin-top: 0;
+        }
+        questionaire-question {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background-color: white;
+        }
+        questionaire-question.valid {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        questionaire-question.invalid {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        questionaire-question-content {
+            display: block;
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        questionaire-question-answer {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        questionaire-question-answer:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        questionaire-question-answer[selected] {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+        button.validate {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        button.validate:hover {
+            background-color: #0056b3;
+        }
+        .info-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        .error-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        .success-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #d4edda;
+            border-left: 4px solid: #28a745;
+            color: #155724;
+        }
+        .constraint-info {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Question Validation Example</h1>
+    
+    <div class="example-section">
+        <h3>Single-Select Question (Required)</h3>
+        <p>This question must have an answer selected to pass validation.</p>
+        
+        <questionaire-question id="single-required" name="age_group">
+            <questionaire-question-content>
+                What is your age group? (Required)
+            </questionaire-question-content>
+            <questionaire-question-answer value="18-25">18-25 years old</questionaire-question-answer>
+            <questionaire-question-answer value="26-35">26-35 years old</questionaire-question-answer>
+            <questionaire-question-answer value="36-45">36-45 years old</questionaire-question-answer>
+            <questionaire-question-answer value="46+">46+ years old</questionaire-question-answer>
+        </questionaire-question>
+        
+        <button class="validate" onclick="validateQuestion('single-required')">Validate This Question</button>
+    </div>
+
+    <div class="example-section">
+        <h3>Multi-Select Question with Min/Max Constraints</h3>
+        <p>This question requires at least 2 and at most 3 selections.</p>
+        
+        <questionaire-question id="multi-constrained" name="exercise_types" multiselect min-answer="2" max-answer="3">
+            <questionaire-question-content>
+                What types of exercise do you enjoy? (Select 2-3 options)
+            </questionaire-question-content>
+            <questionaire-question-answer value="cardio">Cardio (running, cycling, swimming)</questionaire-question-answer>
+            <questionaire-question-answer value="strength">Strength training</questionaire-question-answer>
+            <questionaire-question-answer value="flexibility">Flexibility/Yoga</questionaire-question-answer>
+            <questionaire-question-answer value="sports">Team sports</questionaire-question-answer>
+            <questionaire-question-answer value="outdoor">Outdoor activities</questionaire-question-answer>
+        </questionaire-question>
+        
+        <div class="constraint-info">
+            Constraints: min-answer="2", max-answer="3"
+        </div>
+        
+        <button class="validate" onclick="validateQuestion('multi-constrained')">Validate This Question</button>
+    </div>
+
+    <div class="example-section">
+        <h3>Multi-Select Question with Only Minimum</h3>
+        <p>This question requires at least 1 selection, no maximum limit.</p>
+        
+        <questionaire-question id="multi-min-only" name="skills" multiselect min-answer="1">
+            <questionaire-question-content>
+                What skills do you have? (Select at least 1)
+            </questionaire-question-content>
+            <questionaire-question-answer value="programming">Programming</questionaire-question-answer>
+            <questionaire-question-answer value="design">Design</questionaire-question-answer>
+            <questionaire-question-answer value="management">Management</questionaire-question-answer>
+            <questionaire-question-answer value="communication">Communication</questionaire-question-answer>
+        </questionaire-question>
+        
+        <div class="constraint-info">
+            Constraints: min-answer="1" (no max limit)
+        </div>
+        
+        <button class="validate" onclick="validateQuestion('multi-min-only')">Validate This Question</button>
+    </div>
+
+    <div class="example-section">
+        <h3>Multi-Select Question with Only Maximum</h3>
+        <p>This question allows up to 2 selections, no minimum requirement.</p>
+        
+        <questionaire-question id="multi-max-only" name="preferences" multiselect max-answer="2">
+            <questionaire-question-content>
+                What are your top preferences? (Select up to 2)
+            </questionaire-question-content>
+            <questionaire-question-answer value="fast">Fast service</questionaire-question-answer>
+            <questionaire-question-answer value="quality">High quality</questionaire-question-answer>
+            <questionaire-question-answer value="price">Low price</questionaire-question-answer>
+            <questionaire-question-answer value="convenience">Convenience</questionaire-question-answer>
+        </questionaire-question>
+        
+        <div class="constraint-info">
+            Constraints: max-answer="2" (no min requirement)
+        </div>
+        
+        <button class="validate" onclick="validateQuestion('multi-max-only')">Validate This Question</button>
+    </div>
+
+    <div class="example-section">
+        <h3>Unconstrained Multi-Select Question</h3>
+        <p>This question has no validation constraints.</p>
+        
+        <questionaire-question id="multi-unconstrained" name="hobbies" multiselect>
+            <questionaire-question-content>
+                What are your hobbies? (Optional, select any number)
+            </questionaire-question-content>
+            <questionaire-question-answer value="reading">Reading</questionaire-question-answer>
+            <questionaire-question-answer value="gaming">Gaming</questionaire-question-answer>
+            <questionaire-question-answer value="cooking">Cooking</questionaire-question-answer>
+            <questionaire-question-answer value="traveling">Traveling</questionaire-question-answer>
+        </questionaire-question>
+        
+        <div class="constraint-info">
+            Constraints: None (always valid)
+        </div>
+        
+        <button class="validate" onclick="validateQuestion('multi-unconstrained')">Validate This Question</button>
+    </div>
+
+    <div class="controls">
+        <h3>Bulk Actions</h3>
+        <button onclick="validateAllQuestions()">Validate All Questions</button>
+        <button onclick="clearAllSelections()">Clear All Selections</button>
+        <button onclick="simulateValidAnswers()">Simulate Valid Answers</button>
+        <button onclick="simulateInvalidAnswers()">Simulate Invalid Answers</button>
+        <button onclick="showErrorTypes()">Show Error Types</button>
+    </div>
+
+    <div id="result-panel"></div>
+
+    <script>
+        function validateQuestion(questionId) {
+            const question = document.getElementById(questionId);
+            const resultPanel = document.getElementById('result-panel');
+            
+            // Reset visual state
+            question.classList.remove('valid', 'invalid');
+            
+            try {
+                question.validate();
+                
+                // Validation passed
+                question.classList.add('valid');
+                resultPanel.innerHTML = `
+                    <div class="success-panel">
+                        <strong>✓ Validation Passed</strong><br>
+                        Question "${questionId}" is valid!
+                    </div>
+                `;
+                
+            } catch (error) {
+                // Validation failed
+                question.classList.add('invalid');
+                resultPanel.innerHTML = `
+                    <div class="error-panel">
+                        <strong>✗ Validation Failed</strong><br>
+                        <strong>Error Type:</strong> ${error.constructor.name}<br>
+                        <strong>Message:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function validateAllQuestions() {
+            const questions = document.querySelectorAll('questionaire-question');
+            const results = [];
+            
+            questions.forEach(question => {
+                const id = question.id;
+                question.classList.remove('valid', 'invalid');
+                
+                try {
+                    question.validate();
+                    question.classList.add('valid');
+                    results.push(`✓ ${id}: Valid`);
+                } catch (error) {
+                    question.classList.add('invalid');
+                    results.push(`✗ ${id}: ${error.constructor.name} - ${error.message}`);
+                }
+            });
+            
+            const resultPanel = document.getElementById('result-panel');
+            resultPanel.innerHTML = `
+                <div class="info-panel">
+                    <strong>Validation Results for All Questions:</strong><br><br>
+                    ${results.join('<br>')}
+                </div>
+            `;
+        }
+
+        function clearAllSelections() {
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.removeAttribute('selected');
+            });
+            
+            // Reset visual states
+            document.querySelectorAll('questionaire-question').forEach(q => {
+                q.classList.remove('valid', 'invalid');
+            });
+            
+            document.getElementById('result-panel').innerHTML = `
+                <div class="info-panel">All selections cleared.</div>
+            `;
+        }
+
+        function simulateValidAnswers() {
+            clearAllSelections();
+            
+            // Single-select: select one answer
+            const singleAnswer = document.querySelector('#single-required questionaire-question-answer');
+            if (singleAnswer) singleAnswer.setAttribute('selected', '');
+            
+            // Multi-constrained (2-3): select 2 answers
+            const multiAnswers = document.querySelectorAll('#multi-constrained questionaire-question-answer');
+            if (multiAnswers[0]) multiAnswers[0].setAttribute('selected', '');
+            if (multiAnswers[1]) multiAnswers[1].setAttribute('selected', '');
+            
+            // Multi min-only (min 1): select 1 answer
+            const minOnlyAnswers = document.querySelectorAll('#multi-min-only questionaire-question-answer');
+            if (minOnlyAnswers[0]) minOnlyAnswers[0].setAttribute('selected', '');
+            
+            // Multi max-only (max 2): select 1 answer
+            const maxOnlyAnswers = document.querySelectorAll('#multi-max-only questionaire-question-answer');
+            if (maxOnlyAnswers[0]) maxOnlyAnswers[0].setAttribute('selected', '');
+            
+            // Multi unconstrained: select any number (2 for example)
+            const unconstrainedAnswers = document.querySelectorAll('#multi-unconstrained questionaire-question-answer');
+            if (unconstrainedAnswers[0]) unconstrainedAnswers[0].setAttribute('selected', '');
+            if (unconstrainedAnswers[1]) unconstrainedAnswers[1].setAttribute('selected', '');
+            
+            document.getElementById('result-panel').innerHTML = `
+                <div class="success-panel">Valid answers simulated for all questions.</div>
+            `;
+        }
+
+        function simulateInvalidAnswers() {
+            clearAllSelections();
+            
+            // Single-select: no selection (invalid)
+            // Multi-constrained (2-3): select 1 answer (too few)
+            const multiAnswers = document.querySelectorAll('#multi-constrained questionaire-question-answer');
+            if (multiAnswers[0]) multiAnswers[0].setAttribute('selected', '');
+            
+            // Multi min-only (min 1): no selection (too few)
+            // Multi max-only (max 2): select 3 answers (too many)
+            const maxOnlyAnswers = document.querySelectorAll('#multi-max-only questionaire-question-answer');
+            if (maxOnlyAnswers[0]) maxOnlyAnswers[0].setAttribute('selected', '');
+            if (maxOnlyAnswers[1]) maxOnlyAnswers[1].setAttribute('selected', '');
+            if (maxOnlyAnswers[2]) maxOnlyAnswers[2].setAttribute('selected', '');
+            
+            document.getElementById('result-panel').innerHTML = `
+                <div class="error-panel">Invalid answers simulated. Try validating to see different error types.</div>
+            `;
+        }
+
+        function showErrorTypes() {
+            const resultPanel = document.getElementById('result-panel');
+            resultPanel.innerHTML = `
+                <div class="info-panel">
+                    <strong>Custom Error Classes:</strong><br><br>
+                    <strong>QuestionValidationError</strong> - Base error class<br>
+                    <strong>QuestionNotAnsweredError</strong> - Single-select with no answer<br>
+                    <strong>QuestionAnsweredTooFewError</strong> - Multi-select with too few answers<br>
+                    <strong>QuestionAnsweredTooMuchError</strong> - Multi-select with too many answers<br><br>
+                    <em>All error classes extend QuestionValidationError → Error</em>
+                </div>
+            `;
+        }
+
+        // Add click listeners to make answers selectable
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.addEventListener('click', () => {
+                    // Toggle selection
+                    if (answer.hasAttribute('selected')) {
+                        answer.removeAttribute('selected');
+                    } else {
+                        answer.setAttribute('selected', '');
+                    }
+                    
+                    // Reset validation state when selections change
+                    const question = answer.closest('questionaire-question');
+                    if (question) {
+                        question.classList.remove('valid', 'invalid');
+                    }
+                });
+            });
+            
+            // Initial state
+            showErrorTypes();
+        });
+    </script>
+</body>
+</html>
