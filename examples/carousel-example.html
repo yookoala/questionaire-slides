@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionaire Container Carousel Example</title>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Container Carousel Example</h1>
+    
+    <questionaire-container>
+        <div class="slide">
+            <h2>Slide 1</h2>
+            <p>This is the first slide of the questionaire.</p>
+        </div>
+        <div class="slide">
+            <h2>Slide 2</h2>
+            <p>This is the second slide of the questionaire.</p>
+        </div>
+        <div class="slide">
+            <h2>Slide 3</h2>
+            <p>This is the third slide of the questionaire.</p>
+        </div>
+    </questionaire-container>
+
+    <div style="margin-top: 20px; text-align: center;">
+        <button id="prevBtn">Previous</button>
+        <button id="nextBtn">Next</button>
+        <span id="currentSlide" style="margin-left: 20px;">Slide: 1</span>
+    </div>
+
+    <script>
+        const container = document.querySelector('questionaire-container');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentSlideSpan = document.getElementById('currentSlide');
+
+        prevBtn.addEventListener('click', () => {
+            container.previous();
+            updateSlideNumber();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            container.next();
+            updateSlideNumber();
+        });
+
+        function updateSlideNumber() {
+            currentSlideSpan.textContent = `Slide: ${container.currentIndex + 1}`;
+        }
+
+        // Listen for slide change events
+        container.addEventListener('slide-changed', (e) => {
+            console.log('Slide changed to:', e.detail.index);
+            updateSlideNumber();
+        });
+    </script>
+</body>
+</html>

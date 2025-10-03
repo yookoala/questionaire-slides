@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script type="module" src="../src/questionaire-container.js"></script>
+</head>
+<body>
+    <questionaire-container id="test-container">
+        <div id="slide1">Slide 1</div>
+        <div id="slide2">Slide 2</div>
+        <div id="slide3">Slide 3</div>
+    </questionaire-container>
+
+    <script type="module">
+        import { expect } from '@esm-bundle/chai';
+
+        describe('questionaire-container', () => {
+            let container;
+
+            beforeEach(() => {
+                container = document.getElementById('test-container');
+            });
+
+            it('should display only the first slide initially', async () => {
+                await container.updateComplete;
+                const slides = container.children;
+                expect(slides[0].style.display).to.not.equal('none');
+                expect(slides[1].style.display).to.equal('none');
+                expect(slides[2].style.display).to.equal('none');
+            });
+
+            it('should have currentIndex of 0 initially', () => {
+                expect(container.currentIndex).to.equal(0);
+            });
+
+            it('should move to next slide when next() is called', async () => {
+                container.next();
+                await container.updateComplete;
+                expect(container.currentIndex).to.equal(1);
+                const slides = container.children;
+                expect(slides[0].style.display).to.equal('none');
+                expect(slides[1].style.display).to.not.equal('none');
+                expect(slides[2].style.display).to.equal('none');
+            });
+
+            it('should move to previous slide when previous() is called', async () => {
+                container.next();
+                await container.updateComplete;
+                container.previous();
+                await container.updateComplete;
+                expect(container.currentIndex).to.equal(0);
+            });
+
+            it('should not go below index 0 when previous() is called at first slide', async () => {
+                container.previous();
+                await container.updateComplete;
+                expect(container.currentIndex).to.equal(0);
+            });
+
+            it('should not go beyond last slide when next() is called at last slide', async () => {
+                container.next();
+                container.next();
+                container.next(); // Try to go beyond
+                await container.updateComplete;
+                expect(container.currentIndex).to.equal(2);
+            });
+
+            it('should emit slide-changed event when slide changes', (done) => {
+                container.addEventListener('slide-changed', (e) => {
+                    expect(e.detail.index).to.equal(1);
+                    done();
+                });
+                container.next();
+            });
+
+            it('should go to specific slide with goToSlide()', async () => {
+                container.goToSlide(2);
+                await container.updateComplete;
+                expect(container.currentIndex).to.equal(2);
+            });
+        });
+    </script>
+</body>
+</html>
