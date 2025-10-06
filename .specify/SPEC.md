@@ -92,7 +92,7 @@ This project is to build a set of web components that works together as a questi
   This is a container component to contain multiple button-like elements `<questionaire-action>` on the same row with a 1em gaps in-between by default. With `slot="bottom"` set and placed within a `<questionaire-question>`, it should be always placed visually to the bottom of that question.
 
 
-## Procedure for Each Step
+## Procedure for Features or Bug Fixes
 
 1. Create an example HTML.
 2. Create browser test around the example HTML.
