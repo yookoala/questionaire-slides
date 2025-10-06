@@ -1,0 +1,758 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "src/question-validation-errors.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Custom error classes for questionnaire validation",
+          "name": "QuestionValidationError",
+          "members": [
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "default": "'QuestionValidationError'"
+            }
+          ],
+          "superclass": {
+            "name": "Error",
+            "module": "src/question-validation-errors.js"
+          }
+        },
+        {
+          "kind": "class",
+          "description": "Error thrown when a single-select question has no answer selected",
+          "name": "QuestionNotAnsweredError",
+          "members": [
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "default": "'QuestionNotAnsweredError'",
+              "inheritedFrom": {
+                "name": "QuestionValidationError",
+                "module": "src/question-validation-errors.js"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "QuestionValidationError",
+            "module": "src/question-validation-errors.js"
+          }
+        },
+        {
+          "kind": "class",
+          "description": "Error thrown when a multi-select question has too few answers selected",
+          "name": "QuestionAnsweredTooFewError",
+          "members": [
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "default": "'QuestionAnsweredTooFewError'",
+              "inheritedFrom": {
+                "name": "QuestionValidationError",
+                "module": "src/question-validation-errors.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "minRequired",
+              "default": "minRequired"
+            }
+          ],
+          "superclass": {
+            "name": "QuestionValidationError",
+            "module": "src/question-validation-errors.js"
+          }
+        },
+        {
+          "kind": "class",
+          "description": "Error thrown when a multi-select question has too many answers selected",
+          "name": "QuestionAnsweredTooMuchError",
+          "members": [
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "default": "'QuestionAnsweredTooMuchError'",
+              "inheritedFrom": {
+                "name": "QuestionValidationError",
+                "module": "src/question-validation-errors.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "maxAllowed",
+              "default": "maxAllowed"
+            }
+          ],
+          "superclass": {
+            "name": "QuestionValidationError",
+            "module": "src/question-validation-errors.js"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "QuestionValidationError",
+          "declaration": {
+            "name": "QuestionValidationError",
+            "module": "src/question-validation-errors.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "QuestionNotAnsweredError",
+          "declaration": {
+            "name": "QuestionNotAnsweredError",
+            "module": "src/question-validation-errors.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "QuestionAnsweredTooFewError",
+          "declaration": {
+            "name": "QuestionAnsweredTooFewError",
+            "module": "src/question-validation-errors.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "QuestionAnsweredTooMuchError",
+          "declaration": {
+            "name": "QuestionAnsweredTooMuchError",
+            "module": "src/question-validation-errors.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/questionaire-action.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Questionaire Action Element\nButton-like element to simplify implementation of navigations in questionaire-container",
+          "name": "QuestionaireAction",
+          "members": [
+            {
+              "kind": "field",
+              "name": "properties",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ action: { type: String, reflect: true }, disabled: { type: Boolean, reflect: true }, }"
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` :host { display: inline-block; cursor: pointer; user-select: none; /* Moved from .action-button */ width: 100%; padding: 10px 20px; border: 2px solid #007bff; border-radius: 5px; background-color: #007bff; color: white; font-size: 16px; font-weight: bold; text-align: center; transition: all 0.2s ease; min-width: 80px; box-sizing: border-box; } :host(:hover) { background-color: #0056b3; border-color: #0056b3; transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); } :host(:active) { transform: translateY(0); box-shadow: 0 1px 2px rgba(0,0,0,0.2); } :host([action=\"previous\"]) { background-color: #6c757d; border-color: #6c757d; } :host([action=\"previous\"]:hover) { background-color: #5a6268; border-color: #5a6268; } :host([disabled]) { background-color: #e9ecef; border-color: #dee2e6; color: #6c757d; cursor: not-allowed; transform: none; box-shadow: none; } :host([disabled]:hover) { background-color: #e9ecef; border-color: #dee2e6; transform: none; box-shadow: none; } /* Invalid state styling (internal validation failure) */ :host(.invalid) { background-color: #e9ecef; border-color: #dee2e6; color: #6c757d; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.6; } :host(.invalid:hover) { background-color: #e9ecef; border-color: #dee2e6; transform: none; box-shadow: none; } `"
+            },
+            {
+              "kind": "method",
+              "name": "_setupValidationListening",
+              "description": "Set up event listener for container changes"
+            },
+            {
+              "kind": "method",
+              "name": "_cleanupValidationListening",
+              "description": "Clean up event listeners"
+            },
+            {
+              "kind": "method",
+              "name": "_checkValidationState",
+              "description": "Check the current validation state and update invalid state\nOnly applies to \"next\" actions"
+            },
+            {
+              "kind": "method",
+              "name": "_setInvalidState",
+              "parameters": [
+                {
+                  "name": "invalid"
+                }
+              ],
+              "description": "Set the internal invalid state"
+            },
+            {
+              "kind": "method",
+              "name": "_shouldPreventAction",
+              "description": "Check if the action should be prevented (disabled or invalid)"
+            },
+            {
+              "kind": "method",
+              "name": "_handleClick",
+              "parameters": [
+                {
+                  "name": "event"
+                }
+              ],
+              "description": "Handle click events on the action button"
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            },
+            {
+              "kind": "field",
+              "name": "action",
+              "type": {
+                "text": "string"
+              },
+              "default": "'next'"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "_invalid",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "_containerEventListener",
+              "type": {
+                "text": "null"
+              },
+              "default": "null"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "questionaire-action",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "QuestionaireAction",
+          "declaration": {
+            "name": "QuestionaireAction",
+            "module": "src/questionaire-action.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "questionaire-action",
+          "declaration": {
+            "name": "QuestionaireAction",
+            "module": "src/questionaire-action.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/questionaire-actions.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Questionaire Actions Element\nContainer component to contain multiple button-like elements questionaire-action \non the same row with a 1em gaps in-between by default.",
+          "name": "QuestionaireActions",
+          "members": [
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` :host { display: block; margin: 1em 0; } .actions-container { display: grid; grid-auto-flow: column; grid-auto-columns: max-content; gap: 1em; align-items: center; justify-content: start; } /* When used with slot=\"bottom\", ensure it's positioned at the bottom */ :host([slot=\"bottom\"]) { margin-top: auto; order: 999; /* Ensure it appears at the bottom */ } /* Center the actions when used as bottom slot */ :host([slot=\"bottom\"]) .actions-container { justify-content: center; } /* Responsive behavior for very small screens */ @media (max-width: 480px) { .actions-container { grid-auto-flow: row; grid-auto-columns: unset; gap: 0.5em; justify-content: center; } .actions-container ::slotted(questionaire-action) { width: 100%; } } `"
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "questionaire-actions",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "QuestionaireActions",
+          "declaration": {
+            "name": "QuestionaireActions",
+            "module": "src/questionaire-actions.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "questionaire-actions",
+          "declaration": {
+            "name": "QuestionaireActions",
+            "module": "src/questionaire-actions.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/questionaire-container.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "QuestionaireContainer - A carousel component for displaying questionaire slides\nUses horizontal scrolling to smoothly transition between slides",
+          "name": "QuestionaireContainer",
+          "members": [
+            {
+              "kind": "field",
+              "name": "properties",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ currentIndex: { type: Number }, ready: { type: String, reflect: true }, }"
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` :host { display: block; position: relative; overflow: hidden; width: 100%; height: auto; box-sizing: border-box; } .container { display: grid; height: 100%; transition: transform 0.3s ease-in-out; /* Grid template columns will be set dynamically via inline styles */ } ::slotted(*) { width: 100%; box-sizing: border-box; } `"
+            },
+            {
+              "kind": "method",
+              "name": "firstUpdated"
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            },
+            {
+              "kind": "method",
+              "name": "_handleSlotChange"
+            },
+            {
+              "kind": "method",
+              "name": "_updateContainer"
+            },
+            {
+              "kind": "method",
+              "name": "next",
+              "description": "Navigate to the next slide\nValidates the current item (if applicable) before navigation\nIf current item has a validate() method and validation fails, throws error and refuses to navigate"
+            },
+            {
+              "kind": "method",
+              "name": "previous",
+              "description": "Navigate to the previous slide"
+            },
+            {
+              "kind": "method",
+              "name": "goToSlide",
+              "parameters": [
+                {
+                  "name": "index",
+                  "description": "The index of the slide to navigate to",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "description": "Navigate to a specific slide by index"
+            },
+            {
+              "kind": "method",
+              "name": "_dispatchSlideChangeEvent",
+              "description": "Dispatch a custom event when the slide changes"
+            },
+            {
+              "kind": "field",
+              "name": "slideCount",
+              "description": "Get the total number of slides",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "getContents",
+              "description": "Get aggregated content from all questionaire-question-content elements\nReturns a string with all content text separated by newlines"
+            },
+            {
+              "kind": "field",
+              "name": "values",
+              "description": "Get aggregated values from all named questionaire-question elements\nReturns an object with question names as keys and question values as values\nOnly includes questions with non-empty name attributes",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "current",
+              "description": "Get the currently focused child element\nReturns the child element at the current index, or null if no elements"
+            },
+            {
+              "kind": "field",
+              "name": "currentIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "ready",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            }
+          ],
+          "events": [
+            {
+              "name": "slide-changed",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "questionaire-container",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "QuestionaireContainer",
+          "declaration": {
+            "name": "QuestionaireContainer",
+            "module": "src/questionaire-container.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "questionaire-container",
+          "declaration": {
+            "name": "QuestionaireContainer",
+            "module": "src/questionaire-container.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/questionaire-question-answer.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "QuestionaireQuestionAnswer - A selectable answer option component\n\nFeatures:\n- Container element for answer text with selection state\n- \"selected\" attribute reflects selection state\n- \"value\" property/attribute for submission values\n- If no value attribute is set, value property returns text content\n- Programmatic value changes only affect attribute, not text content",
+          "name": "QuestionaireQuestionAnswer",
+          "members": [
+            {
+              "kind": "field",
+              "name": "properties",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ selected: { type: Boolean, reflect: true }, value: { type: String }, }"
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` :host { display: block; } `"
+            },
+            {
+              "kind": "method",
+              "name": "firstUpdated"
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "description": "Custom setter for value property\nSets the value attribute, which doesn't affect text content"
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "description": "Set the selected state",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "_initialValueSet",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "questionaire-question-answer",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "QuestionaireQuestionAnswer",
+          "declaration": {
+            "name": "QuestionaireQuestionAnswer",
+            "module": "src/questionaire-question-answer.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "questionaire-question-answer",
+          "declaration": {
+            "name": "QuestionaireQuestionAnswer",
+            "module": "src/questionaire-question-answer.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/questionaire-question-content.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "QuestionaireQuestionContent - A simple container component for question text/HTML content\n\nFeatures:\n- Simple container element for displaying question text or HTML\n- Used within questionaire-question elements to show the question content\n- Supports any HTML content via slots\n- Does not affect question logic - purely for display purposes",
+          "name": "QuestionaireQuestionContent",
+          "members": [
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` :host { display: block; } `"
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "questionaire-question-content",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "QuestionaireQuestionContent",
+          "declaration": {
+            "name": "QuestionaireQuestionContent",
+            "module": "src/questionaire-question-content.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "questionaire-question-content",
+          "declaration": {
+            "name": "QuestionaireQuestionContent",
+            "module": "src/questionaire-question-content.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/questionaire-question.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "QuestionaireQuestion - A question container component with selectable answers\n\nFeatures:\n- Contains multiple questionaire-question-answer elements\n- Supports single-select (default) and multi-select modes via multiselect attribute\n- value property returns selected answer value(s) - string for single, array for multi\n- Handles selection logic to enforce single vs multi-select rules\n- Dispatches \"question:changed\" events when answers change",
+          "name": "QuestionaireQuestion",
+          "members": [
+            {
+              "kind": "field",
+              "name": "properties",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ multiselect: { type: Boolean, reflect: true }, name: { type: String, reflect: true }, minAnswer: { type: Number, attribute: 'min-answer', reflect: true }, maxAnswer: { type: Number, attribute: 'max-answer', reflect: true }, }"
+            },
+            {
+              "kind": "field",
+              "name": "styles",
+              "static": true,
+              "default": "css` :host { display: block; min-height: 200px; /* Ensure minimum height for grid layout */ } .question-container { display: grid; grid-template-rows: 1fr auto; grid-template-areas: \"content\" \"bottom\"; min-height: inherit; gap: 1em; } .question-content { grid-area: content; display: grid; grid-auto-flow: row; gap: 0.5em; } .question-bottom { grid-area: bottom; align-self: end; } /* Ensure the bottom slot content is visible */ ::slotted([slot=\"bottom\"]) { display: block !important; } `"
+            },
+            {
+              "kind": "method",
+              "name": "_validateConstraints",
+              "description": "Validate min-answer and max-answer constraints"
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            },
+            {
+              "kind": "method",
+              "name": "_handleSlotChange",
+              "description": "Handle slot changes to set up observers for new answer elements"
+            },
+            {
+              "kind": "method",
+              "name": "_setupAnswerObservation",
+              "description": "Set up mutation observers for all answer elements"
+            },
+            {
+              "kind": "method",
+              "name": "_cleanupObservers",
+              "description": "Clean up all mutation observers"
+            },
+            {
+              "kind": "method",
+              "name": "_handleAnswerSelectionChange",
+              "parameters": [
+                {
+                  "name": "changedAnswer"
+                }
+              ],
+              "description": "Handle when an answer's selection state changes"
+            },
+            {
+              "kind": "method",
+              "name": "_dispatchQuestionChangedEvent",
+              "parameters": [
+                {
+                  "name": "answerElement"
+                }
+              ],
+              "description": "Dispatch question:changed custom event"
+            },
+            {
+              "kind": "method",
+              "name": "_dispatchContainerChangedEvent",
+              "parameters": [
+                {
+                  "name": "answerElement"
+                }
+              ],
+              "description": "Dispatch container:changed custom event to the closest questionaire-container"
+            },
+            {
+              "kind": "method",
+              "name": "_getAnswerElements",
+              "description": "Get all questionaire-question-answer elements in this question"
+            },
+            {
+              "kind": "method",
+              "name": "_getSelectedAnswers",
+              "description": "Get the currently selected answer elements"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "description": "Get the current value of the question\n- In single-select mode: returns string value of selected answer, or undefined if none\n- In multi-select mode: returns array of string values of selected answers, or empty array if none",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "multiselect",
+              "description": "Set multiselect attribute",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "method",
+              "name": "validate",
+              "description": "Validate the current question state\nThrows appropriate validation errors if the question is not valid"
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "minAnswer",
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "maxAnswer",
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "_observers",
+              "default": "new Set()"
+            }
+          ],
+          "events": [
+            {
+              "name": "question:changed",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "questionaire-question",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "QuestionaireQuestion",
+          "declaration": {
+            "name": "QuestionaireQuestion",
+            "module": "src/questionaire-question.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "questionaire-question",
+          "declaration": {
+            "name": "QuestionaireQuestion",
+            "module": "src/questionaire-question.js"
+          }
+        }
+      ]
+    }
+  ]
+}

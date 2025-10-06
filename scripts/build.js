@@ -131,6 +131,7 @@ async function buildDist() {
     keywords: ['web-components', 'questionnaire', 'slides', 'lit', 'custom-elements'],
     dependencies: packageJson.dependencies,
     peerDependencies: packageJson.dependencies,
+    customElements: '../custom-elements.json'
   };
   
   await fs.writeFile(
@@ -139,7 +140,17 @@ async function buildDist() {
   );
   
   console.log('✓ Built package.json for dist');
-  console.log(`\n🎉 Build completed! Generated ${jsFiles.length * 2 + 2} files in dist/`);
+  
+  // Copy custom-elements.json to dist
+  const customElementsPath = path.join(__dirname, '..', 'custom-elements.json');
+  const distCustomElementsPath = path.join(distDir, 'custom-elements.json');
+  
+  if (await fs.pathExists(customElementsPath)) {
+    await fs.copy(customElementsPath, distCustomElementsPath);
+    console.log('✓ Copied custom-elements.json to dist');
+  }
+  
+  console.log(`\n🎉 Build completed! Generated ${jsFiles.length * 2 + 3} files in dist/`);
   
   // Show file sizes
   const distFiles = await fs.readdir(distDir);
