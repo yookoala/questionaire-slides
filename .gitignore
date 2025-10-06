@@ -7,3 +7,6 @@
 # playwright test generated files
 /test-results/
 /playwright-report/
+
+# package files
+*.tgz
