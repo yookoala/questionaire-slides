@@ -1,3 +1,6 @@
+# dist
+/dist/
+
 # npm
 /node_modules/
 
