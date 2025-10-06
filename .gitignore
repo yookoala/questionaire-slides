@@ -1,5 +1,6 @@
 # npm
 /node_modules/
 
-# playwright test results
+# playwright test generated files
 /test-results/
+/playwright-report/
