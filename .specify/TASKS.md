@@ -18,7 +18,7 @@ Steps to implement the applicaiton.
 - [x] feature/question-action-validate: Implement the interaction between `<questionaire-action>` and `<questionaire-container>` to have `<questionaire-action>` (action="next") disabled when the current question's `.validate()` raises error. Make sure this change don't break anything implemented before.
 - [x] fix/style: "div.action-button" in `<questionaire-action>` should not exists. It should be done by styling the :host directly. Fix this without messing up existing feature.
 - [x] qa/check-mit-license-compat: Check the source code with GitHub or other available code source to see if the current source code is compatible with a MIT license release.
-- [ ] qa/tests: reimplement test with playwright with headless chrome / chromium.
+- [ ] qa/tests: write automatic test with @playwright/test using headless chrome / chromium on all test/*.html to ensure they behaves as expected.
 - [ ] qa/github-actions: setup repository to run all tests in GitHub Actions when a new commit is on "main" branch or when a PR on "main" is submitted.
 
 Note: Do not do anything that is not in this file.
