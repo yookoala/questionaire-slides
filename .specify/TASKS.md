@@ -21,6 +21,6 @@ Steps to implement the applicaiton.
 - [x] qa/tests: write automatic test with @playwright/test using headless chrome / chromium on all test/*.html to ensure they behaves as expected.
 - [x] qa/test-rewrite: rewrite simple-test.js and functional-test.js (both in the "test/" folder) with chai+mocha.
 - [x] qa/github-actions: setup repository to run all tests in GitHub Actions when a new commit is on "main" branch or when a PR on "main" is submitted.
-- [ ] publish/npm-ready: a new script to generate "dist/" folder of the "src/*.js", and minified versions of them, with proper library version comment header that are generated dynamically.
+- [x] publish/npm-ready: a new script to generate "dist/" folder of the "src/*.js", and minified versions of them, with proper library version comment header that are generated dynamically.
 
 Note: Do not do anything that is not in this file.
