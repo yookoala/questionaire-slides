@@ -196,6 +196,9 @@ export class QuestionaireQuestion extends LitElement {
 
     // Dispatch question:changed event
     this._dispatchQuestionChangedEvent(changedAnswer);
+    
+    // Dispatch container:changed event
+    this._dispatchContainerChangedEvent(changedAnswer);
   }
 
   /**
@@ -209,6 +212,22 @@ export class QuestionaireQuestion extends LitElement {
         composed: true,
       })
     );
+  }
+
+  /**
+   * Dispatch container:changed custom event to the closest questionaire-container
+   */
+  _dispatchContainerChangedEvent(answerElement) {
+    const container = this.closest('questionaire-container');
+    if (container) {
+      container.dispatchEvent(
+        new CustomEvent('container:changed', {
+          detail: { element: answerElement },
+          bubbles: true,
+          composed: true,
+        })
+      );
+    }
   }
 
   /**

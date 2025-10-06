@@ -7,6 +7,7 @@ import { LitElement, html, css } from 'lit';
 export class QuestionaireAction extends LitElement {
   static properties = {
     action: { type: String, reflect: true },
+    disabled: { type: Boolean, reflect: true },
   };
 
   static styles = css`
@@ -70,21 +71,130 @@ export class QuestionaireAction extends LitElement {
       transform: none;
       box-shadow: none;
     }
+
+    /* Invalid state styling (internal validation failure) */
+    :host(.invalid) .action-button {
+      background-color: #e9ecef;
+      border-color: #dee2e6;
+      color: #6c757d;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+      opacity: 0.6;
+    }
+
+    :host(.invalid) .action-button:hover {
+      background-color: #e9ecef;
+      border-color: #dee2e6;
+      transform: none;
+      box-shadow: none;
+    }
   `;
 
   constructor() {
     super();
     this.action = 'next'; // Default action
+    this.disabled = false;
+    this._invalid = false; // Internal validation state
+    this._containerEventListener = null;
   }
 
   connectedCallback() {
     super.connectedCallback();
     this.addEventListener('click', this._handleClick);
+    
+    // Initialize validation state after component is connected
+    this.updateComplete.then(() => {
+      this._setupValidationListening();
+      this._checkValidationState();
+    });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('click', this._handleClick);
+    this._cleanupValidationListening();
+  }
+
+  /**
+   * Set up event listener for container changes
+   */
+  _setupValidationListening() {
+    const container = this.closest('questionaire-container');
+    if (container) {
+      this._containerEventListener = () => {
+        this._checkValidationState();
+      };
+      container.addEventListener('container:changed', this._containerEventListener);
+    }
+  }
+
+  /**
+   * Clean up event listeners
+   */
+  _cleanupValidationListening() {
+    const container = this.closest('questionaire-container');
+    if (container && this._containerEventListener) {
+      container.removeEventListener('container:changed', this._containerEventListener);
+      this._containerEventListener = null;
+    }
+  }
+
+  /**
+   * Check the current validation state and update invalid state
+   * Only applies to "next" actions
+   */
+  _checkValidationState() {
+    // Only validate "next" actions (default action)
+    const actionType = this.action || 'next';
+    if (actionType !== 'next') {
+      this._setInvalidState(false);
+      return;
+    }
+
+    const container = this.closest('questionaire-container');
+    if (!container) {
+      this._setInvalidState(false);
+      return;
+    }
+
+    // Get current slide and check if it has validation
+    const currentElement = container.current();
+    if (!currentElement || typeof currentElement.validate !== 'function') {
+      this._setInvalidState(false);
+      return;
+    }
+
+    // Try to validate the current element
+    try {
+      currentElement.validate();
+      this._setInvalidState(false); // Validation passed
+    } catch (validationError) {
+      this._setInvalidState(true); // Validation failed
+    }
+  }
+
+  /**
+   * Set the internal invalid state
+   */
+  _setInvalidState(invalid) {
+    const wasInvalid = this._invalid;
+    this._invalid = invalid;
+    
+    if (wasInvalid !== invalid) {
+      if (invalid) {
+        this.classList.add('invalid');
+      } else {
+        this.classList.remove('invalid');
+      }
+    }
+  }
+
+  /**
+   * Check if the action should be prevented (disabled or invalid)
+   */
+  _shouldPreventAction() {
+    return this.disabled || this._invalid;
   }
 
   /**
@@ -93,6 +203,11 @@ export class QuestionaireAction extends LitElement {
   _handleClick(event) {
     event.preventDefault();
     event.stopPropagation();
+
+    // Prevent action if disabled or invalid
+    if (this._shouldPreventAction()) {
+      return;
+    }
 
     // Find the closest parent questionaire-container
     const container = this.closest('questionaire-container');
