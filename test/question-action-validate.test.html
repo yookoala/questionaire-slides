@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Action Validation Test</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/questionaire-action.js"></script>
+    <script type="module" src="../src/questionaire-actions.js"></script>
+    <script type="module" src="../src/question-validation-errors.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .test-pass {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        questionaire-container {
+            border: 1px dashed #007bff;
+            margin: 10px 0;
+            display: block;
+            min-height: 200px;
+            padding: 10px;
+        }
+        questionaire-question {
+            border: 1px solid #6c757d;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        questionaire-question-answer {
+            display: block;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            background: white;
+        }
+        questionaire-question-answer:hover {
+            background: #f0f8ff;
+        }
+        questionaire-question-answer[selected] {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Question Action Validation Test</h1>
+    <p>This page tests the validation-aware behavior of questionaire-action elements.</p>
+
+    <div class="test-section">
+        <h3>Test 1: Initial Invalid State</h3>
+        <p>Test that Next action starts in invalid state when current question fails validation.</p>
+        
+        <questionaire-container id="test1">
+            <questionaire-question name="required">
+                <questionaire-question-content>Required Question</questionaire-question-content>
+                <questionaire-question-answer value="option1">Option 1</questionaire-question-answer>
+                <questionaire-question-answer value="option2">Option 2</questionaire-question-answer>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action id="test1-next">Next</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+        </questionaire-container>
+        
+        <div id="result1" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Validation State Change</h3>
+        <p>Test that action state updates when question becomes valid.</p>
+        
+        <questionaire-container id="test2">
+            <questionaire-question name="test2q">
+                <questionaire-question-content>Test Question</questionaire-question-content>
+                <questionaire-question-answer value="a" id="test2-answer">Answer A</questionaire-question-answer>
+                <questionaire-question-answer value="b">Answer B</questionaire-question-answer>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action id="test2-next">Next</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+        </questionaire-container>
+        
+        <button onclick="selectTest2Answer()">Select Answer (should enable Next)</button>
+        
+        <div id="result2" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Multi-select Constraints</h3>
+        <p>Test action state with multi-select min/max constraints.</p>
+        
+        <questionaire-container id="test3">
+            <questionaire-question name="multitest" multiselect min-answer="2" max-answer="3">
+                <questionaire-question-content>Select 2-3 options</questionaire-question-content>
+                <questionaire-question-answer value="1" id="test3-a1">Option 1</questionaire-question-answer>
+                <questionaire-question-answer value="2" id="test3-a2">Option 2</questionaire-question-answer>
+                <questionaire-question-answer value="3" id="test3-a3">Option 3</questionaire-question-answer>
+                <questionaire-question-answer value="4" id="test3-a4">Option 4</questionaire-question-answer>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action id="test3-next">Next</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+        </questionaire-container>
+        
+        <button onclick="selectMultipleAnswers(1)">Select 1 (invalid)</button>
+        <button onclick="selectMultipleAnswers(2)">Select 2 (valid)</button>
+        <button onclick="selectMultipleAnswers(4)">Select 4 (invalid)</button>
+        
+        <div id="result3" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 4: Container Changed Event</h3>
+        <p>Test that actions listen for container:changed events and re-evaluate.</p>
+        
+        <questionaire-container id="test4">
+            <questionaire-question name="q1">
+                <questionaire-question-content>Question 1</questionaire-question-content>
+                <questionaire-question-answer value="opt1">Option 1</questionaire-question-answer>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action id="test4-next-1">Next from Q1</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+            
+            <questionaire-question name="q2" multiselect min-answer="1">
+                <questionaire-question-content>Question 2 (Multi-select)</questionaire-question-content>
+                <questionaire-question-answer value="a">Option A</questionaire-question-answer>
+                <questionaire-question-answer value="b">Option B</questionaire-question-answer>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action action="previous">Previous</questionaire-action>
+                    <questionaire-action id="test4-next-2">Next from Q2</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+        </questionaire-container>
+        
+        <button onclick="test4Container.goToSlide(0)">Go to Q1</button>
+        <button onclick="test4Container.goToSlide(1)">Go to Q2</button>
+        
+        <div id="result4" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 5: Disabled vs Invalid States</h3>
+        <p>Test that manual disabled state works independently of invalid state.</p>
+        
+        <questionaire-container id="test5">
+            <questionaire-question name="test5q">
+                <questionaire-question-content>Test Question</questionaire-question-content>
+                <questionaire-question-answer value="selected" selected>Pre-selected Answer</questionaire-question-answer>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action id="test5-next">Next</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+        </questionaire-container>
+        
+        <button onclick="toggleTest5Disabled()">Toggle Manual Disabled</button>
+        
+        <div id="result5" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 6: Previous Action (should not be affected)</h3>
+        <p>Test that Previous actions are not affected by validation.</p>
+        
+        <questionaire-container id="test6">
+            <div>First slide</div>
+            <questionaire-question name="test6q">
+                <questionaire-question-content>Required Question</questionaire-question-content>
+                <questionaire-question-answer value="opt">Option</questionaire-question-answer>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action action="previous" id="test6-prev">Previous</questionaire-action>
+                    <questionaire-action id="test6-next">Next</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+        </questionaire-container>
+        
+        <div id="result6" class="test-result test-pending">Waiting for test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Manual Testing Controls</h3>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="resetTests()">Reset Tests</button>
+    </div>
+
+    <script>
+        let test4Container;
+        let test5ManualDisabled = false;
+
+        function setTestResult(testId, passed, message) {
+            const result = document.getElementById(`result${testId}`);
+            result.className = `test-result ${passed ? 'test-pass' : 'test-fail'}`;
+            result.textContent = `${passed ? '✅ PASS' : '❌ FAIL'}: ${message}`;
+        }
+
+        function isActionInInvalidState(action) {
+            // Check various possible indicators of invalid state
+            return action.classList.contains('invalid') || 
+                   action.hasAttribute('aria-disabled') ||
+                   getComputedStyle(action).opacity < 1 ||
+                   getComputedStyle(action).pointerEvents === 'none';
+        }
+
+        function test1() {
+            try {
+                const container = document.getElementById('test1');
+                const nextAction = document.getElementById('test1-next');
+                const question = container.querySelector('questionaire-question');
+                
+                // Question should be invalid initially (no selection)
+                let isQuestionValid = true;
+                try {
+                    question.validate();
+                } catch (e) {
+                    isQuestionValid = false;
+                }
+                
+                const actionInvalid = isActionInInvalidState(nextAction);
+                
+                if (!isQuestionValid && actionInvalid) {
+                    setTestResult(1, true, 'Next action correctly starts in invalid state for unselected required question');
+                } else {
+                    setTestResult(1, false, `Question valid: ${isQuestionValid}, Action invalid: ${actionInvalid}`);
+                }
+            } catch (error) {
+                setTestResult(1, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test2() {
+            try {
+                const nextAction = document.getElementById('test2-next');
+                const initialState = isActionInInvalidState(nextAction);
+                
+                setTestResult(2, true, `Initial state captured. Use button to select answer and observe state change. Initial invalid: ${initialState}`);
+            } catch (error) {
+                setTestResult(2, false, `Error: ${error.message}`);
+            }
+        }
+
+        function selectTest2Answer() {
+            const answer = document.getElementById('test2-answer');
+            answer.setAttribute('selected', '');
+            
+            setTimeout(() => {
+                const nextAction = document.getElementById('test2-next');
+                const nowInvalid = isActionInInvalidState(nextAction);
+                
+                setTestResult(2, !nowInvalid, `After selection: action invalid state = ${nowInvalid} (should be false)`);
+            }, 100);
+        }
+
+        function test3() {
+            try {
+                const nextAction = document.getElementById('test3-next');
+                const initialState = isActionInInvalidState(nextAction);
+                
+                setTestResult(3, true, `Multi-select test ready. Initial invalid: ${initialState}. Use buttons to test different selection counts.`);
+            } catch (error) {
+                setTestResult(3, false, `Error: ${error.message}`);
+            }
+        }
+
+        function selectMultipleAnswers(count) {
+            // Clear all selections first
+            document.querySelectorAll('#test3 questionaire-question-answer[selected]').forEach(answer => {
+                answer.removeAttribute('selected');
+            });
+            
+            // Select the specified number of answers
+            const answers = document.querySelectorAll('#test3 questionaire-question-answer');
+            for (let i = 0; i < Math.min(count, answers.length); i++) {
+                answers[i].setAttribute('selected', '');
+            }
+            
+            setTimeout(() => {
+                const nextAction = document.getElementById('test3-next');
+                const isInvalid = isActionInInvalidState(nextAction);
+                const shouldBeValid = count >= 2 && count <= 3;
+                
+                setTestResult(3, isInvalid !== shouldBeValid, 
+                    `Selected ${count} answers: action invalid = ${isInvalid}, should be valid = ${shouldBeValid}`);
+            }, 100);
+        }
+
+        function test4() {
+            try {
+                test4Container = document.getElementById('test4');
+                test4Container.goToSlide(1); // Go to second question
+                
+                setTimeout(() => {
+                    const nextAction = document.getElementById('test4-next-2');
+                    const isInvalid = isActionInInvalidState(nextAction);
+                    
+                    setTestResult(4, isInvalid, `Navigation to Q2: Next action invalid = ${isInvalid} (should be true for empty multi-select)`);
+                }, 200);
+            } catch (error) {
+                setTestResult(4, false, `Error: ${error.message}`);
+            }
+        }
+
+        function test5() {
+            try {
+                const nextAction = document.getElementById('test5-next');
+                const initiallyInvalid = isActionInInvalidState(nextAction);
+                
+                // Question has pre-selected answer, so should be valid
+                setTestResult(5, !initiallyInvalid, `Pre-selected question: action initially invalid = ${initiallyInvalid} (should be false)`);
+            } catch (error) {
+                setTestResult(5, false, `Error: ${error.message}`);
+            }
+        }
+
+        function toggleTest5Disabled() {
+            const nextAction = document.getElementById('test5-next');
+            test5ManualDisabled = !test5ManualDisabled;
+            
+            if (test5ManualDisabled) {
+                nextAction.setAttribute('disabled', '');
+            } else {
+                nextAction.removeAttribute('disabled');
+            }
+            
+            const isDisabled = nextAction.hasAttribute('disabled');
+            setTestResult(5, isDisabled === test5ManualDisabled, 
+                `Manual disabled state: ${test5ManualDisabled}, actual disabled: ${isDisabled}`);
+        }
+
+        function test6() {
+            try {
+                const container = document.getElementById('test6');
+                container.goToSlide(1); // Go to second slide with required question
+                
+                setTimeout(() => {
+                    const prevAction = document.getElementById('test6-prev');
+                    const nextAction = document.getElementById('test6-next');
+                    
+                    const prevInvalid = isActionInInvalidState(prevAction);
+                    const nextInvalid = isActionInInvalidState(nextAction);
+                    
+                    setTestResult(6, !prevInvalid && nextInvalid, 
+                        `Previous action invalid: ${prevInvalid} (should be false), Next action invalid: ${nextInvalid} (should be true)`);
+                }, 200);
+            } catch (error) {
+                setTestResult(6, false, `Error: ${error.message}`);
+            }
+        }
+
+        function runAllTests() {
+            setTimeout(() => {
+                test1();
+                test2();
+                test3();
+                test4();
+                test5();
+                test6();
+            }, 500);
+        }
+
+        function resetTests() {
+            for (let i = 1; i <= 6; i++) {
+                const result = document.getElementById(`result${i}`);
+                result.className = 'test-result test-pending';
+                result.textContent = 'Waiting for test...';
+            }
+            
+            // Reset all selections
+            document.querySelectorAll('questionaire-question-answer[selected]').forEach(answer => {
+                answer.removeAttribute('selected');
+            });
+            
+            // Reset test 5 pre-selection
+            setTimeout(() => {
+                document.querySelector('#test5 questionaire-question-answer').setAttribute('selected', '');
+            }, 100);
+        }
+
+        // Auto-run tests when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Make answers clickable
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.addEventListener('click', () => {
+                    if (answer.hasAttribute('selected')) {
+                        answer.removeAttribute('selected');
+                    } else {
+                        answer.setAttribute('selected', '');
+                    }
+                });
+            });
+            
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>

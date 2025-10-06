@@ -672,6 +672,15 @@ Final status of TASKS.md - ALL FEATURES IMPLEMENTED:
 11. ✅ **feature/question-actions**: `<questionaire-actions>` container element with layout ability
 12. ✅ **fix/layout**: CSS Grid layout replacement for all Flexbox usage
 
+## Current Task: feature/question-action-validate
+🔄 **IN PROGRESS**: Implement validation-aware action button disabling
+
+### Phase 1: Example and Test Creation ✅
+- Created `examples/question-action-validate-example.html` - Interactive example showing validation-aware action buttons
+- Created `test/question-action-validate.test.html` - Comprehensive test suite for action validation functionality
+- Tests cover: initial invalid state, validation state changes, multi-select constraints, container events, disabled vs invalid states
+- Examples demonstrate: automatic disabling based on validation, visual feedback, event handling, state management
+
 ## Complete Questionnaire System 🚀
 
 The project now has a **fully-featured, production-ready questionnaire system** with:

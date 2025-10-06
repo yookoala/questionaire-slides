@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Action Validation Example</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://unpkg.com/lit@3.3.1/index.js",
+        "lit/": "https://unpkg.com/lit@3.3.1/",
+        "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.1/reactive-element.js",
+        "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.1/",
+        "lit-html": "https://unpkg.com/lit-html@3.3.1/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@3.3.1/",
+        "lit-element": "https://unpkg.com/lit-element@4.2.1/lit-element.js",
+        "lit-element/": "https://unpkg.com/lit-element@4.2.1/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <script type="module" src="../src/questionaire-question-answer.js"></script>
+    <script type="module" src="../src/questionaire-question.js"></script>
+    <script type="module" src="../src/questionaire-question-content.js"></script>
+    <script type="module" src="../src/questionaire-action.js"></script>
+    <script type="module" src="../src/questionaire-actions.js"></script>
+    <script type="module" src="../src/question-validation-errors.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .example-section h3 {
+            margin-top: 0;
+        }
+        questionaire-container {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 3px solid #28a745;
+            border-radius: 8px;
+            background-color: white;
+            min-height: 400px;
+        }
+        questionaire-question {
+            display: block;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background-color: white;
+        }
+        questionaire-question-content {
+            display: block;
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        questionaire-question-answer {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        questionaire-question-answer:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        questionaire-question-answer[selected] {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f8f9fa;
+        }
+        .info-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        .action-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #fff3cd;
+            padding: 15px;
+            border: 2px solid #ffc107;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 300px;
+        }
+        .action-info .current-slide {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .testing-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        .validation-status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .validation-valid {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .validation-invalid {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <h1>Question Action Validation Example</h1>
+    
+    <div class="action-info">
+        <div class="current-slide">Current Slide: <span id="slide-display">1</span></div>
+        <div>Total Slides: <span id="total-display">4</span></div>
+        <div>Action State: <span id="action-state">Unknown</span></div>
+    </div>
+    
+    <div class="example-section">
+        <h3>Validation-Aware Action Buttons</h3>
+        <p>The "Next" action buttons are automatically disabled when the current question fails validation. Watch how the button state changes based on question validity.</p>
+        
+        <questionaire-container id="validation-survey">
+            <!-- Question 1: Required single-select (starts invalid) -->
+            <questionaire-question name="required_question" id="q1">
+                <questionaire-question-content>
+                    Required Question
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    Please select one option (required to proceed).
+                </questionaire-question-content>
+                <questionaire-question-answer value="option1">Option 1</questionaire-question-answer>
+                <questionaire-question-answer value="option2">Option 2</questionaire-question-answer>
+                <questionaire-question-answer value="option3">Option 3</questionaire-question-answer>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action id="next-btn-1">Next (should be disabled initially)</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+
+            <!-- Question 2: Multi-select with min/max constraints -->
+            <questionaire-question name="multiselect_question" id="q2" multiselect min-answer="2" max-answer="3">
+                <questionaire-question-content>
+                    Multi-Select Question
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    Select 2-3 options (validation constraint).
+                </questionaire-question-content>
+                <questionaire-question-answer value="a">Option A</questionaire-question-answer>
+                <questionaire-question-answer value="b">Option B</questionaire-question-answer>
+                <questionaire-question-answer value="c">Option C</questionaire-question-answer>
+                <questionaire-question-answer value="d">Option D</questionaire-question-answer>
+                <questionaire-question-answer value="e">Option E</questionaire-question-answer>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action action="previous">Previous</questionaire-action>
+                    <questionaire-action id="next-btn-2">Next (disabled until 2-3 selected)</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+
+            <!-- Question 3: Valid question (no validation constraints) -->
+            <questionaire-question name="optional_question" id="q3">
+                <questionaire-question-content>
+                    Optional Question
+                </questionaire-question-content>
+                <questionaire-question-content>
+                    This question is optional (Next button should always be enabled).
+                </questionaire-question-content>
+                <questionaire-question-answer value="yes">Yes</questionaire-question-answer>
+                <questionaire-question-answer value="no">No</questionaire-question-answer>
+                <questionaire-question-answer value="maybe">Maybe</questionaire-question-answer>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action action="previous">Previous</questionaire-action>
+                    <questionaire-action id="next-btn-3">Next (always enabled)</questionaire-action>
+                </questionaire-actions>
+            </questionaire-question>
+
+            <!-- Summary page (no validation) -->
+            <div id="summary-page" style="text-align: center; padding: 40px;">
+                <h2>Survey Complete!</h2>
+                <p>Thank you for completing the validation example.</p>
+                <p>The action buttons properly validated each question before allowing navigation.</p>
+                
+                <questionaire-actions slot="bottom">
+                    <questionaire-action action="previous">← Back to Review</questionaire-action>
+                </questionaire-actions>
+            </div>
+        </questionaire-container>
+    </div>
+
+    <div class="testing-section">
+        <h3>Validation Testing</h3>
+        <p>Test different validation scenarios:</p>
+        
+        <div id="validation-status" class="validation-status validation-invalid">
+            Current Question: Not validated yet
+        </div>
+        
+        <div style="margin: 15px 0;">
+            <strong>Manual Validation Test:</strong><br>
+            <button onclick="validateCurrentQuestion()">Validate Current Question</button>
+            <button onclick="checkActionStates()">Check Action Button States</button>
+            <button onclick="simulateAnswerSelection()">Simulate Answer Selection</button>
+        </div>
+        
+        <div style="margin: 15px 0;">
+            <strong>Disabled vs Invalid Test:</strong><br>
+            <button onclick="toggleDisabled()">Toggle Manual Disabled State</button>
+            <button onclick="showActionInfo()">Show Action Button Info</button>
+        </div>
+    </div>
+
+    <div class="controls">
+        <h3>Manual Controls</h3>
+        <button onclick="goToSlide(0)">Go to Question 1</button>
+        <button onclick="goToSlide(1)">Go to Question 2</button>
+        <button onclick="goToSlide(2)">Go to Question 3</button>
+        <button onclick="goToSlide(3)">Go to Summary</button>
+        <button onclick="showCurrentValues()">Show Current Values</button>
+        <button onclick="resetAllAnswers()">Reset All Answers</button>
+    </div>
+
+    <div id="result-panel" class="info-panel">
+        Action validation demonstrates automatic disabling based on question validity.
+        Navigate between questions and observe how the "Next" buttons respond to validation states.
+    </div>
+
+    <script>
+        let container;
+        let manuallyDisabled = false;
+
+        function updateDisplay() {
+            container = container || document.getElementById('validation-survey');
+            
+            const slideDisplay = document.getElementById('slide-display');
+            const totalDisplay = document.getElementById('total-display');
+            const actionState = document.getElementById('action-state');
+            
+            slideDisplay.textContent = container.currentIndex + 1;
+            totalDisplay.textContent = container.slideCount;
+            
+            // Check action state
+            const currentNextBtn = getCurrentNextButton();
+            if (currentNextBtn) {
+                const isDisabled = currentNextBtn.hasAttribute('disabled');
+                const isInvalid = currentNextBtn.classList.contains('invalid'); // Assuming this class indicates invalid state
+                actionState.textContent = isDisabled ? 'Disabled' : (isInvalid ? 'Invalid' : 'Valid');
+            } else {
+                actionState.textContent = 'No Next Button';
+            }
+        }
+
+        function getCurrentNextButton() {
+            const current = container.current();
+            if (!current) return null;
+            
+            return current.querySelector('questionaire-action:not([action="previous"])') || 
+                   current.querySelector('questionaire-action[action="next"]');
+        }
+
+        function validateCurrentQuestion() {
+            const current = container.current();
+            const validationStatus = document.getElementById('validation-status');
+            
+            if (current && current.tagName === 'QUESTIONAIRE-QUESTION') {
+                try {
+                    current.validate();
+                    validationStatus.className = 'validation-status validation-valid';
+                    validationStatus.textContent = `✅ Question "${current.getAttribute('name')}" is valid`;
+                } catch (error) {
+                    validationStatus.className = 'validation-status validation-invalid';
+                    validationStatus.textContent = `❌ Validation failed: ${error.message}`;
+                }
+            } else {
+                validationStatus.className = 'validation-status validation-valid';
+                validationStatus.textContent = `ℹ️ Current element is not a question (no validation needed)`;
+            }
+        }
+
+        function checkActionStates() {
+            const resultPanel = document.getElementById('result-panel');
+            const allActions = document.querySelectorAll('questionaire-action');
+            
+            let stateInfo = '<strong>Action Button States:</strong><br>';
+            allActions.forEach((action, index) => {
+                const actionType = action.getAttribute('action') || 'next';
+                const isDisabled = action.hasAttribute('disabled');
+                const isInvalid = action.classList.contains('invalid');
+                const buttonText = action.textContent.trim().substring(0, 20);
+                
+                stateInfo += `Action ${index + 1} (${actionType}): "${buttonText}"<br>`;
+                stateInfo += `  Disabled: ${isDisabled}, Invalid: ${isInvalid}<br>`;
+            });
+            
+            resultPanel.innerHTML = stateInfo;
+        }
+
+        function simulateAnswerSelection() {
+            const current = container.current();
+            if (current && current.tagName === 'QUESTIONAIRE-QUESTION') {
+                const answers = current.querySelectorAll('questionaire-question-answer');
+                if (answers.length > 0) {
+                    // Select the first answer
+                    answers[0].setAttribute('selected', '');
+                    document.getElementById('result-panel').innerHTML = 
+                        '<strong>Simulated Answer Selection:</strong><br>Selected first answer to test validation state change.';
+                }
+            }
+        }
+
+        function toggleDisabled() {
+            const nextBtn = getCurrentNextButton();
+            if (nextBtn) {
+                manuallyDisabled = !manuallyDisabled;
+                if (manuallyDisabled) {
+                    nextBtn.setAttribute('disabled', '');
+                } else {
+                    nextBtn.removeAttribute('disabled');
+                }
+                document.getElementById('result-panel').innerHTML = 
+                    `<strong>Manual Disabled State:</strong><br>Set to ${manuallyDisabled}`;
+            }
+        }
+
+        function showActionInfo() {
+            const nextBtn = getCurrentNextButton();
+            const resultPanel = document.getElementById('result-panel');
+            
+            if (nextBtn) {
+                resultPanel.innerHTML = `
+                    <strong>Current Next Button Info:</strong><br>
+                    Text: "${nextBtn.textContent.trim()}"<br>
+                    Action: ${nextBtn.getAttribute('action') || 'next'}<br>
+                    Disabled attribute: ${nextBtn.hasAttribute('disabled')}<br>
+                    Invalid class: ${nextBtn.classList.contains('invalid')}<br>
+                    Computed style display: ${getComputedStyle(nextBtn).display}<br>
+                    Computed style opacity: ${getComputedStyle(nextBtn).opacity}<br>
+                    Computed style cursor: ${getComputedStyle(nextBtn).cursor}
+                `;
+            } else {
+                resultPanel.innerHTML = 'No Next button found on current slide.';
+            }
+        }
+
+        function goToSlide(index) {
+            container = container || document.getElementById('validation-survey');
+            container.goToSlide(index);
+            updateDisplay();
+            validateCurrentQuestion();
+            
+            const resultPanel = document.getElementById('result-panel');
+            resultPanel.innerHTML = `Manually navigated to slide ${index + 1}`;
+        }
+
+        function showCurrentValues() {
+            container = container || document.getElementById('validation-survey');
+            const values = container.values;
+            const resultPanel = document.getElementById('result-panel');
+            
+            resultPanel.innerHTML = `
+                <strong>Current Survey Values:</strong><br>
+                ${JSON.stringify(values, null, 2)}
+            `;
+        }
+
+        function resetAllAnswers() {
+            document.querySelectorAll('questionaire-question-answer[selected]').forEach(answer => {
+                answer.removeAttribute('selected');
+            });
+            validateCurrentQuestion();
+            document.getElementById('result-panel').innerHTML = 'All answers reset. Action buttons should update based on validation.';
+        }
+
+        // Add click listeners to make answers selectable
+        document.addEventListener('DOMContentLoaded', () => {
+            container = document.getElementById('validation-survey');
+            
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                answer.addEventListener('click', () => {
+                    // Toggle selection
+                    if (answer.hasAttribute('selected')) {
+                        answer.removeAttribute('selected');
+                    } else {
+                        answer.setAttribute('selected', '');
+                    }
+                    
+                    // Re-validate after selection change
+                    setTimeout(validateCurrentQuestion, 100);
+                });
+            });
+
+            // Listen for slide changes to update display
+            container.addEventListener('slide-changed', (event) => {
+                updateDisplay();
+                validateCurrentQuestion();
+            });
+            
+            // Listen for container changes (should trigger action validation)
+            container.addEventListener('container:changed', (event) => {
+                console.log('Container changed event:', event.detail);
+                setTimeout(() => {
+                    updateDisplay();
+                    validateCurrentQuestion();
+                }, 100);
+            });
+            
+            // Listen for action clicks
+            document.addEventListener('click', (event) => {
+                if (event.target.tagName === 'QUESTIONAIRE-ACTION') {
+                    const action = event.target.getAttribute('action') || 'next';
+                    
+                    const resultPanel = document.getElementById('result-panel');
+                    resultPanel.innerHTML = `
+                        <strong>Action Button Clicked:</strong><br>
+                        Action: ${action}<br>
+                        Button Text: "${event.target.textContent.trim()}"<br>
+                        Should validate before navigation if action="next"<br>
+                        Validation-aware navigation system active.
+                    `;
+                }
+            });
+            
+            // Initial state
+            updateDisplay();
+            validateCurrentQuestion();
+        });
+    </script>
+</body>
+</html>
