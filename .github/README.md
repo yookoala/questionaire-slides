@@ -16,11 +16,10 @@ This repository is configured with GitHub Actions to automatically run all tests
 
 ### 2. `ci.yml` - Comprehensive CI Pipeline
 - **Lint and Validate Job**: Security audit and package validation
-- **Test Matrix Job**: Tests across multiple OS and Node.js versions
-  - Operating Systems: Ubuntu, Windows, macOS
-  - Node.js versions: 18.x, 20.x, 21.x
-  - Excludes some combinations to optimize CI time
-- **Test Coverage Job**: Generates test result summaries
+- **Test Coverage Job**: Tests across multiple Node.js versions (18.x, 20.x, 21.x)
+  - Since this is a browser-native web components project, only Ubuntu is used
+  - Focuses on Node.js compatibility for development tooling
+  - Generates test result summaries for each Node.js version
 
 ## Test Coverage
 
