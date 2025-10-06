@@ -259,9 +259,32 @@ test('QuestionaireAction should be defined', () => {
 test('QuestionaireAction should have default properties', () => {
     const instance = new QuestionaireAction();
     assertEquals(instance.action, 'next', 'Should default to "next" action');
+    assertEquals(instance.disabled, false, 'Should default to not disabled');
+    assertEquals(instance._invalid, false, 'Should default to not invalid');
     
     // Should be registered as custom element
     assertEquals(customElements.get('questionaire-action'), QuestionaireAction, 'Should be registered');
+});
+
+// Test 35: Action element should have validation properties
+test('QuestionaireAction should have validation functionality', () => {
+    const instance = new QuestionaireAction();
+    
+    // Should have validation-related methods
+    assertEquals(typeof instance._checkValidationState, 'function', 'Should have _checkValidationState method');
+    assertEquals(typeof instance._setInvalidState, 'function', 'Should have _setInvalidState method');
+    assertEquals(typeof instance._shouldPreventAction, 'function', 'Should have _shouldPreventAction method');
+    
+    // Test prevention logic
+    instance.disabled = true;
+    assertTrue(instance._shouldPreventAction(), 'Should prevent action when disabled');
+    
+    instance.disabled = false;
+    instance._invalid = true;
+    assertTrue(instance._shouldPreventAction(), 'Should prevent action when invalid');
+    
+    instance._invalid = false;
+    assertTrue(!instance._shouldPreventAction(), 'Should not prevent action when valid and enabled');
 });
 
 console.log(`\n=== QuestionaireActions Tests ===`);

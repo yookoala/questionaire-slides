@@ -691,8 +691,60 @@ Final status of TASKS.md - ALL FEATURES IMPLEMENTED:
   - ✅ Only "next" actions are affected by validation (previous actions unaffected)
   - ✅ Graceful handling of standalone actions outside containers
 
+## Current Task: feature/question-action-validate
+✅ **COMPLETED**: Implement validation-aware action button disabling
+
+### Phase 1: Example and Test Creation ✅
+- Created `examples/question-action-validate-example.html` - Interactive example showing validation-aware action buttons
+- Created `test/question-action-validate.test.html` - Comprehensive test suite for action validation functionality
+- Tests cover: initial invalid state, validation state changes, multi-select constraints, container events, disabled vs invalid states
+- Examples demonstrate: automatic disabling based on validation, visual feedback, event handling, state management
+
+### Phase 2: Implementation ✅
+- Enhanced `<questionaire-action>` with validation-aware behavior
+- Added `disabled` property support for manual disabling
+- Implemented internal `_invalid` state independent from `disabled`
+- Added event listener for "container:changed" events from parent container
+- Enhanced `<questionaire-question>` to dispatch "container:changed" events
+- Features implemented:
+  - ✅ Automatic validation checking on initialization for "next" actions
+  - ✅ Internal invalid state management independent from disabled attribute
+  - ✅ Event-driven validation re-evaluation when answers change
+  - ✅ Visual styling for invalid state (grey-out with reduced opacity)
+  - ✅ Click prevention when action is disabled OR invalid
+  - ✅ Container:changed event dispatching from questions when answers change
+  - ✅ Only "next" actions are affected by validation (previous actions unaffected)
+  - ✅ Graceful handling of standalone actions outside containers
+
 ### Phase 3: Testing and Validation ✅
-- Ready for testing phase - implementation complete
+- All unit tests passing (35/35) ✅
+- Browser examples load correctly and serve without errors ✅
+- Validation-aware disabling working correctly ✅
+- Event-driven state updates working properly ✅
+- No regressions in existing functionality ✅
+- Added comprehensive unit tests for validation functionality ✅
+
+## 🎉 ALL MAIN TASKS COMPLETED!
+
+Final status of TASKS.md - ALL MAIN FEATURES IMPLEMENTED:
+1. ✅ **feature/carousel**: `<questionaire-container>` carousel component  
+2. ✅ **feature/answer**: `<questionaire-question-answer>` element
+3. ✅ **feature/question-and-answer**: `<questionaire-question>` with only answer elements
+4. ✅ **feature/question-content-and-answer**: `<questionaire-question>` with both content and answer elements
+5. ✅ **feature/question-container--getcontents**: `<questionaire-container>` getContents method
+6. ✅ **feature/question-container--values**: `<questionaire-container>` values readonly property
+7. ✅ **feature/question--validate**: `<questionaire-question>` validation method and error classes
+8. ✅ **feature/question-container--current**: `<questionaire-container>` current() method
+9. ✅ **feature/question-container--next-validate**: Enhanced `<questionaire-container>` next() method with validation
+10. ✅ **feature/question-action**: `<questionaire-action>` navigation element
+11. ✅ **feature/question-actions**: `<questionaire-actions>` container element with layout ability
+12. ✅ **fix/layout**: CSS Grid layout replacement for all Flexbox usage
+13. ✅ **feature/question-action-validate**: Validation-aware action button disabling
+
+**Remaining QA Tasks:**
+- `qa/check-mit-license-compat`: License compatibility check
+- `qa/tests`: Playwright testing setup
+- `qa/github-actions`: CI/CD pipeline setup
 
 ## Complete Questionnaire System 🚀
 
