@@ -7,7 +7,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "node test/simple-test.js",
+    "test": "playwright test",
+    "test:simple": "node test/simple-test.js",
+    "test:functional": "node test/functional-test.js",
     "serve": "npx http-server -p 8080 -o /examples"
   },
   "dependencies": {
