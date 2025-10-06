@@ -1,4 +1,5 @@
 // Simple test to verify the components can be loaded and basic API works
+import { expect } from 'chai';
 import { LitElement } from 'lit';
 import { QuestionaireContainer } from '../src/questionaire-container.js';
 import { QuestionaireQuestionAnswer } from '../src/questionaire-question-answer.js';
@@ -13,325 +14,248 @@ import {
   QuestionAnsweredTooMuchError 
 } from '../src/question-validation-errors.js';
 
-console.log('Testing questionaire components...\n');
+describe('QuestionaireContainer Tests', () => {
+    it('should be defined', () => {
+        expect(QuestionaireContainer).to.be.a('function');
+    });
 
-let passed = 0;
-let failed = 0;
+    it('should have expected static properties', () => {
+        expect(QuestionaireContainer.properties).to.be.an('object');
+    });
 
-function test(name, fn) {
-    try {
-        fn();
-        console.log(`✓ PASS: ${name}`);
-        passed++;
-    } catch (e) {
-        console.log(`✗ FAIL: ${name}`);
-        console.log(`  Error: ${e.message}`);
-        failed++;
-    }
-}
+    it('should be registered as custom element', () => {
+        const defined = customElements.get('questionaire-container');
+        expect(defined).to.equal(QuestionaireContainer);
+    });
 
-function assertEquals(actual, expected, message) {
-    if (actual !== expected) {
-        throw new Error(message || `Expected ${expected} but got ${actual}`);
-    }
-}
+    it('should be instantiable', () => {
+        const instance = new QuestionaireContainer();
+        expect(instance).to.be.an('object');
+        expect(instance.currentIndex).to.equal(0);
+    });
 
-function assertTrue(condition, message) {
-    if (!condition) {
-        throw new Error(message || 'Expected condition to be true');
-    }
-}
+    it('should have required methods', () => {
+        const instance = new QuestionaireContainer();
+        expect(instance.next).to.be.a('function');
+        expect(instance.previous).to.be.a('function');
+        expect(instance.goToSlide).to.be.a('function');
+        expect(instance.getContents).to.be.a('function');
+        expect(instance.current).to.be.a('function');
+    });
 
-console.log(`\n=== QuestionaireContainer Tests ===`);
+    it('should have getContents method', () => {
+        const instance = new QuestionaireContainer();
+        expect(instance.getContents).to.be.a('function');
+        // For unit test, method should return empty string when not connected to DOM
+        expect(instance.getContents()).to.equal('');
+    });
 
-// Test 1: Component should be defined
-test('QuestionaireContainer should be defined', () => {
-    assertEquals(typeof QuestionaireContainer, 'function', 'QuestionaireContainer should be a function/class');
+    it('should have values property', () => {
+        const instance = new QuestionaireContainer();
+        expect(instance.values).to.be.an('object');
+        expect(instance.values).not.to.be.null;
+        // For unit test, property should return empty object when not connected to DOM
+        expect(JSON.stringify(instance.values)).to.equal('{}');
+    });
+
+    it('should have current method', () => {
+        const instance = new QuestionaireContainer();
+        expect(instance.current).to.be.a('function');
+        // For unit test, method should return null when not connected to DOM
+        expect(instance.current()).to.be.null;
+    });
 });
 
-// Test 2: Component should have correct properties
-test('QuestionaireContainer should have expected static properties', () => {
-    assertEquals(typeof QuestionaireContainer.properties, 'object', 'Should have properties definition');
+describe('QuestionaireQuestionAnswer Tests', () => {
+    it('should be defined', () => {
+        expect(QuestionaireQuestionAnswer).to.be.a('function');
+    });
+
+    it('should have expected static properties', () => {
+        expect(QuestionaireQuestionAnswer.properties).to.be.an('object');
+    });
+
+    it('should be registered as custom element', () => {
+        const defined = customElements.get('questionaire-question-answer');
+        expect(defined).to.equal(QuestionaireQuestionAnswer);
+    });
+
+    it('should be instantiable', () => {
+        const instance = new QuestionaireQuestionAnswer();
+        expect(instance).to.be.an('object');
+        expect(instance.selected).to.equal(false);
+    });
+
+    it('should have proper value behavior', () => {
+        const instance = new QuestionaireQuestionAnswer();
+        // Test selected property
+        expect(instance.selected).to.be.a('boolean');
+        // Test value property exists
+        expect(instance.value).to.be.a('string');
+    });
 });
 
-// Test 3: Custom element should be registered
-test('Custom element "questionaire-container" should be registered', () => {
-    const defined = customElements.get('questionaire-container');
-    assertEquals(defined, QuestionaireContainer, 'Custom element should be registered');
+describe('QuestionaireQuestion Tests', () => {
+    it('should be defined', () => {
+        expect(QuestionaireQuestion).to.be.a('function');
+    });
+
+    it('should have expected static properties', () => {
+        expect(QuestionaireQuestion.properties).to.be.an('object');
+    });
+
+    it('should be registered as custom element', () => {
+        const defined = customElements.get('questionaire-question');
+        expect(defined).to.equal(QuestionaireQuestion);
+    });
+
+    it('should be instantiable', () => {
+        const instance = new QuestionaireQuestion();
+        expect(instance).to.be.an('object');
+        expect(instance.multiselect).to.equal(false);
+    });
+
+    it('should have proper value behavior', () => {
+        const instance = new QuestionaireQuestion();
+        // Test multiselect property
+        expect(instance.multiselect).to.be.a('boolean');
+        // For value property, we need to mock the shadow root behavior since it's not connected to DOM
+        // In real usage, this would work after the component is connected
+        expect(instance.value).to.be.undefined;
+    });
+
+    it('should support name attribute', () => {
+        const instance = new QuestionaireQuestion();
+        expect(instance.name).to.be.a('string');
+        expect(instance.name).to.equal('');
+    });
+
+    it('should have validation features', () => {
+        const instance = new QuestionaireQuestion();
+        expect(instance.validate).to.be.a('function');
+        expect(instance.minAnswer).to.be.undefined;
+        expect(instance.maxAnswer).to.be.undefined;
+    });
 });
 
-// Test 4: Component can be instantiated
-test('QuestionaireContainer can be instantiated', () => {
-    const instance = new QuestionaireContainer();
-    assertEquals(typeof instance, 'object', 'Should create an instance');
-    assertEquals(instance.currentIndex, 0, 'Should have currentIndex property set to 0');
+describe('QuestionaireQuestionContent Tests', () => {
+    it('should be defined', () => {
+        expect(QuestionaireQuestionContent).to.be.a('function');
+    });
+
+    it('should have expected static properties', () => {
+        expect(QuestionaireQuestionContent.styles).to.be.an('object');
+    });
+
+    it('should be registered as custom element', () => {
+        const defined = customElements.get('questionaire-question-content');
+        expect(defined).to.equal(QuestionaireQuestionContent);
+    });
+
+    it('should be instantiable', () => {
+        const instance = new QuestionaireQuestionContent();
+        expect(instance).to.be.an('object');
+    });
+
+    it('should be a simple container', () => {
+        const instance = new QuestionaireQuestionContent();
+        // Content component should be simple and not have complex logic
+        expect(instance.render).to.be.a('function');
+    });
 });
 
-// Test 5: Component has required methods
-test('QuestionaireContainer should have required methods', () => {
-    const instance = new QuestionaireContainer();
-    assertEquals(typeof instance.next, 'function', 'Should have next method');
-    assertEquals(typeof instance.previous, 'function', 'Should have previous method');
-    assertEquals(typeof instance.goToSlide, 'function', 'Should have goToSlide method');
-    assertEquals(typeof instance.getContents, 'function', 'Should have getContents method');
-    assertEquals(typeof instance.current, 'function', 'Should have current method');
+describe('Question Validation Error Classes', () => {
+    it('should be defined', () => {
+        expect(QuestionValidationError).to.be.a('function');
+        expect(QuestionNotAnsweredError).to.be.a('function');
+        expect(QuestionAnsweredTooFewError).to.be.a('function');
+        expect(QuestionAnsweredTooMuchError).to.be.a('function');
+    });
+
+    it('should extend properly', () => {
+        const baseError = new QuestionValidationError('test');
+        const notAnsweredError = new QuestionNotAnsweredError();
+        const tooFewError = new QuestionAnsweredTooFewError('test', 2);
+        const tooMuchError = new QuestionAnsweredTooMuchError('test', 3);
+
+        expect(baseError).to.be.instanceOf(Error);
+        expect(notAnsweredError).to.be.instanceOf(QuestionValidationError);
+        expect(tooFewError).to.be.instanceOf(QuestionValidationError);
+        expect(tooMuchError).to.be.instanceOf(QuestionValidationError);
+    });
 });
 
-console.log(`\n=== QuestionaireQuestionAnswer Tests ===`);
+describe('QuestionaireAction Tests', () => {
+    it('should be defined', () => {
+        expect(QuestionaireAction).to.be.a('function');
+        
+        const instance = new QuestionaireAction();
+        expect(instance.tagName).to.equal('QUESTIONAIRE-ACTION');
+        expect(instance.action).to.be.a('string');
+    });
 
-// Test 6: Answer component should be defined
-test('QuestionaireQuestionAnswer should be defined', () => {
-    assertEquals(typeof QuestionaireQuestionAnswer, 'function', 'QuestionaireQuestionAnswer should be a function/class');
+    it('should have default properties', () => {
+        const instance = new QuestionaireAction();
+        expect(instance.action).to.equal('next');
+        expect(instance.disabled).to.equal(false);
+        expect(instance._invalid).to.equal(false);
+        
+        // Should be registered as custom element
+        expect(customElements.get('questionaire-action')).to.equal(QuestionaireAction);
+    });
+
+    it('should have validation functionality', () => {
+        const instance = new QuestionaireAction();
+        
+        // Should have validation-related methods
+        expect(instance._checkValidationState).to.be.a('function');
+        expect(instance._setInvalidState).to.be.a('function');
+        expect(instance._shouldPreventAction).to.be.a('function');
+        
+        // Test prevention logic
+        instance.disabled = true;
+        expect(instance._shouldPreventAction()).to.be.true;
+        
+        instance.disabled = false;
+        instance._invalid = true;
+        expect(instance._shouldPreventAction()).to.be.true;
+        
+        instance._invalid = false;
+        expect(instance._shouldPreventAction()).to.be.false;
+    });
 });
 
-// Test 7: Answer component should have correct properties
-test('QuestionaireQuestionAnswer should have expected static properties', () => {
-    assertEquals(typeof QuestionaireQuestionAnswer.properties, 'object', 'Should have properties definition');
+describe('QuestionaireActions Tests', () => {
+    it('should be defined', () => {
+        expect(QuestionaireActions).to.be.a('function');
+    });
+
+    it('should have expected static properties', () => {
+        // QuestionaireActions doesn't need properties, but should have styles
+        expect(QuestionaireActions.styles).to.be.an('object');
+    });
+
+    it('should be registered as custom element', () => {
+        expect(customElements.get('questionaire-actions')).to.equal(QuestionaireActions);
+    });
+
+    it('should be instantiable', () => {
+        const instance = new QuestionaireActions();
+        expect(instance.constructor).to.equal(QuestionaireActions);
+        expect(instance).to.be.instanceOf(LitElement);
+    });
+
+    it('should be a simple container', () => {
+        const instance = new QuestionaireActions();
+        
+        // Should be a LitElement
+        expect(instance).to.be.instanceOf(LitElement);
+        
+        // Should have render method that returns template
+        expect(instance.render).to.be.a('function');
+        
+        const template = instance.render();
+        expect(template).to.be.an('object');
+        expect(template).not.to.be.null;
+    });
 });
-
-// Test 8: Custom element should be registered
-test('Custom element "questionaire-question-answer" should be registered', () => {
-    const defined = customElements.get('questionaire-question-answer');
-    assertEquals(defined, QuestionaireQuestionAnswer, 'Custom element should be registered');
-});
-
-// Test 9: Answer component can be instantiated
-test('QuestionaireQuestionAnswer can be instantiated', () => {
-    const instance = new QuestionaireQuestionAnswer();
-    assertEquals(typeof instance, 'object', 'Should create an instance');
-    assertEquals(instance.selected, false, 'Should have selected property set to false');
-});
-
-// Test 10: Answer component has correct property behavior
-test('QuestionaireQuestionAnswer should have proper value behavior', () => {
-    const instance = new QuestionaireQuestionAnswer();
-    
-    // Test selected property
-    assertEquals(typeof instance.selected, 'boolean', 'Selected should be boolean');
-    
-    // Test value property exists
-    assertEquals(typeof instance.value, 'string', 'Value should be string');
-});
-
-console.log(`\n=== QuestionaireQuestion Tests ===`);
-
-// Test 11: Question component should be defined
-test('QuestionaireQuestion should be defined', () => {
-    assertEquals(typeof QuestionaireQuestion, 'function', 'QuestionaireQuestion should be a function/class');
-});
-
-// Test 12: Question component should have correct properties
-test('QuestionaireQuestion should have expected static properties', () => {
-    assertEquals(typeof QuestionaireQuestion.properties, 'object', 'Should have properties definition');
-});
-
-// Test 13: Custom element should be registered
-test('Custom element "questionaire-question" should be registered', () => {
-    const defined = customElements.get('questionaire-question');
-    assertEquals(defined, QuestionaireQuestion, 'Custom element should be registered');
-});
-
-// Test 14: Question component can be instantiated
-test('QuestionaireQuestion can be instantiated', () => {
-    const instance = new QuestionaireQuestion();
-    assertEquals(typeof instance, 'object', 'Should create an instance');
-    assertEquals(instance.multiselect, false, 'Should have multiselect property set to false');
-});
-
-// Test 15: Question component has correct property behavior
-test('QuestionaireQuestion should have proper value behavior', () => {
-    const instance = new QuestionaireQuestion();
-    
-    // Test multiselect property
-    assertEquals(typeof instance.multiselect, 'boolean', 'Multiselect should be boolean');
-    
-    // For value property, we need to mock the shadow root behavior since it's not connected to DOM
-    // In real usage, this would work after the component is connected
-    assertEquals(typeof instance.value, 'undefined', 'Value should be undefined when no answers available');
-});
-
-console.log(`\n=== QuestionaireQuestionContent Tests ===`);
-
-// Test 16: Content component should be defined
-test('QuestionaireQuestionContent should be defined', () => {
-    assertEquals(typeof QuestionaireQuestionContent, 'function', 'QuestionaireQuestionContent should be a function/class');
-});
-
-// Test 17: Content component should have correct properties
-test('QuestionaireQuestionContent should have expected static properties', () => {
-    assertEquals(typeof QuestionaireQuestionContent.styles, 'object', 'Should have styles definition');
-});
-
-// Test 18: Custom element should be registered
-test('Custom element "questionaire-question-content" should be registered', () => {
-    const defined = customElements.get('questionaire-question-content');
-    assertEquals(defined, QuestionaireQuestionContent, 'Custom element should be registered');
-});
-
-// Test 19: Content component can be instantiated
-test('QuestionaireQuestionContent can be instantiated', () => {
-    const instance = new QuestionaireQuestionContent();
-    assertEquals(typeof instance, 'object', 'Should create an instance');
-});
-
-// Test 20: Content component should be simple container
-test('QuestionaireQuestionContent should be a simple container', () => {
-    const instance = new QuestionaireQuestionContent();
-    
-    // Content component should be simple and not have complex logic
-    assertEquals(typeof instance.render, 'function', 'Should have render method from LitElement');
-});
-
-// Test 21: Container getContents method
-test('QuestionaireContainer should have getContents method', () => {
-    const instance = new QuestionaireContainer();
-    assertEquals(typeof instance.getContents, 'function', 'Should have getContents method');
-    
-    // For unit test, method should return empty string when not connected to DOM
-    assertEquals(instance.getContents(), '', 'Should return empty string when no content available');
-});
-
-// Test 22: Question component should have name attribute support
-test('QuestionaireQuestion should support name attribute', () => {
-    const instance = new QuestionaireQuestion();
-    assertEquals(typeof instance.name, 'string', 'Should have name property');
-    assertEquals(instance.name, '', 'Should default to empty string');
-});
-
-// Test 23: Container values property
-test('QuestionaireContainer should have values property', () => {
-    const instance = new QuestionaireContainer();
-    assertEquals(typeof instance.values, 'object', 'Should have values property');
-    assertEquals(instance.values !== null, true, 'values should not be null');
-    
-    // For unit test, property should return empty object when not connected to DOM
-    assertEquals(JSON.stringify(instance.values), '{}', 'Should return empty object when no questions available');
-});
-
-// Test 24: Question validation error classes
-test('Question validation error classes should be defined', () => {
-    assertEquals(typeof QuestionValidationError, 'function', 'QuestionValidationError should be defined');
-    assertEquals(typeof QuestionNotAnsweredError, 'function', 'QuestionNotAnsweredError should be defined');
-    assertEquals(typeof QuestionAnsweredTooFewError, 'function', 'QuestionAnsweredTooFewError should be defined');
-    assertEquals(typeof QuestionAnsweredTooMuchError, 'function', 'QuestionAnsweredTooMuchError should be defined');
-});
-
-// Test 25: Question should have validate method and constraint properties
-test('QuestionaireQuestion should have validation features', () => {
-    const instance = new QuestionaireQuestion();
-    assertEquals(typeof instance.validate, 'function', 'Should have validate method');
-    assertEquals(typeof instance.minAnswer, 'undefined', 'Should have minAnswer property');
-    assertEquals(typeof instance.maxAnswer, 'undefined', 'Should have maxAnswer property');
-});
-
-// Test 26: Error class hierarchy
-test('Error classes should extend properly', () => {
-    const baseError = new QuestionValidationError('test');
-    const notAnsweredError = new QuestionNotAnsweredError();
-    const tooFewError = new QuestionAnsweredTooFewError('test', 2);
-    const tooMuchError = new QuestionAnsweredTooMuchError('test', 3);
-
-    assertEquals(baseError instanceof Error, true, 'QuestionValidationError should extend Error');
-    assertEquals(notAnsweredError instanceof QuestionValidationError, true, 'QuestionNotAnsweredError should extend QuestionValidationError');
-    assertEquals(tooFewError instanceof QuestionValidationError, true, 'QuestionAnsweredTooFewError should extend QuestionValidationError');
-    assertEquals(tooMuchError instanceof QuestionValidationError, true, 'QuestionAnsweredTooMuchError should extend QuestionValidationError');
-});
-
-// Test 27: Container current method
-test('QuestionaireContainer should have current method', () => {
-    const instance = new QuestionaireContainer();
-    assertEquals(typeof instance.current, 'function', 'Should have current method');
-    
-    // For unit test, method should return null when not connected to DOM
-    assertEquals(instance.current(), null, 'Should return null when no elements available');
-});
-
-// Test 28: Action element should be defined
-test('QuestionaireAction should be defined', () => {
-    assertEquals(typeof QuestionaireAction, 'function', 'QuestionaireAction should be defined');
-    
-    const instance = new QuestionaireAction();
-    assertEquals(instance.tagName, 'QUESTIONAIRE-ACTION', 'Should have correct tag name');
-    assertEquals(typeof instance.action, 'string', 'Should have action property');
-});
-
-// Test 29: Action element should have default properties
-test('QuestionaireAction should have default properties', () => {
-    const instance = new QuestionaireAction();
-    assertEquals(instance.action, 'next', 'Should default to "next" action');
-    assertEquals(instance.disabled, false, 'Should default to not disabled');
-    assertEquals(instance._invalid, false, 'Should default to not invalid');
-    
-    // Should be registered as custom element
-    assertEquals(customElements.get('questionaire-action'), QuestionaireAction, 'Should be registered');
-});
-
-// Test 35: Action element should have validation properties
-test('QuestionaireAction should have validation functionality', () => {
-    const instance = new QuestionaireAction();
-    
-    // Should have validation-related methods
-    assertEquals(typeof instance._checkValidationState, 'function', 'Should have _checkValidationState method');
-    assertEquals(typeof instance._setInvalidState, 'function', 'Should have _setInvalidState method');
-    assertEquals(typeof instance._shouldPreventAction, 'function', 'Should have _shouldPreventAction method');
-    
-    // Test prevention logic
-    instance.disabled = true;
-    assertTrue(instance._shouldPreventAction(), 'Should prevent action when disabled');
-    
-    instance.disabled = false;
-    instance._invalid = true;
-    assertTrue(instance._shouldPreventAction(), 'Should prevent action when invalid');
-    
-    instance._invalid = false;
-    assertTrue(!instance._shouldPreventAction(), 'Should not prevent action when valid and enabled');
-});
-
-console.log(`\n=== QuestionaireActions Tests ===`);
-
-// Test 30: Actions element should be defined
-test('QuestionaireActions should be defined', () => {
-    assertEquals(typeof QuestionaireActions, 'function', 'QuestionaireActions should be a constructor function');
-});
-
-// Test 31: Actions element should have expected static properties
-test('QuestionaireActions should have expected static properties', () => {
-    // QuestionaireActions doesn't need properties, but should have styles
-    assertEquals(typeof QuestionaireActions.styles, 'object', 'Should have styles defined');
-});
-
-// Test 32: Actions element should be registered as custom element
-test('Custom element "questionaire-actions" should be registered', () => {
-    assertEquals(customElements.get('questionaire-actions'), QuestionaireActions, 
-                'questionaire-actions should be registered with QuestionaireActions class');
-});
-
-// Test 33: Actions element can be instantiated
-test('QuestionaireActions can be instantiated', () => {
-    const instance = new QuestionaireActions();
-    assertEquals(instance.constructor, QuestionaireActions, 'Should be instance of QuestionaireActions');
-    assertTrue(instance instanceof LitElement, 'Should extend LitElement');
-});
-
-// Test 34: Actions element should be a simple container
-test('QuestionaireActions should be a simple container', () => {
-    const instance = new QuestionaireActions();
-    
-    // Should be a LitElement
-    assertTrue(instance instanceof LitElement, 'Should extend LitElement');
-    
-    // Should have render method that returns template
-    assertEquals(typeof instance.render, 'function', 'Should have render method');
-    
-    const template = instance.render();
-    assertTrue(template && typeof template === 'object', 'Should return a template');
-});
-
-console.log(`\n=== Test Results ===`);
-console.log(`Total: ${passed + failed}`);
-console.log(`Passed: ${passed}`);
-console.log(`Failed: ${failed}`);
-
-if (failed > 0) {
-    process.exit(1);
-}

@@ -8,8 +8,10 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
-    "test:simple": "node test/simple-test.js",
-    "test:functional": "node test/functional-test.js",
+    "test:simple": "mocha test/simple-test.js --timeout 10000",
+    "test:functional": "mocha test/functional-test.js --timeout 10000",
+    "test:simple:legacy": "node test/simple-test.js",
+    "test:functional:legacy": "node test/functional-test.js",
     "serve": "npx http-server -p 8080 -o /examples"
   },
   "dependencies": {
@@ -17,6 +19,8 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.55.1",
-    "jsdom": "^27.0.0"
+    "chai": "^6.2.0",
+    "jsdom": "^27.0.0",
+    "mocha": "^11.7.4"
   }
 }
