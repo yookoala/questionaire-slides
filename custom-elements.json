@@ -4,7 +4,70 @@
   "modules": [
     {
       "kind": "javascript-module",
-      "path": "src/question-validation-errors.js",
+      "path": "dist/index.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "dist/question-validation-errors.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "dist/questionaire-action.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "dist/questionaire-actions.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "dist/questionaire-container.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "dist/questionaire-question-answer.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "dist/questionaire-question-content.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "module": "dist/questionaire-question.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "dist/question-validation-errors.js",
       "declarations": [
         {
           "kind": "class",
@@ -22,7 +85,7 @@
           ],
           "superclass": {
             "name": "Error",
-            "module": "src/question-validation-errors.js"
+            "module": "dist/question-validation-errors.js"
           }
         },
         {
@@ -39,13 +102,13 @@
               "default": "'QuestionNotAnsweredError'",
               "inheritedFrom": {
                 "name": "QuestionValidationError",
-                "module": "src/question-validation-errors.js"
+                "module": "dist/question-validation-errors.js"
               }
             }
           ],
           "superclass": {
             "name": "QuestionValidationError",
-            "module": "src/question-validation-errors.js"
+            "module": "dist/question-validation-errors.js"
           }
         },
         {
@@ -62,7 +125,7 @@
               "default": "'QuestionAnsweredTooFewError'",
               "inheritedFrom": {
                 "name": "QuestionValidationError",
-                "module": "src/question-validation-errors.js"
+                "module": "dist/question-validation-errors.js"
               }
             },
             {
@@ -73,7 +136,7 @@
           ],
           "superclass": {
             "name": "QuestionValidationError",
-            "module": "src/question-validation-errors.js"
+            "module": "dist/question-validation-errors.js"
           }
         },
         {
@@ -90,7 +153,7 @@
               "default": "'QuestionAnsweredTooMuchError'",
               "inheritedFrom": {
                 "name": "QuestionValidationError",
-                "module": "src/question-validation-errors.js"
+                "module": "dist/question-validation-errors.js"
               }
             },
             {
@@ -101,7 +164,7 @@
           ],
           "superclass": {
             "name": "QuestionValidationError",
-            "module": "src/question-validation-errors.js"
+            "module": "dist/question-validation-errors.js"
           }
         }
       ],
@@ -111,7 +174,7 @@
           "name": "QuestionValidationError",
           "declaration": {
             "name": "QuestionValidationError",
-            "module": "src/question-validation-errors.js"
+            "module": "dist/question-validation-errors.js"
           }
         },
         {
@@ -119,7 +182,7 @@
           "name": "QuestionNotAnsweredError",
           "declaration": {
             "name": "QuestionNotAnsweredError",
-            "module": "src/question-validation-errors.js"
+            "module": "dist/question-validation-errors.js"
           }
         },
         {
@@ -127,7 +190,7 @@
           "name": "QuestionAnsweredTooFewError",
           "declaration": {
             "name": "QuestionAnsweredTooFewError",
-            "module": "src/question-validation-errors.js"
+            "module": "dist/question-validation-errors.js"
           }
         },
         {
@@ -135,14 +198,14 @@
           "name": "QuestionAnsweredTooMuchError",
           "declaration": {
             "name": "QuestionAnsweredTooMuchError",
-            "module": "src/question-validation-errors.js"
+            "module": "dist/question-validation-errors.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/questionaire-action.js",
+      "path": "dist/questionaire-action.js",
       "declarations": [
         {
           "kind": "class",
@@ -255,7 +318,7 @@
           "name": "QuestionaireAction",
           "declaration": {
             "name": "QuestionaireAction",
-            "module": "src/questionaire-action.js"
+            "module": "dist/questionaire-action.js"
           }
         },
         {
@@ -263,14 +326,14 @@
           "name": "questionaire-action",
           "declaration": {
             "name": "QuestionaireAction",
-            "module": "src/questionaire-action.js"
+            "module": "dist/questionaire-action.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/questionaire-actions.js",
+      "path": "dist/questionaire-actions.js",
       "declarations": [
         {
           "kind": "class",
@@ -302,7 +365,7 @@
           "name": "QuestionaireActions",
           "declaration": {
             "name": "QuestionaireActions",
-            "module": "src/questionaire-actions.js"
+            "module": "dist/questionaire-actions.js"
           }
         },
         {
@@ -310,14 +373,14 @@
           "name": "questionaire-actions",
           "declaration": {
             "name": "QuestionaireActions",
-            "module": "src/questionaire-actions.js"
+            "module": "dist/questionaire-actions.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/questionaire-container.js",
+      "path": "dist/questionaire-container.js",
       "declarations": [
         {
           "kind": "class",
@@ -445,7 +508,7 @@
           "name": "QuestionaireContainer",
           "declaration": {
             "name": "QuestionaireContainer",
-            "module": "src/questionaire-container.js"
+            "module": "dist/questionaire-container.js"
           }
         },
         {
@@ -453,14 +516,14 @@
           "name": "questionaire-container",
           "declaration": {
             "name": "QuestionaireContainer",
-            "module": "src/questionaire-container.js"
+            "module": "dist/questionaire-container.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/questionaire-question-answer.js",
+      "path": "dist/questionaire-question-answer.js",
       "declarations": [
         {
           "kind": "class",
@@ -527,7 +590,7 @@
           "name": "QuestionaireQuestionAnswer",
           "declaration": {
             "name": "QuestionaireQuestionAnswer",
-            "module": "src/questionaire-question-answer.js"
+            "module": "dist/questionaire-question-answer.js"
           }
         },
         {
@@ -535,14 +598,14 @@
           "name": "questionaire-question-answer",
           "declaration": {
             "name": "QuestionaireQuestionAnswer",
-            "module": "src/questionaire-question-answer.js"
+            "module": "dist/questionaire-question-answer.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/questionaire-question-content.js",
+      "path": "dist/questionaire-question-content.js",
       "declarations": [
         {
           "kind": "class",
@@ -574,7 +637,7 @@
           "name": "QuestionaireQuestionContent",
           "declaration": {
             "name": "QuestionaireQuestionContent",
-            "module": "src/questionaire-question-content.js"
+            "module": "dist/questionaire-question-content.js"
           }
         },
         {
@@ -582,14 +645,14 @@
           "name": "questionaire-question-content",
           "declaration": {
             "name": "QuestionaireQuestionContent",
-            "module": "src/questionaire-question-content.js"
+            "module": "dist/questionaire-question-content.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/questionaire-question.js",
+      "path": "dist/questionaire-question.js",
       "declarations": [
         {
           "kind": "class",
@@ -741,7 +804,7 @@
           "name": "QuestionaireQuestion",
           "declaration": {
             "name": "QuestionaireQuestion",
-            "module": "src/questionaire-question.js"
+            "module": "dist/questionaire-question.js"
           }
         },
         {
@@ -749,7 +812,7 @@
           "name": "questionaire-question",
           "declaration": {
             "name": "QuestionaireQuestion",
-            "module": "src/questionaire-question.js"
+            "module": "dist/questionaire-question.js"
           }
         }
       ]

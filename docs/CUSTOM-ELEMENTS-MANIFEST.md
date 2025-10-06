@@ -62,13 +62,18 @@ Tools and IDEs that support Custom Elements Manifest can use this file to provid
 
 ## Updating the Manifest
 
-To regenerate the custom elements manifest:
+The Custom Elements Manifest is generated from the built files in `dist/` (excluding minified versions):
 
 ```bash
+# Build dist files and regenerate manifest
 npm run analyze
+
+# Or run steps separately
+npm run build
+npx cem analyze --config custom-elements-manifest.config.js
 ```
 
-The manifest is automatically included in builds and npm packages.
+The manifest is automatically regenerated during the publish process and included in builds and npm packages.
 
 ## Tool Support
 

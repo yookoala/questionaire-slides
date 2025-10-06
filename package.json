@@ -31,8 +31,8 @@
     "test:simple:legacy": "node test/simple-test.js",
     "test:functional:legacy": "node test/functional-test.js",
     "build": "node scripts/build.js",
-    "analyze": "cem analyze --config custom-elements-manifest.config.js",
-    "prepublishOnly": "npm run build",
+    "analyze": "npm run build && cem analyze --config custom-elements-manifest.config.js",
+    "prepublishOnly": "npm run build && npm run analyze",
     "serve": "npx http-server -p 8080 -o /examples"
   },
   "dependencies": {

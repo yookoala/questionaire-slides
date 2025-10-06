@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 
 // Custom Elements Manifest configuration
 export default {
-  globs: ['src/**/*.js'],
+  globs: ['dist/*.js', '!dist/*.min.js'],
   outDir: './',
   plugins: [
     // Add JSDoc comments support
