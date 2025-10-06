@@ -1,4 +1,4 @@
-# Questionaire Web Components
+# Questionaire Slides Web Components
 
 A set of web components for building interactive questionaires with a carousel interface.
 
@@ -82,4 +82,4 @@ This project uses:
 
 ## License
 
-MIT
+This software is licensed under the MIT License. A copy of the license is distributed along with the source code [here](LICENSE).
