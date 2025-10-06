@@ -7,7 +7,7 @@ This repository is configured with GitHub Actions to automatically run all tests
 ## Workflows
 
 ### 1. `test.yml` - Basic Test Runner
-- Runs on Ubuntu with Node.js 18.x and 20.x
+- Runs on Ubuntu with Node.js 23.x and 24.x
 - Executes all three test suites:
   - Simple tests (mocha+chai): `npm run test:simple`
   - Functional tests (mocha+chai): `npm run test:functional`
@@ -15,10 +15,10 @@ This repository is configured with GitHub Actions to automatically run all tests
 - Uploads Playwright reports on failure
 
 ### 2. `ci.yml` - Comprehensive CI Pipeline
-- **Lint and Validate Job**: Security audit and package validation
-- **Test Coverage Job**: Tests across multiple Node.js versions (18.x, 20.x, 21.x)
+- **Lint and Validate Job**: Security audit and package validation (Node.js 24.x)
+- **Test Coverage Job**: Tests across Node.js versions (23.x, 24.x)
   - Since this is a browser-native web components project, only Ubuntu is used
-  - Focuses on Node.js compatibility for development tooling
+  - Focuses on latest Node.js versions for modern development tooling
   - Generates test result summaries for each Node.js version
 
 ## Test Coverage
