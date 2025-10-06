@@ -2,16 +2,34 @@
   "name": "questionslides",
   "version": "1.0.0",
   "description": "Web components for building a questionare/slides interface.",
+  "keywords": [
+    "web-components",
+    "questionnaire", 
+    "slides",
+    "lit",
+    "custom-elements",
+    "carousel",
+    "survey"
+  ],
   "license": "MIT",
   "author": "Koala Yeung <koalay@gmail.com>",
   "type": "module",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "playwright test",
     "test:simple": "mocha test/simple-test.js --timeout 10000",
     "test:functional": "mocha test/functional-test.js --timeout 10000",
     "test:simple:legacy": "node test/simple-test.js",
     "test:functional:legacy": "node test/functional-test.js",
+    "build": "node scripts/build.js",
+    "prepublishOnly": "npm run build",
     "serve": "npx http-server -p 8080 -o /examples"
   },
   "dependencies": {
@@ -20,7 +38,9 @@
   "devDependencies": {
     "@playwright/test": "^1.55.1",
     "chai": "^6.2.0",
+    "fs-extra": "^11.3.2",
     "jsdom": "^27.0.0",
-    "mocha": "^11.7.4"
+    "mocha": "^11.7.4",
+    "terser": "^5.44.0"
   }
 }
