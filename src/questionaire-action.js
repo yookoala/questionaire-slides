@@ -15,10 +15,7 @@ export class QuestionaireAction extends LitElement {
       display: inline-block;
       cursor: pointer;
       user-select: none;
-    }
-
-    .action-button {
-      display: block;
+      /* Moved from .action-button */
       width: 100%;
       padding: 10px 20px;
       border: 2px solid #007bff;
@@ -28,35 +25,34 @@ export class QuestionaireAction extends LitElement {
       font-size: 16px;
       font-weight: bold;
       text-align: center;
-      cursor: pointer;
       transition: all 0.2s ease;
       min-width: 80px;
       box-sizing: border-box;
     }
 
-    .action-button:hover {
+    :host(:hover) {
       background-color: #0056b3;
       border-color: #0056b3;
       transform: translateY(-1px);
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
-    .action-button:active {
+    :host(:active) {
       transform: translateY(0);
       box-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
 
-    :host([action="previous"]) .action-button {
+    :host([action="previous"]) {
       background-color: #6c757d;
       border-color: #6c757d;
     }
 
-    :host([action="previous"]) .action-button:hover {
+    :host([action="previous"]:hover) {
       background-color: #5a6268;
       border-color: #5a6268;
     }
 
-    :host([disabled]) .action-button {
+    :host([disabled]) {
       background-color: #e9ecef;
       border-color: #dee2e6;
       color: #6c757d;
@@ -65,7 +61,7 @@ export class QuestionaireAction extends LitElement {
       box-shadow: none;
     }
 
-    :host([disabled]) .action-button:hover {
+    :host([disabled]:hover) {
       background-color: #e9ecef;
       border-color: #dee2e6;
       transform: none;
@@ -73,7 +69,7 @@ export class QuestionaireAction extends LitElement {
     }
 
     /* Invalid state styling (internal validation failure) */
-    :host(.invalid) .action-button {
+    :host(.invalid) {
       background-color: #e9ecef;
       border-color: #dee2e6;
       color: #6c757d;
@@ -83,7 +79,7 @@ export class QuestionaireAction extends LitElement {
       opacity: 0.6;
     }
 
-    :host(.invalid) .action-button:hover {
+    :host(.invalid:hover) {
       background-color: #e9ecef;
       border-color: #dee2e6;
       transform: none;
@@ -244,9 +240,7 @@ export class QuestionaireAction extends LitElement {
 
   render() {
     return html`
-      <div class="action-button">
-        <slot></slot>
-      </div>
+      <slot></slot>
     `;
   }
 }

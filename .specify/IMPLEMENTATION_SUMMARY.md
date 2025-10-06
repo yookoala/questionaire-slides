@@ -741,6 +741,28 @@ Final status of TASKS.md - ALL MAIN FEATURES IMPLEMENTED:
 12. ✅ **fix/layout**: CSS Grid layout replacement for all Flexbox usage
 13. ✅ **feature/question-action-validate**: Validation-aware action button disabling
 
+## Current Task: fix/style
+✅ **COMPLETED**: Remove wrapper div from questionaire-action and style :host directly
+
+### Implementation Summary ✅
+- **Problem**: The `<questionaire-action>` component had an unnecessary wrapper `div.action-button`
+- **Solution**: Moved all `.action-button` styles to `:host` and removed the wrapper div
+- **Changes Made**:
+  - ✅ Moved all button styling from `.action-button` to `:host` 
+  - ✅ Updated hover states from `.action-button:hover` to `:host(:hover)`
+  - ✅ Updated active states from `.action-button:active` to `:host(:active)`
+  - ✅ Updated attribute-based styles (action="previous", disabled, invalid)
+  - ✅ Simplified render method to only contain `<slot></slot>`
+  - ✅ Preserved all existing functionality and visual appearance
+  - ✅ Maintained validation-aware behavior and event handling
+
+### Testing Results ✅
+- All unit tests passing (35/35) ✅
+- Browser examples load correctly and render properly ✅
+- No functionality regressions ✅
+- Visual appearance maintained ✅
+- Validation behavior still working ✅
+
 **Remaining QA Tasks:**
 - `qa/check-mit-license-compat`: License compatibility check
 - `qa/tests`: Playwright testing setup
