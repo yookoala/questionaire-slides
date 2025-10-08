@@ -159,6 +159,24 @@
                 assertEquals(answer1.selected, false, 'Selected property should be false when attribute is removed');
             });
 
+            runTest('should toggle selection on click', () => {
+                // Reset selection state
+                answer1.selected = false;
+                assertEquals(answer1.selected, false, 'Should start unselected');
+                
+                // Simulate click
+                answer1.click();
+                assertEquals(answer1.selected, true, 'Should be selected after first click');
+                
+                // Click again to toggle off
+                answer1.click();
+                assertEquals(answer1.selected, false, 'Should be unselected after second click');
+                
+                // Test multiple clicks
+                answer1.click();
+                assertEquals(answer1.selected, true, 'Should be selected after third click');
+            });
+
             runTest('should not change text content when value property is set programmatically', () => {
                 const originalText = answer1.textContent;
                 answer1.value = 'new-programmatic-value';

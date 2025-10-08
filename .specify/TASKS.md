@@ -22,5 +22,6 @@ Steps to implement the applicaiton.
 - [x] qa/test-rewrite: rewrite simple-test.js and functional-test.js (both in the "test/" folder) with chai+mocha.
 - [x] qa/github-actions: setup repository to run all tests in GitHub Actions when a new commit is on "main" branch or when a PR on "main" is submitted.
 - [x] publish/npm-ready: a new script to generate "dist/" folder of the "src/*.js", and minified versions of them, with proper library version comment header that are generated dynamically.
+- [x] fix/answer-example: in the example, the click behaviour was added in line 207-212. This click-select behaviour should be part of the QuestionaireQuestionAnswer class instead.
 
 Note: Do not do anything that is not in this file.

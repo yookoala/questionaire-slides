@@ -85,23 +85,23 @@
 </head>
 <body>
     <h1>Questionaire Question Answer Example</h1>
-    
+
     <div class="example-section">
         <h3>Basic Answer Options</h3>
         <p>Click on the answer options below to select them:</p>
-        
+
         <questionaire-question-answer id="answer1">
             Never
         </questionaire-question-answer>
-        
+
         <questionaire-question-answer id="answer2" value="year">
             Once or more per year
         </questionaire-question-answer>
-        
+
         <questionaire-question-answer id="answer3" value="month">
             Once or more per month
         </questionaire-question-answer>
-        
+
         <questionaire-question-answer id="answer4" value="week">
             Once or more per week
         </questionaire-question-answer>
@@ -124,17 +124,17 @@
     <div class="example-section">
         <h3>Programmatic Value Setting</h3>
         <p>This demonstrates how programmatically setting the value attribute doesn't affect the display text:</p>
-        
+
         <questionaire-question-answer id="testAnswer">
             Original Text Content
         </questionaire-question-answer>
-        
+
         <div class="controls">
             <button onclick="setValueProgrammatically()">Set value="programmatic" (text unchanged)</button>
             <button onclick="changeTextContent()">Change text content to "New Text"</button>
             <button onclick="showCurrentState()">Show Current State</button>
         </div>
-        
+
         <div class="info-panel" id="testInfo">
             Current state will be shown here
         </div>
@@ -146,7 +146,7 @@
             document.querySelectorAll('questionaire-question-answer').forEach(answer => {
                 answer.removeAttribute('selected');
             });
-            
+
             // Select the specified answer
             const answer = document.getElementById(id);
             answer.setAttribute('selected', '');
@@ -162,18 +162,18 @@
         function updateInfo() {
             const answers = document.querySelectorAll('#answer1, #answer2, #answer3, #answer4');
             let info = 'Current State:\n\n';
-            
+
             answers.forEach((answer, index) => {
                 const isSelected = answer.hasAttribute('selected');
                 const value = answer.value;
                 const textContent = answer.textContent.trim();
-                
+
                 info += `Answer ${index + 1}:\n`;
                 info += `  Selected: ${isSelected}\n`;
                 info += `  Value: "${value}"\n`;
                 info += `  Text: "${textContent}"\n\n`;
             });
-            
+
             document.getElementById('info').textContent = info;
         }
 
@@ -196,24 +196,26 @@
             info += `Value attribute: "${testAnswer.getAttribute('value') || 'null'}"\n`;
             info += `Text content: "${testAnswer.textContent.trim()}"\n`;
             info += `Selected: ${testAnswer.hasAttribute('selected')}`;
-            
+
             document.getElementById('testInfo').textContent = info;
         }
 
-        // Add click listeners to make answers selectable
+        // Add listeners for selection changes to update info display
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
-                answer.addEventListener('click', () => {
-                    // Toggle selection
-                    if (answer.hasAttribute('selected')) {
-                        answer.removeAttribute('selected');
-                    } else {
-                        answer.setAttribute('selected', '');
+            // Listen for attribute changes to update info when selection changes
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'selected') {
+                        updateInfo();
                     }
-                    updateInfo();
                 });
             });
-            
+
+            // Observe all answer elements for selection changes
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                observer.observe(answer, { attributes: true, attributeFilter: ['selected'] });
+            });
+
             // Initial info update
             updateInfo();
             showCurrentState();

@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit';
 
 /**
  * QuestionaireQuestionAnswer - A selectable answer option component
- * 
+ *
  * Features:
  * - Container element for answer text with selection state
  * - "selected" attribute reflects selection state
@@ -34,6 +34,25 @@ export class QuestionaireQuestionAnswer extends LitElement {
     super();
     this.selected = false;
     this._initialValueSet = false;
+    this._boundHandleClick = this._handleClick.bind(this);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('click', this._boundHandleClick);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('click', this._boundHandleClick);
+  }
+
+  /**
+   * Handle click events to toggle selection
+   */
+  _handleClick() {
+    // Toggle selection state
+    this.selected = !this.selected;
   }
 
   firstUpdated() {
@@ -57,12 +76,12 @@ export class QuestionaireQuestionAnswer extends LitElement {
     if (this.hasAttribute('value')) {
       return this.getAttribute('value');
     }
-    
+
     // If _value was set internally, return that
     if (this._value !== undefined) {
       return this._value;
     }
-    
+
     // Otherwise return current text content (handle null/undefined)
     const textContent = this.textContent;
     return textContent ? textContent.trim() : '';
