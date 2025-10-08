@@ -169,6 +169,66 @@
                 assertEquals(container.slideCount, 3, 'Should have 3 slides');
             });
 
+            runTest('should have disabled property that defaults to false', () => {
+                assertEquals(container.disabled, false, 'Disabled should default to false');
+                assert(!container.hasAttribute('disabled'), 'Disabled attribute should not be present initially');
+            });
+
+            runTest('should support setting disabled via property', () => {
+                // Test setting to true
+                container.disabled = true;
+                assertEquals(container.disabled, true, 'Disabled property should be true');
+                assert(container.hasAttribute('disabled'), 'Disabled attribute should be present when property is true');
+                
+                // Test setting to false
+                container.disabled = false;
+                assertEquals(container.disabled, false, 'Disabled property should be false');
+                assert(!container.hasAttribute('disabled'), 'Disabled attribute should not be present when property is false');
+            });
+
+            runTest('should support setting disabled via attribute', () => {
+                // Test setting attribute
+                container.setAttribute('disabled', '');
+                assertEquals(container.disabled, true, 'Disabled property should be true when attribute is set');
+                assert(container.hasAttribute('disabled'), 'Disabled attribute should be present');
+                
+                // Test removing attribute
+                container.removeAttribute('disabled');
+                assertEquals(container.disabled, false, 'Disabled property should be false when attribute is removed');
+                assert(!container.hasAttribute('disabled'), 'Disabled attribute should not be present');
+            });
+
+            runTest('should have overlay element in shadow DOM', () => {
+                const overlay = container.shadowRoot.querySelector('.overlay');
+                assert(overlay, 'Overlay element should exist in shadow DOM');
+                
+                // Test initial state (not disabled)
+                container.disabled = false;
+                const computedStyle = window.getComputedStyle(overlay);
+                assertEquals(computedStyle.opacity, '0', 'Overlay should have opacity 0 when not disabled');
+                assertEquals(computedStyle.pointerEvents, 'none', 'Overlay should have pointer-events none when not disabled');
+            });
+
+            runTest('should show overlay when disabled', () => {
+                const overlay = container.shadowRoot.querySelector('.overlay');
+                
+                // Enable disabled state
+                container.disabled = true;
+                
+                // Force style update
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        const computedStyle = window.getComputedStyle(overlay);
+                        assertEquals(computedStyle.opacity, '1', 'Overlay should have opacity 1 when disabled');
+                        assertEquals(computedStyle.pointerEvents, 'all', 'Overlay should have pointer-events all when disabled');
+                        
+                        // Reset state
+                        container.disabled = false;
+                        resolve();
+                    }, 50);
+                });
+            });
+
             // Update summary
             document.getElementById('total').textContent = total;
             document.getElementById('passed').textContent = passed;

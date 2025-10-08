@@ -394,13 +394,13 @@
                 "text": "object"
               },
               "static": true,
-              "default": "{ currentIndex: { type: Number }, ready: { type: String, reflect: true }, }"
+              "default": "{ currentIndex: { type: Number }, ready: { type: String, reflect: true }, disabled: { type: Boolean, reflect: true }, }"
             },
             {
               "kind": "field",
               "name": "styles",
               "static": true,
-              "default": "css` :host { display: block; position: relative; overflow: hidden; width: 100%; height: auto; box-sizing: border-box; } .container { display: grid; height: 100%; transition: transform 0.3s ease-in-out; /* Grid template columns will be set dynamically via inline styles */ } ::slotted(*) { width: 100%; box-sizing: border-box; } `"
+              "default": "css` :host { display: block; position: relative; overflow: hidden; width: 100%; height: auto; box-sizing: border-box; } .container { display: grid; height: 100%; transition: transform 0.3s ease-in-out; /* Grid template columns will be set dynamically via inline styles */ } .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(128, 128, 128, 0.5); opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; z-index: 1000; } :host([disabled]) .overlay { opacity: 1; pointer-events: all; } ::slotted(*) { width: 100%; box-sizing: border-box; } `"
             },
             {
               "kind": "method",
@@ -484,6 +484,14 @@
                 "text": "string"
               },
               "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
             }
           ],
           "events": [

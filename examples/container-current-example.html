@@ -246,6 +246,13 @@
         <button onclick="testCurrentElementProperties()">Test Current Element Properties</button>
     </div>
 
+    <div class="controls">
+        <h3>Disabled State Testing</h3>
+        <button id="disable-toggle" onclick="toggleDisabled()">Disable Container</button>
+        <button onclick="testDisabledProperty()">Test Disabled Property</button>
+        <p><em>When disabled, a semi-transparent overlay should cover the questionnaire and prevent interaction.</em></p>
+    </div>
+
     <div class="info-panel" id="info">
         Click "Get Current Element" to see the current() method result
     </div>
@@ -388,6 +395,60 @@
             container = container || document.getElementById('main-questionnaire');
             const indicator = document.getElementById('question-indicator');
             indicator.textContent = `Question ${container.currentIndex + 1} of ${container.slideCount}`;
+        }
+
+        function toggleDisabled() {
+            container = container || document.getElementById('main-questionnaire');
+            const toggleButton = document.getElementById('disable-toggle');
+            
+            container.disabled = !container.disabled;
+            
+            toggleButton.textContent = container.disabled ? 'Enable Container' : 'Disable Container';
+            
+            let info = `Container disabled state: ${container.disabled}\n`;
+            info += container.disabled 
+                ? 'Container is now disabled - overlay should be visible and prevent interaction'
+                : 'Container is now enabled - overlay should be hidden and allow interaction';
+            
+            document.getElementById('info').textContent = info;
+        }
+
+        function testDisabledProperty() {
+            container = container || document.getElementById('main-questionnaire');
+            
+            let info = 'Disabled Property Test:\n\n';
+            
+            info += `Current disabled value: ${container.disabled}\n`;
+            info += `Disabled attribute: ${container.hasAttribute('disabled') ? 'present' : 'not present'}\n`;
+            info += `Disabled property type: ${typeof container.disabled}\n`;
+            
+            // Test setting disabled via property
+            const originalState = container.disabled;
+            container.disabled = true;
+            info += `\nAfter setting disabled=true:\n`;
+            info += `- disabled property: ${container.disabled}\n`;
+            info += `- disabled attribute: ${container.hasAttribute('disabled') ? 'present' : 'not present'}\n`;
+            
+            container.disabled = false;
+            info += `\nAfter setting disabled=false:\n`;
+            info += `- disabled property: ${container.disabled}\n`;
+            info += `- disabled attribute: ${container.hasAttribute('disabled') ? 'present' : 'not present'}\n`;
+            
+            // Test setting disabled via attribute
+            container.setAttribute('disabled', '');
+            info += `\nAfter setting disabled attribute:\n`;
+            info += `- disabled property: ${container.disabled}\n`;
+            info += `- disabled attribute: ${container.hasAttribute('disabled') ? 'present' : 'not present'}\n`;
+            
+            container.removeAttribute('disabled');
+            info += `\nAfter removing disabled attribute:\n`;
+            info += `- disabled property: ${container.disabled}\n`;
+            info += `- disabled attribute: ${container.hasAttribute('disabled') ? 'present' : 'not present'}\n`;
+            
+            // Restore original state
+            container.disabled = originalState;
+            
+            document.getElementById('info').textContent = info;
         }
 
         // Initialize and set up event listeners

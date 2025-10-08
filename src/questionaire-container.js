@@ -8,6 +8,7 @@ export class QuestionaireContainer extends LitElement {
   static properties = {
     currentIndex: { type: Number },
     ready: { type: String, reflect: true },
+    disabled: { type: Boolean, reflect: true },
   };
 
   static styles = css`
@@ -27,6 +28,24 @@ export class QuestionaireContainer extends LitElement {
       /* Grid template columns will be set dynamically via inline styles */
     }
 
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(128, 128, 128, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    :host([disabled]) .overlay {
+      opacity: 1;
+      pointer-events: all;
+    }
+
     ::slotted(*) {
       width: 100%;
       box-sizing: border-box;
@@ -37,6 +56,7 @@ export class QuestionaireContainer extends LitElement {
     super();
     this.currentIndex = 0;
     this.ready = '';
+    this.disabled = false;
   }
 
   firstUpdated() {
@@ -50,6 +70,7 @@ export class QuestionaireContainer extends LitElement {
       <div class="container">
         <slot @slotchange=${this._handleSlotChange}></slot>
       </div>
+      <div class="overlay"></div>
     `;
   }
 
