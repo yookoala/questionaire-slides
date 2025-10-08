@@ -70,7 +70,7 @@ export class QuestionaireContainer extends LitElement {
       <div class="container">
         <slot @slotchange=${this._handleSlotChange}></slot>
       </div>
-      <div class="overlay"></div>
+      <div class="overlay" part="disable-overlay"></div>
     `;
   }
 
@@ -90,10 +90,10 @@ export class QuestionaireContainer extends LitElement {
       // Set grid template columns dynamically based on number of children
       const gridColumns = Array(childCount).fill('1fr').join(' ');
       container.style.gridTemplateColumns = gridColumns;
-      
+
       // Set container width to accommodate all children
       container.style.width = `${childCount * 100}%`;
-      
+
       // Calculate the transform position based on current index
       const translateX = -this.currentIndex * (100 / childCount);
       container.style.transform = `translateX(${translateX}%)`;
@@ -118,7 +118,7 @@ export class QuestionaireContainer extends LitElement {
     if (this.currentIndex < children.length - 1) {
       // Get current element and validate if applicable
       const currentElement = children[this.currentIndex];
-      
+
       // If current element has a validate method, call it
       if (currentElement && typeof currentElement.validate === 'function') {
         try {
@@ -128,7 +128,7 @@ export class QuestionaireContainer extends LitElement {
           throw validationError;
         }
       }
-      
+
       // Validation passed or no validation needed - proceed with navigation
       this.currentIndex++;
       this._updateContainer();
@@ -195,7 +195,7 @@ export class QuestionaireContainer extends LitElement {
 
     const contentTexts = [];
     const questions = slot.assignedElements();
-    
+
     questions.forEach(question => {
       if (question.tagName === 'QUESTIONAIRE-QUESTION') {
         const contentElements = question.querySelectorAll('questionaire-question-content');
@@ -223,7 +223,7 @@ export class QuestionaireContainer extends LitElement {
 
     const valuesObject = {};
     const questions = slot.assignedElements();
-    
+
     questions.forEach(question => {
       if (question.tagName === 'QUESTIONAIRE-QUESTION') {
         const name = question.getAttribute('name');
