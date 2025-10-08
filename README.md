@@ -1,6 +1,14 @@
 # Questionaire Slides Web Components
 
+[![github-shield]][github-url] [![npm-version-shield]][npmjs-url]
+
 A set of web components for building interactive questionaires with a carousel interface.
+
+
+[github-url]: https://github.com/yookoala/questionaire-slides
+[github-shield]: https://img.shields.io/github/package-json/v/yookoala/questionaire-slides?logo=github
+[npmjs-url]: https://www.npmjs.com/package/questionaire-slides
+[npm-version-shield]: https://img.shields.io/npm/v/questionaire-slides?logo=nodedotjs
 
 ## Project Structure
 
@@ -75,6 +83,10 @@ See the `examples/` directory for working examples:
 
 ## Development
 
+The development of this project is [here](https://github.com/yookoala/questionaire-slides).
+
+The issue tracker is [here](https://github.com/yookoala/questionaire-slides/issues).
+
 This project uses:
 - [Lit](https://lit.dev/) - For building web components
 - ES Modules - For JavaScript module system
@@ -83,3 +95,5 @@ This project uses:
 ## License
 
 This software is licensed under the MIT License. A copy of the license is distributed along with the source code [here](LICENSE).
+
+Please note that most of the code are written with the help of generative AI (Claude and GitHub Copilot). I designed the element hierachy, the APIs, and UI specification. I also did human test and code review. I also checked for code copyright infringments to my best ability.

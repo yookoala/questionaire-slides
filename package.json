@@ -13,6 +13,11 @@
   ],
   "license": "MIT",
   "author": "Koala Yeung <koalay@gmail.com>",
+  "homepage": "https://github.com/yookoala/questionaire-slides",
+  "bugs": {
+    "url": "https://github.com/yookoala/questionaire-slides/issues",
+    "email": "koalay@gmail.com"
+  },
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
