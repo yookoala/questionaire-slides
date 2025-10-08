@@ -169,49 +169,6 @@
                 assertEquals(container.slideCount, 3, 'Should have 3 slides');
             });
 
-            runTest('should listen for change events from answer elements in questions', () => {
-                return new Promise((resolve, reject) => {
-                    let changeEventReceived = false;
-                    let changeEventDetails = null;
-                    
-                    const changeEventHandler = (event) => {
-                        try {
-                            assertEquals(event.type, 'change', 'Event type should be "change"');
-                            assertEquals(event.bubbles, true, 'Event should bubble');
-                            assert(event.target.tagName.toLowerCase() === 'questionaire-question-answer', 
-                                   'Event target should be an answer element');
-                            changeEventReceived = true;
-                            changeEventDetails = event;
-                        } catch (e) {
-                            reject(e);
-                        }
-                    };
-                    
-                    container.addEventListener('change', changeEventHandler);
-                    
-                    // Get the first question and its answers
-                    const firstQuestion = container.querySelector('questionaire-question');
-                    const firstAnswers = firstQuestion.querySelectorAll('questionaire-question-answer');
-                    
-                    // Clear selections
-                    firstAnswers.forEach(answer => answer.removeAttribute('selected'));
-                    
-                    // Click an answer to trigger change event
-                    firstAnswers[0].click();
-                    
-                    setTimeout(() => {
-                        container.removeEventListener('change', changeEventHandler);
-                        if (!changeEventReceived) {
-                            reject(new Error('change event from answer was not received by container'));
-                        } else {
-                            assertEquals(changeEventDetails.target, firstAnswers[0], 
-                                       'Change event target should be the clicked answer');
-                            resolve();
-                        }
-                    }, 150);
-                });
-            });
-
             // Update summary
             document.getElementById('total').textContent = total;
             document.getElementById('passed').textContent = passed;

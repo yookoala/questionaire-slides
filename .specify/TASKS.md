@@ -25,5 +25,6 @@ Steps to implement the applicaiton.
 - [x] fix/answer-example: in the example, the click behaviour was added in line 207-212. This click-select behaviour should be part of the QuestionaireQuestionAnswer class instead.
 - [x] fix/questionaire-question-answer-select: in existing tests and examples, there are script that rely on explicit event listener for answer's click. But after the last task, the behaviour is added to the element. Remove obsoleted code or modify code for the new behaviour. 
 - [x] feature/questionaire-question-answer--bubbling-change-event: in QuestionaireQuestionAnswer, I've added a bubbling change event when clicked. Modify existing tests for container, question and answer to detect such event.
+- [x] fix/questionaire-question-answer--bubbling-change-event: the 'change' event dispatch logic in `<questionaire-question-answer>` is not a good design. Remove that.
 
 Note: Do not do anything that is not in this file.

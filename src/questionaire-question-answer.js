@@ -57,7 +57,6 @@ export class QuestionaireQuestionAnswer extends LitElement {
   _handleClick() {
     // Toggle selection state
     this.selected = !this.selected;
-    this.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
   firstUpdated() {
