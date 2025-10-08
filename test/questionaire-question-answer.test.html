@@ -177,6 +177,70 @@
                 assertEquals(answer1.selected, true, 'Should be selected after third click');
             });
 
+            runTest('should dispatch change event when clicked', () => {
+                return new Promise((resolve, reject) => {
+                    let eventReceived = false;
+                    let changeEventCount = 0;
+                    
+                    const eventHandler = (event) => {
+                        try {
+                            assertEquals(event.type, 'change', 'Event type should be "change"');
+                            assertEquals(event.bubbles, true, 'Event should bubble');
+                            assertEquals(event.target, answer1, 'Event target should be the clicked answer');
+                            changeEventCount++;
+                            eventReceived = true;
+                        } catch (e) {
+                            reject(e);
+                        }
+                    };
+                    
+                    answer1.addEventListener('change', eventHandler);
+                    
+                    // Reset selection state
+                    answer1.selected = false;
+                    
+                    // Click to trigger change event
+                    answer1.click();
+                    
+                    // Check if event was received
+                    setTimeout(() => {
+                        answer1.removeEventListener('change', eventHandler);
+                        if (!eventReceived) {
+                            reject(new Error('change event was not dispatched'));
+                        } else {
+                            assertEquals(changeEventCount, 1, 'Should receive exactly one change event');
+                            resolve();
+                        }
+                    }, 100);
+                });
+            });
+
+            runTest('should dispatch change event for each click', () => {
+                return new Promise((resolve, reject) => {
+                    let changeEventCount = 0;
+                    
+                    const eventHandler = (event) => {
+                        changeEventCount++;
+                    };
+                    
+                    answer1.addEventListener('change', eventHandler);
+                    
+                    // Reset selection state
+                    answer1.selected = false;
+                    
+                    // Multiple clicks should trigger multiple events
+                    answer1.click(); // select
+                    answer1.click(); // unselect
+                    answer1.click(); // select again
+                    
+                    setTimeout(() => {
+                        answer1.removeEventListener('change', eventHandler);
+                        assertEquals(changeEventCount, 3, 'Should receive three change events for three clicks');
+                        resolve();
+                    }, 100);
+                });
+            });
+
             runTest('should not change text content when value property is set programmatically', () => {
                 const originalText = answer1.textContent;
                 answer1.value = 'new-programmatic-value';

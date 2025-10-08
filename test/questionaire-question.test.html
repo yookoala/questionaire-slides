@@ -248,6 +248,45 @@
                 });
             });
 
+            runTest('should listen for change events from answer elements', () => {
+                return new Promise((resolve, reject) => {
+                    let changeEventReceived = false;
+                    let changeEventDetails = null;
+                    
+                    const changeEventHandler = (event) => {
+                        try {
+                            assertEquals(event.type, 'change', 'Event type should be "change"');
+                            assertEquals(event.bubbles, true, 'Event should bubble');
+                            assert(event.target.tagName.toLowerCase() === 'questionaire-question-answer', 
+                                   'Event target should be an answer element');
+                            changeEventReceived = true;
+                            changeEventDetails = event;
+                        } catch (e) {
+                            reject(e);
+                        }
+                    };
+                    
+                    singleQuestion.addEventListener('change', changeEventHandler);
+                    
+                    // Clear selections
+                    singleAnswers.forEach(answer => answer.removeAttribute('selected'));
+                    
+                    // Click an answer to trigger change event
+                    singleAnswers[1].click();
+                    
+                    setTimeout(() => {
+                        singleQuestion.removeEventListener('change', changeEventHandler);
+                        if (!changeEventReceived) {
+                            reject(new Error('change event from answer was not received by question'));
+                        } else {
+                            assertEquals(changeEventDetails.target, singleAnswers[1], 
+                                       'Change event target should be the clicked answer');
+                            resolve();
+                        }
+                    }, 150);
+                });
+            });
+
             runTest('should handle text content as value when no value attribute', () => {
                 // Create a test question with answer that has no value attribute
                 const testQuestion = document.createElement('questionaire-question');

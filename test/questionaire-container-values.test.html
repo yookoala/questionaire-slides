@@ -354,6 +354,56 @@
                 assertEquals(container1.currentIndex, initialIndex, 'Accessing values should not affect currentIndex');
             });
 
+            runTest('should listen for change events from answer elements', () => {
+                return new Promise((resolve, reject) => {
+                    let changeEventCount = 0;
+                    let lastChangeEventTarget = null;
+                    
+                    const changeEventHandler = (event) => {
+                        try {
+                            assertEquals(event.type, 'change', 'Event type should be "change"');
+                            assertEquals(event.bubbles, true, 'Event should bubble');
+                            assert(event.target.tagName.toLowerCase() === 'questionaire-question-answer', 
+                                   'Event target should be an answer element');
+                            changeEventCount++;
+                            lastChangeEventTarget = event.target;
+                        } catch (e) {
+                            reject(e);
+                        }
+                    };
+                    
+                    container1.addEventListener('change', changeEventHandler);
+                    
+                    // Get initial values
+                    const initialValues = container1.values;
+                    
+                    // Find the first answer and click it
+                    const firstAnswer = container1.querySelector('questionaire-question-answer');
+                    firstAnswer.removeAttribute('selected'); // ensure it starts unselected
+                    
+                    // Click to trigger change event
+                    firstAnswer.click();
+                    
+                    setTimeout(() => {
+                        container1.removeEventListener('change', changeEventHandler);
+                        
+                        try {
+                            assertEquals(changeEventCount, 1, 'Should receive exactly one change event');
+                            assertEquals(lastChangeEventTarget, firstAnswer, 'Event target should be the clicked answer');
+                            
+                            // Verify that values have updated after the change
+                            const newValues = container1.values;
+                            assert(JSON.stringify(newValues) !== JSON.stringify(initialValues), 
+                                   'Container values should update after answer selection change');
+                            
+                            resolve();
+                        } catch (e) {
+                            reject(e);
+                        }
+                    }, 150);
+                });
+            });
+
             // Update summary
             document.getElementById('total').textContent = total;
             document.getElementById('passed').textContent = passed;
