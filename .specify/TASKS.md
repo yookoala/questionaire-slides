@@ -24,5 +24,6 @@ Steps to implement the applicaiton.
 - [x] publish/npm-ready: a new script to generate "dist/" folder of the "src/*.js", and minified versions of them, with proper library version comment header that are generated dynamically.
 - [x] fix/answer-example: in the example, the click behaviour was added in line 207-212. This click-select behaviour should be part of the QuestionaireQuestionAnswer class instead.
 - [x] fix/questionaire-question-answer-select: in existing tests and examples, there are script that rely on explicit event listener for answer's click. But after the last task, the behaviour is added to the element. Remove obsoleted code or modify code for the new behaviour. 
+- [ ] feature/questionaire-question-answer--bubbling-change-event: in QuestionaireQuestionAnswer, I've added a bubbling change event when clicked. Modify existing tests for container, question and answer to detect such event.
 
 Note: Do not do anything that is not in this file.
