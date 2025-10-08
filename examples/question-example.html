@@ -205,20 +205,22 @@
             getQuestionValues();
         }
 
-        // Add click listeners to make answers selectable
+        // Listen for selection changes to log events and update values
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
-                answer.addEventListener('click', () => {
-                    // Toggle selection
-                    if (answer.hasAttribute('selected')) {
-                        answer.removeAttribute('selected');
-                    } else {
-                        answer.setAttribute('selected', '');
+            // Use MutationObserver to detect selection changes
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'selected') {
+                        const answer = mutation.target;
+                        eventLog.push(`Answer selection changed: ${answer.value || answer.textContent.trim()}`);
+                        getQuestionValues();
                     }
-                    
-                    eventLog.push(`Clicked answer: ${answer.value || answer.textContent.trim()}`);
-                    getQuestionValues();
                 });
+            });
+
+            // Observe all answer elements for selection changes
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                observer.observe(answer, { attributes: true, attributeFilter: ['selected'] });
             });
 
             // Listen for question:changed events

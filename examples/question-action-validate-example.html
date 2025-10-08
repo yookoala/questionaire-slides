@@ -419,22 +419,23 @@
             document.getElementById('result-panel').innerHTML = 'All answers reset. Action buttons should update based on validation.';
         }
 
-        // Add click listeners to make answers selectable
+        // Initialize and set up event listeners
         document.addEventListener('DOMContentLoaded', () => {
             container = document.getElementById('validation-survey');
             
-            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
-                answer.addEventListener('click', () => {
-                    // Toggle selection
-                    if (answer.hasAttribute('selected')) {
-                        answer.removeAttribute('selected');
-                    } else {
-                        answer.setAttribute('selected', '');
+            // Use MutationObserver to detect selection changes and re-validate
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'selected') {
+                        // Re-validate after selection change
+                        setTimeout(validateCurrentQuestion, 100);
                     }
-                    
-                    // Re-validate after selection change
-                    setTimeout(validateCurrentQuestion, 100);
                 });
+            });
+
+            // Observe all answer elements for selection changes
+            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
+                observer.observe(answer, { attributes: true, attributeFilter: ['selected'] });
             });
 
             // Listen for slide changes to update display

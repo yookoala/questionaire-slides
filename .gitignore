@@ -10,3 +10,6 @@
 
 # package files
 *.tgz
+
+# temp files
+/temp/

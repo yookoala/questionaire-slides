@@ -23,6 +23,6 @@ Steps to implement the applicaiton.
 - [x] qa/github-actions: setup repository to run all tests in GitHub Actions when a new commit is on "main" branch or when a PR on "main" is submitted.
 - [x] publish/npm-ready: a new script to generate "dist/" folder of the "src/*.js", and minified versions of them, with proper library version comment header that are generated dynamically.
 - [x] fix/answer-example: in the example, the click behaviour was added in line 207-212. This click-select behaviour should be part of the QuestionaireQuestionAnswer class instead.
-- [ ] fix/questionaire-question-answer-select: in existing tests and examples, there are script that rely on explicit event listener for answer's click. But after the last task, the behaviour is added to the element. Remove obsoleted code or modify code for the new behaviour. 
+- [x] fix/questionaire-question-answer-select: in existing tests and examples, there are script that rely on explicit event listener for answer's click. But after the last task, the behaviour is added to the element. Remove obsoleted code or modify code for the new behaviour. 
 
 Note: Do not do anything that is not in this file.

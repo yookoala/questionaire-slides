@@ -442,16 +442,7 @@
 
         // Auto-run tests when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            // Make answers clickable
-            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
-                answer.addEventListener('click', () => {
-                    if (answer.hasAttribute('selected')) {
-                        answer.removeAttribute('selected');
-                    } else {
-                        answer.setAttribute('selected', '');
-                    }
-                });
-            });
+            // Click behavior is now built into questionaire-question-answer components
             
             setTimeout(runAllTests, 1000);
         });

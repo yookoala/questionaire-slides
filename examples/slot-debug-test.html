@@ -115,16 +115,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Make answers clickable
-            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
-                answer.addEventListener('click', () => {
-                    if (answer.hasAttribute('selected')) {
-                        answer.removeAttribute('selected');
-                    } else {
-                        answer.setAttribute('selected', '');
-                    }
-                });
-            });
+            // Click behavior is now built into questionaire-question-answer components
             
             // Debug logging
             setTimeout(() => {

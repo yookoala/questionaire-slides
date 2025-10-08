@@ -328,20 +328,9 @@
             resultPanel.innerHTML = results;
         }
 
-        // Add click listeners to make answers selectable
+        // Initialize and set up event listeners
         document.addEventListener('DOMContentLoaded', () => {
             container = document.getElementById('grid-survey');
-            
-            document.querySelectorAll('questionaire-question-answer').forEach(answer => {
-                answer.addEventListener('click', () => {
-                    // Toggle selection
-                    if (answer.hasAttribute('selected')) {
-                        answer.removeAttribute('selected');
-                    } else {
-                        answer.setAttribute('selected', '');
-                    }
-                });
-            });
 
             // Listen for slide changes to update display
             container.addEventListener('slide-changed', (event) => {
