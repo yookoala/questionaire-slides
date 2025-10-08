@@ -19,6 +19,14 @@ export class QuestionaireQuestionAnswer extends LitElement {
   static styles = css`
     :host {
       display: block;
+      cursor: pointer;
+      padding: 0.5em 1em;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 0.2em;
+    }
+    :host(:hover) {
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      background-color: rgba(0, 0, 0, 0.05);
     }
   `;
 
