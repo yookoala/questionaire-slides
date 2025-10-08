@@ -28,6 +28,10 @@ export class QuestionaireQuestionAnswer extends LitElement {
       border: 1px solid rgba(0, 0, 0, 0.15);
       background-color: rgba(0, 0, 0, 0.05);
     }
+    :host([selected]) {
+      border: 2px solid rgba(200, 200, 200, 1);
+      background-color: rgba(255, 255, 240, 1);
+    }
   `;
 
   constructor() {
