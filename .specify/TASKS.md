@@ -27,5 +27,6 @@ Steps to implement the applicaiton.
 - [x] feature/questionaire-question-answer--bubbling-change-event: in QuestionaireQuestionAnswer, I've added a bubbling change event when clicked. Modify existing tests for container, question and answer to detect such event.
 - [x] fix/questionaire-question-answer--bubbling-change-event: the 'change' event dispatch logic in `<questionaire-question-answer>` is not a good design. Remove that.
 - [x] feature/questionaire-container: add an attribute / property "disabled". When the container is disabled, a semi-transparent grey overlay will visually appear to cover everything in the container and prevent user interaction with UI elements in the questionaire. The cover element by default should be there in the shadow dom but with opacity 0 and do not interact with cursor. It should appear faded in with CSS transition.
+- [x] feature/questionaire-action--button: add a new behaviour if action="button". In which case, do not trigger "next" or "previous" navigation. Only trigger a click action.
 
 Note: Do not do anything that is not in this file.

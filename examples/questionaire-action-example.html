@@ -291,6 +291,13 @@
         </div>
         
         <div style="margin: 15px 0;">
+            <strong>Button Actions (no navigation):</strong><br>
+            <questionaire-action action="button" onclick="testButtonAction(this)">Submit Form</questionaire-action>
+            <questionaire-action action="button" onclick="testButtonAction(this)">Save Progress</questionaire-action>
+            <questionaire-action action="button" onclick="testButtonAction(this)">Reset Data</questionaire-action>
+        </div>
+        
+        <div style="margin: 15px 0;">
             <strong>Action with default behavior:</strong><br>
             <questionaire-action onclick="testAction(this)">Default Action (next)</questionaire-action>
         </div>
@@ -347,6 +354,29 @@
                 Parent Container: ${actionElement.closest('questionaire-container') ? 'Found' : 'Not Found'}<br>
                 <em>Note: This test action doesn't actually navigate.</em>
             `;
+        }
+
+        function testButtonAction(actionElement) {
+            const resultPanel = document.getElementById('result-panel');
+            
+            resultPanel.innerHTML = `
+                <strong>Button Action Clicked:</strong><br>
+                Element: ${actionElement.tagName}<br>
+                Action: button<br>
+                Text Content: "${actionElement.textContent.trim()}"<br>
+                <em>Button actions dispatch 'action-click' events without navigation.</em><br>
+                <em>Check browser console for event details.</em>
+            `;
+            
+            // Listen for the action-click event
+            actionElement.addEventListener('action-click', (event) => {
+                console.log('Action-click event received:', event.detail);
+                resultPanel.innerHTML += `<br><strong>Event Details:</strong><br>
+                    Action: ${event.detail.action}<br>
+                    Element: ${event.detail.element.tagName}<br>
+                    Bubbles: ${event.bubbles}<br>
+                    Composed: ${event.composed}`;
+            }, { once: true });
         }
 
         function goToSlide(index) {

@@ -52,6 +52,16 @@ export class QuestionaireAction extends LitElement {
       border-color: #5a6268;
     }
 
+    :host([action="button"]) {
+      background-color: #28a745;
+      border-color: #28a745;
+    }
+
+    :host([action="button"]:hover) {
+      background-color: #218838;
+      border-color: #1e7e34;
+    }
+
     :host([disabled]) {
       background-color: #e9ecef;
       border-color: #dee2e6;
@@ -205,7 +215,21 @@ export class QuestionaireAction extends LitElement {
       return;
     }
 
-    // Find the closest parent questionaire-container
+    // Determine the action to perform
+    const actionType = this.action || 'next';
+    
+    // Handle button action - just dispatch custom event, no navigation
+    if (actionType === 'button') {
+      // Dispatch a custom 'action-click' event for button behavior
+      this.dispatchEvent(new CustomEvent('action-click', {
+        detail: { action: 'button', element: this },
+        bubbles: true,
+        composed: true
+      }));
+      return;
+    }
+
+    // Find the closest parent questionaire-container for navigation actions
     const container = this.closest('questionaire-container');
     
     if (!container) {
@@ -213,9 +237,6 @@ export class QuestionaireAction extends LitElement {
       console.warn('questionaire-action: No parent questionaire-container found');
       return;
     }
-
-    // Determine the action to perform
-    const actionType = this.action || 'next';
     
     try {
       // Apply the action to the container

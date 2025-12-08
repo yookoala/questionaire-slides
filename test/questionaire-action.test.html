@@ -137,6 +137,15 @@
                 <questionaire-action id="default-action">Default Action</questionaire-action>
             </questionaire-question>
         </questionaire-container>
+
+        <!-- Test elements for button actions -->
+        <div id="button-test-container">
+            <questionaire-action action="button" id="button-action-1">Button Action 1</questionaire-action>
+            <questionaire-action action="button" id="button-action-2">Button Action 2</questionaire-action>
+            <questionaire-action action="button" id="button-action-nested">
+                <span>Nested Button</span>
+            </questionaire-action>
+        </div>
     </div>
 
     <script type="module">
@@ -330,6 +339,88 @@
                 // Test that CSS can target the element
                 const computedStyle = window.getComputedStyle(nextBtn1);
                 assert(computedStyle.display !== '', 'Should have computed styles');
+            });
+
+            runTest('button action should dispatch action-click event', () => {
+                return new Promise((resolve, reject) => {
+                    const buttonAction = document.getElementById('button-action-1');
+                    let eventReceived = false;
+                    
+                    const eventHandler = (event) => {
+                        try {
+                            assertEquals(event.type, 'action-click', 'Event type should be action-click');
+                            assertEquals(event.detail.action, 'button', 'Event detail action should be button');
+                            assertEquals(event.detail.element, buttonAction, 'Event detail element should be the button');
+                            assertEquals(event.bubbles, true, 'Event should bubble');
+                            assertEquals(event.composed, true, 'Event should be composed');
+                            eventReceived = true;
+                            resolve();
+                        } catch (e) {
+                            reject(e);
+                        }
+                    };
+                    
+                    buttonAction.addEventListener('action-click', eventHandler);
+                    buttonAction.click();
+                    
+                    setTimeout(() => {
+                        if (!eventReceived) {
+                            reject(new Error('action-click event was not dispatched'));
+                        }
+                    }, 100);
+                });
+            });
+
+            runTest('button action should not trigger navigation', () => {
+                return new Promise((resolve) => {
+                    // Add button action inside container
+                    const containerWithButton = container1;
+                    const buttonAction = document.createElement('questionaire-action');
+                    buttonAction.setAttribute('action', 'button');
+                    buttonAction.textContent = 'Test Button';
+                    containerWithButton.appendChild(buttonAction);
+                    
+                    // Set initial position
+                    containerWithButton.goToSlide(1);
+                    const initialIndex = containerWithButton.currentIndex;
+                    
+                    // Click button - should not navigate
+                    buttonAction.click();
+                    
+                    setTimeout(() => {
+                        assertEquals(containerWithButton.currentIndex, initialIndex, 'Button action should not change container position');
+                        
+                        // Clean up
+                        containerWithButton.removeChild(buttonAction);
+                        resolve();
+                    }, 50);
+                });
+            });
+
+            runTest('button action should work outside container', () => {
+                return new Promise((resolve, reject) => {
+                    const buttonAction = document.getElementById('button-action-2');
+                    let eventReceived = false;
+                    
+                    const eventHandler = (event) => {
+                        try {
+                            assertEquals(event.detail.action, 'button', 'Button outside container should still dispatch event');
+                            eventReceived = true;
+                            resolve();
+                        } catch (e) {
+                            reject(e);
+                        }
+                    };
+                    
+                    buttonAction.addEventListener('action-click', eventHandler);
+                    buttonAction.click();
+                    
+                    setTimeout(() => {
+                        if (!eventReceived) {
+                            reject(new Error('Button outside container should still work'));
+                        }
+                    }, 100);
+                });
             });
 
             // Update summary
