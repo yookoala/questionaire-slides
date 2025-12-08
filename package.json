@@ -1,6 +1,6 @@
 {
   "name": "questionaire-slides",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Web components for building a questionare/slides interface.",
   "keywords": [
     "web-components",
@@ -48,9 +48,9 @@
     "@playwright/test": "^1.55.1",
     "chai": "^6.2.0",
     "fs-extra": "^11.3.2",
+    "http-server": "^14.1.1",
     "jsdom": "^27.0.0",
     "mocha": "^11.7.4",
     "terser": "^5.44.0"
-  },
-  "customElements": "custom-elements.json"
+  }
 }
