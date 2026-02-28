@@ -225,7 +225,7 @@
               "kind": "field",
               "name": "styles",
               "static": true,
-              "default": "css` :host { display: inline-block; cursor: pointer; user-select: none; /* Moved from .action-button */ width: 100%; padding: 10px 20px; border: 2px solid #007bff; border-radius: 5px; background-color: #007bff; color: white; font-size: 16px; font-weight: bold; text-align: center; transition: all 0.2s ease; min-width: 80px; box-sizing: border-box; } :host(:hover) { background-color: #0056b3; border-color: #0056b3; transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); } :host(:active) { transform: translateY(0); box-shadow: 0 1px 2px rgba(0,0,0,0.2); } :host([action=\"previous\"]) { background-color: #6c757d; border-color: #6c757d; } :host([action=\"previous\"]:hover) { background-color: #5a6268; border-color: #5a6268; } :host([disabled]) { background-color: #e9ecef; border-color: #dee2e6; color: #6c757d; cursor: not-allowed; transform: none; box-shadow: none; } :host([disabled]:hover) { background-color: #e9ecef; border-color: #dee2e6; transform: none; box-shadow: none; } /* Invalid state styling (internal validation failure) */ :host(.invalid) { background-color: #e9ecef; border-color: #dee2e6; color: #6c757d; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.6; } :host(.invalid:hover) { background-color: #e9ecef; border-color: #dee2e6; transform: none; box-shadow: none; } `"
+              "default": "css` :host { display: inline-block; cursor: pointer; user-select: none; /* Moved from .action-button */ width: 100%; padding: 10px 20px; border: 2px solid #007bff; border-radius: 5px; background-color: #007bff; color: white; font-size: 16px; font-weight: bold; text-align: center; transition: all 0.2s ease; min-width: 80px; box-sizing: border-box; } :host(:hover) { background-color: #0056b3; border-color: #0056b3; transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); } :host(:active) { transform: translateY(0); box-shadow: 0 1px 2px rgba(0,0,0,0.2); } :host([action=\"previous\"]) { background-color: #6c757d; border-color: #6c757d; } :host([action=\"previous\"]:hover) { background-color: #5a6268; border-color: #5a6268; } :host([action=\"button\"]) { background-color: #28a745; border-color: #28a745; } :host([action=\"button\"]:hover) { background-color: #218838; border-color: #1e7e34; } :host([disabled]) { background-color: #e9ecef; border-color: #dee2e6; color: #6c757d; cursor: not-allowed; transform: none; box-shadow: none; } :host([disabled]:hover) { background-color: #e9ecef; border-color: #dee2e6; transform: none; box-shadow: none; } /* Invalid state styling (internal validation failure) */ :host(.invalid) { background-color: #e9ecef; border-color: #dee2e6; color: #6c757d; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.6; } :host(.invalid:hover) { background-color: #e9ecef; border-color: #dee2e6; transform: none; box-shadow: none; } `"
             },
             {
               "kind": "method",
@@ -302,6 +302,14 @@
                 "text": "null"
               },
               "default": "null"
+            }
+          ],
+          "events": [
+            {
+              "name": "action-click",
+              "type": {
+                "text": "CustomEvent"
+              }
             }
           ],
           "superclass": {
