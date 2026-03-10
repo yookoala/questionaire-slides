@@ -147,8 +147,27 @@ export class QuestionaireAction extends LitElement {
   }
 
   /**
-   * Check the current validation state and update invalid state
-   * Only applies to "next" actions
+   * Walk up the light DOM from this element to find the direct child of the
+   * given container that contains this action. This is the slide the action
+   * "belongs to", which may differ from container.current() when multiple
+   * slides are present.
+   *
+   * @param {HTMLElement} container
+   * @returns {HTMLElement|null}
+   */
+  _getOwnerSlide(container) {
+    let el = this;
+    while (el && el.parentElement !== container) {
+      el = el.parentElement;
+    }
+    return el || null;
+  }
+
+  /**
+   * Check the current validation state and update invalid state.
+   * Only applies to "next" actions.
+   * Validates against the slide this action belongs to, not the globally
+   * visible slide — so buttons on other slides are never affected.
    */
   _checkValidationState() {
     // Only validate "next" actions (default action)
@@ -164,16 +183,16 @@ export class QuestionaireAction extends LitElement {
       return;
     }
 
-    // Get current slide and check if it has validation
-    const currentElement = container.current();
-    if (!currentElement || typeof currentElement.validate !== 'function') {
+    // Validate against the slide this action belongs to, not container.current().
+    const ownerSlide = this._getOwnerSlide(container);
+    if (!ownerSlide || typeof ownerSlide.validate !== 'function') {
       this._setInvalidState(false);
       return;
     }
 
-    // Try to validate the current element
+    // Try to validate the owner slide
     try {
-      currentElement.validate();
+      ownerSlide.validate();
       this._setInvalidState(false); // Validation passed
     } catch (validationError) {
       this._setInvalidState(true); // Validation failed
