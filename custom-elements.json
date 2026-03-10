@@ -239,8 +239,26 @@
             },
             {
               "kind": "method",
+              "name": "_getOwnerSlide",
+              "parameters": [
+                {
+                  "name": "container",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                }
+              ],
+              "description": "Walk up the light DOM from this element to find the direct child of the\ngiven container that contains this action. This is the slide the action\n\"belongs to\", which may differ from container.current() when multiple\nslides are present.",
+              "return": {
+                "type": {
+                  "text": "HTMLElement|null"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "_checkValidationState",
-              "description": "Check the current validation state and update invalid state\nOnly applies to \"next\" actions"
+              "description": "Check the current validation state and update invalid state.\nOnly applies to \"next\" actions.\nValidates against the slide this action belongs to, not the globally\nvisible slide — so buttons on other slides are never affected."
             },
             {
               "kind": "method",
