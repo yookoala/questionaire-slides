@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Questionaire Container Height Tests</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "/node_modules/lit/index.js",
+        "lit/": "/node_modules/lit/",
+        "@lit/reactive-element": "/node_modules/@lit/reactive-element/reactive-element.js",
+        "@lit/reactive-element/": "/node_modules/@lit/reactive-element/",
+        "lit-html": "/node_modules/lit-html/lit-html.js",
+        "lit-html/": "/node_modules/lit-html/",
+        "lit-element": "/node_modules/lit-element/lit-element.js",
+        "lit-element/": "/node_modules/lit-element/"
+      }
+    }
+    </script>
+    <script type="module" src="../src/questionaire-container.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .slide {
+            background: #e9ecef;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>Questionaire Container Height Tests</h1>
+    <p>
+        This page verifies that the carousel container sizes itself to its
+        current slide instead of reserving the height of the tallest slide,
+        and that the height follows navigation and content resizes.
+    </p>
+
+    <questionaire-container id="q">
+        <div id="slide1" class="slide" style="height: 200px;">Slide 1 (200px)</div>
+        <div id="slide2" class="slide" style="height: 500px;">Slide 2 (500px, tallest)</div>
+        <div id="slide3" class="slide" style="height: 100px;">Slide 3 (100px)</div>
+    </questionaire-container>
+
+    <div id="test-status">Fixture ready.</div>
+</body>
+</html>

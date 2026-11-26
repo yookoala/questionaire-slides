@@ -23,8 +23,11 @@ export class QuestionaireContainer extends LitElement {
 
     .container {
       display: grid;
+      /* Let slides keep their natural content height (instead of stretching
+         to the row height), so the current slide's height is measurable. */
+      align-items: start;
       height: 100%;
-      transition: transform 0.3s ease-in-out;
+      transition: transform 0.3s ease-in-out, height 0.3s ease-in-out;
       /* Grid template columns will be set dynamically via inline styles */
     }
 
@@ -59,7 +62,49 @@ export class QuestionaireContainer extends LitElement {
     this.disabled = false;
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    // Re-observe on (re)connect: firstUpdated only runs once, but a
+    // disconnected element loses its resize observations.
+    this._observeSlides();
+  }
+
+  disconnectedCallback() {
+    if (this._resizeObserver) {
+      this._resizeObserver.disconnect();
+    }
+    super.disconnectedCallback();
+  }
+
+  /**
+   * Watch slides for content size changes (e.g. async content, images
+   * loading, validation messages appearing) and keep the container height
+   * in sync with the current slide.
+   */
+  _ensureResizeObserver() {
+    if (typeof ResizeObserver === 'undefined' || this._resizeObserver) {
+      return;
+    }
+    this._resizeObserver = new ResizeObserver(() => this._updateContainer());
+  }
+
+  /**
+   * Observe the slotted slides with the resize observer.
+   */
+  _observeSlides() {
+    this._ensureResizeObserver();
+    if (!this._resizeObserver) return;
+
+    this._resizeObserver.disconnect();
+    const slot = this.shadowRoot?.querySelector('slot');
+    const children = slot ? slot.assignedElements() : [];
+    for (const child of children) {
+      this._resizeObserver.observe(child);
+    }
+  }
+
   firstUpdated() {
+    this._observeSlides();
     this._updateContainer();
     // Set ready attribute to "1" after rendering
     this.ready = '1';
@@ -75,10 +120,13 @@ export class QuestionaireContainer extends LitElement {
   }
 
   _handleSlotChange() {
+    this._observeSlides();
     this._updateContainer();
   }
 
   _updateContainer() {
+    if (!this.shadowRoot) return;
+
     const container = this.shadowRoot.querySelector('.container');
     if (!container) return;
 
@@ -97,11 +145,51 @@ export class QuestionaireContainer extends LitElement {
       // Calculate the transform position based on current index
       const translateX = -this.currentIndex * (100 / childCount);
       container.style.transform = `translateX(${translateX}%)`;
+
+      this._updateHeight(container, children);
     } else {
       // Handle empty container
       container.style.gridTemplateColumns = '1fr';
       container.style.width = '100%';
       container.style.transform = 'translateX(0%)';
+      container.style.height = '';
+      this._heightApplied = false;
+    }
+  }
+
+  /**
+   * Fit the container to the height of the current slide.
+   *
+   * Slides are laid out as grid columns side by side, and hidden slides
+   * still occupy the single grid row. Without an explicit height, the
+   * container would be as tall as the tallest slide, leaving a large blank
+   * band below the (usually shorter) current slide on every step.
+   * `align-items: start` keeps each slide at its natural content height,
+   * so it can be measured and applied to the container here.
+   *
+   * The first height application skips the height transition: the raw
+   * container is as tall as the tallest slide, and animating from that
+   * would cause a visible shrink on load.
+   *
+   * @param {HTMLElement} container The .container element in the shadow DOM
+   * @param {Element[]} children The assigned slide elements
+   */
+  _updateHeight(container, children) {
+    const current = children[this.currentIndex];
+    if (!current) return;
+
+    const height = `${current.getBoundingClientRect().height}px`;
+
+    if (!this._heightApplied) {
+      const previousTransition = container.style.transition;
+      container.style.transition = 'none';
+      container.style.height = height;
+      // Force a style flush so the height applies without a transition.
+      void container.offsetHeight;
+      container.style.transition = previousTransition;
+      this._heightApplied = true;
+    } else {
+      container.style.height = height;
     }
   }
 
